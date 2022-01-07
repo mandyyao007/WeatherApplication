@@ -263,7 +263,7 @@ public class HomeFragment extends Fragment {
                            // getReportOfIndex(selectConfigId,stationId,startDateStr,endDateStr);
                             Log.d("fan","====222222222222222222==:");
                             getReportOfIndex(selectConfigId,stationId,"2021-11-26","2021-12-02");
-
+                            setLineView(mLineChartView,hScrollView);
                             //setLineView(fragmentHomeView);
                         }
                         @Override
@@ -280,7 +280,7 @@ public class HomeFragment extends Fragment {
 
             }
         });
-        setLineView(mLineChartView,hScrollView);
+        //setLineView(mLineChartView,hScrollView);
         tvWeather =fragmentHomeView.findViewById(R.id.tv_weather);
         tvTem =fragmentHomeView.findViewById(R.id.tv_tem);
         tvTemLowHigh = fragmentHomeView.findViewById(R.id.tv_tem_low_high);
