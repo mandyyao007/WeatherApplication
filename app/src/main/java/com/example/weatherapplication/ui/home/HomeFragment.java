@@ -220,7 +220,7 @@ public class HomeFragment extends Fragment {
     }
 
 
-    private void initView(View fragmentHomeView ,String userName) throws IOException {
+   /* private void initView(View fragmentHomeView ,String userName) throws IOException {
         mStationSpinner = fragmentHomeView.findViewById(R.id.sp_station);
         mIndexSpinner = fragmentHomeView.findViewById(R.id.sp_index);
         hScrollView = (HScrollView) fragmentHomeView.findViewById(R.id.HScrollView);
@@ -281,6 +281,74 @@ public class HomeFragment extends Fragment {
             }
         });
         //setLineView(mLineChartView,hScrollView);
+        tvWeather =fragmentHomeView.findViewById(R.id.tv_weather);
+        tvTem =fragmentHomeView.findViewById(R.id.tv_tem);
+        tvTemLowHigh = fragmentHomeView.findViewById(R.id.tv_tem_low_high);
+        tvWin = fragmentHomeView.findViewById(R.id.tv_win);
+        tvAir =fragmentHomeView.findViewById(R.id.tv_air);
+        ivWeather =(ImageView)fragmentHomeView.findViewById(R.id.iv_weather);
+        rlvFutureWeather = fragmentHomeView.findViewById(R.id.rlv_future_weather);
+
+    }*/
+
+    private void initView(View fragmentHomeView ,String userName) throws IOException {
+        mStationSpinner = fragmentHomeView.findViewById(R.id.sp_station);
+        mIndexSpinner = fragmentHomeView.findViewById(R.id.sp_index);
+        hScrollView = (HScrollView) fragmentHomeView.findViewById(R.id.HScrollView);
+        mLineChartView = (LineChartView) fragmentHomeView.findViewById(R.id.simpleLineChart);
+        //mCities = getResources().getStringArray(R.array.cities);
+        StationBean stationBean = NetUtil.getStationInfo(userName);
+        mStations = getStationList(stationBean);
+        stationsMap = getStationMap(stationBean);
+        //mSpAdapter = new ArrayAdapter<String>(this.getActivity(),R.layout.sp_item_layout,mCities);
+        mSpAdapter = new ArrayAdapter<String>(this.getActivity(),R.layout.sp_item_layout,mStations);
+        mStationSpinner.setAdapter(mSpAdapter);
+        final String[] stationId = {null};
+        Log.d("fan","====STATION info==:"+stationBean.toString());
+        mStationSpinner.setOnItemSelectedListener( new AdapterView.OnItemSelectedListener(){
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                stationId[0] = (String) stationsMap.get(mStations[position]);
+                Log.d("fan","===stationId==:"+ stationId[0]);
+                IndexBean indexbean = null;
+                try {
+                    indexbean = NetUtil.getIndexInfo(stationId[0]);
+                    mIndexs = getIndexOfStation(indexbean);
+                    mIndexAdapter = new ArrayAdapter<String>(parent.getContext(), R.layout.index_item_layout,mIndexs);
+                    mIndexSpinner.setAdapter(mIndexAdapter);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                indexMap = getIndexOfStationMap(indexbean);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        mIndexSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    String selectedIndex = mIndexs[position];
+                    Log.d("fan","===selectedIndex==:"+selectedIndex);
+                    String selectConfigId = (String) indexMap.get(selectedIndex);
+                    Log.d("fan","===selectConfigId==:"+selectConfigId);
+                    Date endDate = new Date();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    Calendar c = Calendar.getInstance();
+                    c.add(Calendar.DATE, -7);
+                    String startDateStr = sdf.format(c.getTime());
+                    String endDateStr = sdf.format(endDate);
+                    // getReportOfIndex(selectConfigId,stationId,startDateStr,endDateStr);
+                    Log.d("fan","====222222222222222222==:");
+                    getReportOfIndex(selectConfigId, stationId[0],"2021-11-26","2021-12-02");
+                    //setLineView(mLineChartView,hScrollView);
+                }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+        setLineView(mLineChartView,hScrollView);
         tvWeather =fragmentHomeView.findViewById(R.id.tv_weather);
         tvTem =fragmentHomeView.findViewById(R.id.tv_tem);
         tvTemLowHigh = fragmentHomeView.findViewById(R.id.tv_tem_low_high);
