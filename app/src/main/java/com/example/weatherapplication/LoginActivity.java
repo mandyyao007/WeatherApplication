@@ -54,8 +54,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String fail = "用户名或者密码有误，请重新登录!";
 
         Intent intent = null;
-        if(!"".equals(userName) && !"".equals(password)){
-            try {
+      if(!"".equals(userName) && !"".equals(password)){
+           try {
                 String status = NetUtil.getloginInfo(userName,password);
                 Log.d("fan","====status==:"+status);
                 if("S".equals(status)){
@@ -65,9 +65,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     startActivity(intent);
                 }else{
                     intent = null;
-                    //toast 居中显示
+                   //toast 居中显示
                     ToastUtil.showMessage(LoginActivity.this,fail);
-                }
+               }
             } catch (IOException e) {
                 e.printStackTrace();
             }

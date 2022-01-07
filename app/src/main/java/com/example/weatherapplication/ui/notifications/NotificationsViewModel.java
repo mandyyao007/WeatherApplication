@@ -10,7 +10,7 @@ public class NotificationsViewModel extends ViewModel {
 
     public NotificationsViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("我的模块待开发！");
+        mText.setValue("评价模块待开发！");
     }
 
     public LiveData<String> getText() {
