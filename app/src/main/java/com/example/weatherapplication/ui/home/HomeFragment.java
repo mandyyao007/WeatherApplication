@@ -348,7 +348,7 @@ public class HomeFragment extends Fragment {
 
                 }
             });
-        setLineView(mLineChartView,hScrollView);
+        setLineView(mLineChartView,hScrollView); 
         tvWeather =fragmentHomeView.findViewById(R.id.tv_weather);
         tvTem =fragmentHomeView.findViewById(R.id.tv_tem);
         tvTemLowHigh = fragmentHomeView.findViewById(R.id.tv_tem_low_high);
