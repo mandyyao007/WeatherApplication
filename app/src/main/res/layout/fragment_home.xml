@@ -21,13 +21,16 @@
             android:overlapAnchor="false"
             android:popupBackground="@color/transparent"
             android:spinnerMode="dropdown" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_station"
+            android:textSize="15sp"
+            android:text="连云港"
+            android:layout_below="@id/sp_station"
+            android:visibility="invisible"
+            android:textColor="@color/white"/>
     </RelativeLayout>
-    <ImageView
-        android:id="@+id/iv_weather"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        >
-    </ImageView>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -43,7 +46,7 @@
         android:spinnerMode="dropdown"
         android:popupBackground="@color/transparent"
         android:overlapAnchor =  "false"
-        android:dropDownVerticalOffset = "20dp"
+        android:dropDownVerticalOffset = "25dp"
         android:backgroundTint="@color/white"/>
     <TextView
         android:layout_width="wrap_content"
@@ -56,10 +59,11 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_tem_low_high"
+        android:id="@+id/tv_reportdata"
         android:text=""
         android:textSize="15sp"
         android:textColor="@color/white"
+        android:visibility="invisible"
         android:layout_marginTop="10dp"/>
     <TextView
         android:layout_width="wrap_content"
@@ -96,11 +100,4 @@
                 />
         </LinearLayout>
     </com.example.weatherapplication.view.HScrollView>
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/rlv_future_weather"
-        android:layout_marginTop="5dp"/>
-
-
 </LinearLayout>

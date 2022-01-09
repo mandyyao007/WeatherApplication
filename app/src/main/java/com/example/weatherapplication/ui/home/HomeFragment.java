@@ -59,10 +59,10 @@ public class HomeFragment extends Fragment {
     private AppCompatSpinner mStationSpinner,mIndexSpinner;
     private ArrayAdapter<String> mSpAdapter,mIndexAdapter;
     private String[] mCities,mStations,mIndexs;
-    private TextView tvWeather,tvTem,tvTemLowHigh,tvWin,tvAir;
+    private TextView tvWeather,tvWin,tvAir,tvStation,tvReportData,tvTem;
     private ImageView ivWeather;
     private RecyclerView rlvFutureWeather;
-    private FutureWeatherAdapter mWeatherAdapter;
+    //private FutureWeatherAdapter mWeatherAdapter;
     private DayWeatherBean todayWeather;
     String  userName;
     private Map stationsMap,indexMap;
@@ -95,9 +95,8 @@ public class HomeFragment extends Fragment {
                 Gson gson = new Gson();
                 ReportBean reportBean = gson.fromJson(report, ReportBean.class);
                 Log.d("fan","====解析后的reportBean==:"+reportBean.toString());
-                updateUiOfReport(reportBean);
-                setLineView(mLineChartView,hScrollView);
-               // setLineView(reportBean);
+                //updateUiOfReport(reportBean);
+                //setLineView(mLineChartView,hScrollView);
             }
         }
     };
@@ -113,10 +112,7 @@ public class HomeFragment extends Fragment {
         if(todayReport == null){
             return;
         }
-        tvTem.setText(todayReport.getCol1());
-        tvWeather.setText(todayReport.getAcquisitionTime());
         //tvWeather.setText(todayWeather.getWea()+"("+todayWeather.getDay()+")");
-        //tvTemLowHigh.setText(todayWeather.getTem2()+"~"+todayWeather.getTem1());
         //tvWin.setText(todayWeather.getWin()[0]+todayWeather.getWinSpeed());
         ///tvAir.setText("空气："+todayWeather.getAir()+todayWeather.getAirLevel()+"\n"+todayWeather.getAirTips());
         //ivWeather.setImageResource(getImgResOfWeather(todayWeather.getWeaImg()));
@@ -168,9 +164,7 @@ public class HomeFragment extends Fragment {
         if(todayWeather == null){
             return;
         }
-        //tvTem.setText(todayWeather.getTem());
         //tvWeather.setText(todayWeather.getWea()+"("+todayWeather.getDay()+")");
-        //tvTemLowHigh.setText(todayWeather.getTem2()+"~"+todayWeather.getTem1());
         //tvWin.setText(todayWeather.getWin()[0]+todayWeather.getWinSpeed());
         ///tvAir.setText("空气："+todayWeather.getAir()+todayWeather.getAirLevel()+"\n"+todayWeather.getAirTips());
         //ivWeather.setImageResource(getImgResOfWeather(todayWeather.getWeaImg()));
@@ -178,10 +172,10 @@ public class HomeFragment extends Fragment {
         dayWeathers.remove(0); // 去掉当天的天气
 
         // 未来天气的展示
-        mWeatherAdapter = new FutureWeatherAdapter(this.getActivity(), dayWeathers);
-        rlvFutureWeather.setAdapter(mWeatherAdapter);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity(),LinearLayoutManager.HORIZONTAL,false);
-        rlvFutureWeather.setLayoutManager(layoutManager);
+//        mWeatherAdapter = new FutureWeatherAdapter(this.getActivity(), dayWeathers);
+//        rlvFutureWeather.setAdapter(mWeatherAdapter);
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity(),LinearLayoutManager.HORIZONTAL,false);
+//        rlvFutureWeather.setLayoutManager(layoutManager);
     }
     private int getImgResOfWeather(String weaStr){
         int result = 0;
@@ -282,8 +276,6 @@ public class HomeFragment extends Fragment {
         });
         //setLineView(mLineChartView,hScrollView);
         tvWeather =fragmentHomeView.findViewById(R.id.tv_weather);
-        tvTem =fragmentHomeView.findViewById(R.id.tv_tem);
-        tvTemLowHigh = fragmentHomeView.findViewById(R.id.tv_tem_low_high);
         tvWin = fragmentHomeView.findViewById(R.id.tv_win);
         tvAir =fragmentHomeView.findViewById(R.id.tv_air);
         ivWeather =(ImageView)fragmentHomeView.findViewById(R.id.iv_weather);
@@ -294,8 +286,9 @@ public class HomeFragment extends Fragment {
     private void initView(View fragmentHomeView ,String userName) throws IOException {
         mStationSpinner = fragmentHomeView.findViewById(R.id.sp_station);
         mIndexSpinner = fragmentHomeView.findViewById(R.id.sp_index);
-        hScrollView = (HScrollView) fragmentHomeView.findViewById(R.id.HScrollView);
-        mLineChartView = (LineChartView) fragmentHomeView.findViewById(R.id.simpleLineChart);
+        tvStation = (TextView) fragmentHomeView.findViewById(R.id.tv_station);
+        tvReportData = (TextView) fragmentHomeView.findViewById(R.id.tv_reportdata);
+        tvTem = (TextView) fragmentHomeView.findViewById(R.id.tv_tem);
         //mCities = getResources().getStringArray(R.array.cities);
         StationBean stationBean = NetUtil.getStationInfo(userName);
         mStations = getStationList(stationBean);
@@ -303,16 +296,16 @@ public class HomeFragment extends Fragment {
         //mSpAdapter = new ArrayAdapter<String>(this.getActivity(),R.layout.sp_item_layout,mCities);
         mSpAdapter = new ArrayAdapter<String>(this.getActivity(),R.layout.sp_item_layout,mStations);
         mStationSpinner.setAdapter(mSpAdapter);
-        final String[] stationId = {null};
+        ReportBean reportBean = null;
         Log.d("fan","====STATION info==:"+stationBean.toString());
         mStationSpinner.setOnItemSelectedListener( new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                stationId[0] = (String) stationsMap.get(mStations[position]);
-                Log.d("fan","===stationId==:"+ stationId[0]);
+                tvStation.setText((String)stationsMap.get(mStations[position])) ;
+                Log.d("fan","===stationId==:"+ tvStation.getText().toString());
                 IndexBean indexbean = null;
                 try {
-                    indexbean = NetUtil.getIndexInfo(stationId[0]);
+                    indexbean = NetUtil.getIndexInfo(tvStation.getText().toString());
                     mIndexs = getIndexOfStation(indexbean);
                     mIndexAdapter = new ArrayAdapter<String>(parent.getContext(), R.layout.index_item_layout,mIndexs);
                     mIndexSpinner.setAdapter(mIndexAdapter);
@@ -325,6 +318,8 @@ public class HomeFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+        hScrollView = (HScrollView) fragmentHomeView.findViewById(R.id.HScrollView);
+        mLineChartView = (LineChartView) fragmentHomeView.findViewById(R.id.simpleLineChart);
         mIndexSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -338,24 +333,22 @@ public class HomeFragment extends Fragment {
                     c.add(Calendar.DATE, -7);
                     String startDateStr = sdf.format(c.getTime());
                     String endDateStr = sdf.format(endDate);
-                    // getReportOfIndex(selectConfigId,stationId,startDateStr,endDateStr);
-                    Log.d("fan","====222222222222222222==:");
-                    getReportOfIndex(selectConfigId, stationId[0],"2021-11-26","2021-12-02");
-                    //setLineView(mLineChartView,hScrollView);
+                    try {
+                        String reportOfIndex =  NetUtil.getReportOfIndex(selectConfigId,tvStation.getText().toString(),startDateStr,endDateStr);
+                        tvReportData.setText(reportOfIndex);
+                        Log.d("fan","====tvReportData.text==:"+tvReportData.getText().toString());
+                        setLineView(mLineChartView,hScrollView,tvReportData.getText().toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {
 
                 }
             });
-        setLineView(mLineChartView,hScrollView); 
-        tvWeather =fragmentHomeView.findViewById(R.id.tv_weather);
-        tvTem =fragmentHomeView.findViewById(R.id.tv_tem);
-        tvTemLowHigh = fragmentHomeView.findViewById(R.id.tv_tem_low_high);
-        tvWin = fragmentHomeView.findViewById(R.id.tv_win);
-        tvAir =fragmentHomeView.findViewById(R.id.tv_air);
-        ivWeather =(ImageView)fragmentHomeView.findViewById(R.id.iv_weather);
-        rlvFutureWeather = fragmentHomeView.findViewById(R.id.rlv_future_weather);
+        String reportResult = tvReportData.getText().toString();
+        Log.d("fan","====reportResult==:"+reportResult);
 
     }
     private void getReportOfIndex(String selectConfigId, String stationId, String startDateStr, String endDateStr) {
@@ -512,7 +505,24 @@ public class HomeFragment extends Fragment {
         startActivity(intent);
     }
 
-     private void setLineView( LineChartView mLineChartView,HScrollView hScrollView ){
+     private void setLineView( LineChartView mLineChartView,HScrollView hScrollView ,String reportResult){
+         Log.d("fan","*********00000000000000reportResult==:"+reportResult);
+//       Gson gson = new Gson();
+//       ReportBean reportBean = gson.fromJson(reportResult, ReportBean.class);
+//       Log.d("fan","====*******reportBean==:"+reportBean.toString());
+//       if(reportBean == null){
+//           return ;
+//       }
+//       List<DayReportBean> dayReports = reportBean.getmDayReportBeans();
+//       if(dayReports == null){
+//           return;
+//       }
+//       DayReportBean todayReport = dayReports.get(0);
+//       if(todayReport == null){
+//             return;
+//       }
+//       dayReports.remove(0); // 去掉当天的天气
+
         //时间 (x轴)
         String[] xItem = {"00:00","01:00","02:00","03:00","04:00","05:00","06:00","07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00",
                 "16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00"};
@@ -520,6 +530,7 @@ public class HomeFragment extends Fragment {
         for (int i = 0; i < xItem.length; i++) {
             xItemArray.add(xItem[i]);
         }
+
          Log.d("fan","*********111111111111111111==:");
         //天气
         //String[] weather = {"多云","多云","阴天","小雨","小雨","小雨","小雨","小雨","小雨","小雨","小雨","小雨","阴天","阴天","阴天","多云","多云","多云","中雨","中雨","多云","多云","多云","多云"};

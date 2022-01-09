@@ -1,7 +1,7 @@
 package com.example.weatherapplication.bean;
 
 import com.google.gson.annotations.SerializedName;
-
+//{"collectorName":"济南水科院土壤监测系统地表1","collectorPort":"","id":"17","latitude":"36.58","longitude":"116.83"}
 public class StationItemBean {
     @SerializedName("collectorName")
     private String collectorName;
@@ -9,6 +9,11 @@ public class StationItemBean {
     private String collectorPort;
     @SerializedName("id")
     private String id;
+
+    @SerializedName("latitude")
+    private String latitude;
+    @SerializedName("longitude")
+    private String longitude;
 
     public void setId(String id) {
         this.id = id;
@@ -34,12 +39,30 @@ public class StationItemBean {
         return collectorPort;
     }
 
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
     @Override
     public String toString() {
         return "StationItemBean{" +
                 "collectorName='" + collectorName + '\'' +
                 ", collectorPort='" + collectorPort + '\'' +
                 ", id='" + id + '\'' +
+                ", latitude='" + latitude + '\'' +
+                ", longitude='" + longitude + '\'' +
                 '}';
     }
 }

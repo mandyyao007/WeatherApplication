@@ -79,7 +79,7 @@ public class NetUtil {
         String result ="";
         //拼接出URL
         String loginUrl = URL_LOGIN+"?password="+password+"&userName="+userName;
-        //Log.d("fan","-----loginUrl======"+loginUrl);
+        Log.d("fan","-----loginUrl======"+loginUrl);
         result = service(loginUrl,"POST");
         //Log.d("fan","-----result======"+result);
         Gson gson = new Gson();
@@ -125,7 +125,7 @@ public class NetUtil {
     public static StationBean getStationInfo(String userName) throws IOException {
         String result ="";
         //拼接出URL
-        String stationUrl = URL_STATION+"?userName="+userName+"&weatherStationId=1";
+        String stationUrl = URL_STATION+"?userName="+userName+"&weatherStationId=14";
         Log.d("fan","-----stationUrl======"+stationUrl);
         result = service(stationUrl,"POST");
         //Log.d("fan","-----result======"+result);
@@ -141,26 +141,26 @@ public class NetUtil {
         String indexUrl = URL_INDEX+"?collectorId="+collectorId;
         Log.d("fan","-----indexUrl======"+indexUrl);
         result = service(indexUrl,"POST");
-        Log.d("fan","-----indexBean  result======"+result);
+       // Log.d("fan","-----indexBean  result======"+result);
         Gson gson = new Gson();
         IndexBean indexBean = gson.fromJson(result, IndexBean.class);
         Log.d("fan","====解析后的indexBean==:"+indexBean.toString());
         return indexBean;
 
     }
-//    public static ReportBean getReportInfo(String collectorId,String collectorConfigId) throws IOException {
-//        String result ="";
-//        //拼接出URL
-//        String reportUrl = URL_REPORT_DATA+"?collectorConfigId="+collectorConfigId+"&collectorId="+collectorId+"&endDate=2021-11-29&startDate=2021-11-25";
-//        Log.d("fan","-----reportUrl======"+reportUrl);
-//        result = service(reportUrl,"POST");
-//        Log.d("fan","-----reportBean  result======"+result);
-//        Gson gson = new Gson();
-//        ReportBean reportBean = gson.fromJson(result, ReportBean.class);
-//        Log.d("fan","====解析后的reportBean==:"+reportBean.toString());
-//        return reportBean;
-//
-//    }
+    public static ReportBean getReportInfo(String collectorConfigId, String collectorId,String startDateStr, String endDateStr) throws IOException {
+        String result ="";
+        //拼接出URL
+        String reportUrl = URL_REPORT_DATA+"?collectorConfigId="+collectorConfigId+"&collectorId="+collectorId+"&endDate="+endDateStr+"&startDate="+startDateStr;
+        Log.d("fan","-----reportUrl======"+reportUrl);
+        result = service(reportUrl,"POST");
+        Log.d("fan","-----reportBean  result======"+result);
+        Gson gson = new Gson();
+        ReportBean reportBean = gson.fromJson(result, ReportBean.class);
+        Log.d("fan","====解析后的reportBean==:"+reportBean.toString());
+        return reportBean;
+
+    }
 
     public static String getReportOfIndex(String selectConfigId, String stationId, String startDateStr, String endDateStr) throws IOException {
         String reportResult ="";
