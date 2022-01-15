@@ -84,7 +84,7 @@ public class NetUtil {
         //Log.d("fan","-----result======"+result);
         Gson gson = new Gson();
         LoginBean loginBean = gson.fromJson(result, LoginBean.class);
-        Log.d("fan","====解析后的loginBean==:"+loginBean.toString());
+        //Log.d("fan","====解析后的loginBean==:"+loginBean.toString());
         String status =  loginBean.getStatus();
         return status;
 
@@ -131,7 +131,7 @@ public class NetUtil {
         //Log.d("fan","-----result======"+result);
         Gson gson = new Gson();
         StationBean stationBean = gson.fromJson(result, StationBean.class);
-        Log.d("fan","====解析后的stationBean==:"+stationBean.toString());
+        //Log.d("fan","====解析后的stationBean==:"+stationBean.toString());
         return stationBean;
     }
 
@@ -139,12 +139,12 @@ public class NetUtil {
         String result ="";
         //拼接出URL
         String indexUrl = URL_INDEX+"?collectorId="+collectorId;
-        Log.d("fan","-----indexUrl======"+indexUrl);
+        //Log.d("fan","-----indexUrl======"+indexUrl);
         result = service(indexUrl,"POST");
        // Log.d("fan","-----indexBean  result======"+result);
         Gson gson = new Gson();
         IndexBean indexBean = gson.fromJson(result, IndexBean.class);
-        Log.d("fan","====解析后的indexBean==:"+indexBean.toString());
+        //Log.d("fan","====解析后的indexBean==:"+indexBean.toString());
         return indexBean;
 
     }
@@ -154,7 +154,7 @@ public class NetUtil {
         String reportUrl = URL_REPORT_DATA+"?collectorConfigId="+collectorConfigId+"&collectorId="+collectorId+"&endDate="+endDateStr+"&startDate="+startDateStr;
         Log.d("fan","-----reportUrl======"+reportUrl);
         result = service(reportUrl,"POST");
-        Log.d("fan","-----reportBean  result======"+result);
+        //Log.d("fan","-----reportBean  result======"+result);
         Gson gson = new Gson();
         ReportBean reportBean = gson.fromJson(result, ReportBean.class);
         Log.d("fan","====解析后的reportBean==:"+reportBean.toString());

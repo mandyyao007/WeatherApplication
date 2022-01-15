@@ -84,9 +84,9 @@ public class LineChartView extends View implements HScrollView.OnMyHScrollView{
         Log.d(TAG,"widthSize:"+widthSize+",heightSize:"+heightSize );
         //高度固定  150dp  == 304 px
         mHeight =heightSize;
-        Log.d(TAG,"------mWidth:"+mWidth+",mHeight:"+mHeight +"mXAxis:"+mXAxis);
+        Log.d(TAG,"------mWidth:"+mWidth+",mHeight:"+mHeight +"    mXAxis:"+mXAxis);
         if(mXAxis == null){
-            Log.d(TAG,"mWidth:"+mWidth+",mHeight:"+mHeight +"mXAxis:"+mXAxis);
+            Log.d(TAG,"mWidth:"+mWidth+",mHeight:"+mHeight +"     mXAxis:"+mXAxis);
             return;
         }
         //宽度通过数组长度计算

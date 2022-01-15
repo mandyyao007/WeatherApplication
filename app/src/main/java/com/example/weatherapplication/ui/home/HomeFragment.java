@@ -1,6 +1,7 @@
 package com.example.weatherapplication.ui.home;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -38,6 +39,16 @@ import com.example.weatherapplication.databinding.FragmentHomeBinding;
 import com.example.weatherapplication.util.NetUtil;
 import com.example.weatherapplication.view.HScrollView;
 import com.example.weatherapplication.view.LineChartView;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -50,6 +61,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class HomeFragment extends Fragment {
 
@@ -62,14 +74,15 @@ public class HomeFragment extends Fragment {
     private TextView tvWeather,tvWin,tvAir,tvStation,tvReportData,tvTem;
     private ImageView ivWeather;
     private RecyclerView rlvFutureWeather;
-    //private FutureWeatherAdapter mWeatherAdapter;
+    private FutureWeatherAdapter mWeatherAdapter;
     private DayWeatherBean todayWeather;
     String  userName;
     private Map stationsMap,indexMap;
     private BeforeReportAdapter mReportAdapter;
-    /////////
-    private LineChartView mLineChartView;
-    private HScrollView hScrollView;
+    //private LineChartView mLineChartView;
+    //private HScrollView hScrollView;
+    private LineChart lineChart;
+    private List<Entry> entries;
 //    private Handler mHandler = new Handler(Looper.myLooper()){
 //        @Override
 //        public void handleMessage(@NonNull Message msg) {
@@ -96,7 +109,6 @@ public class HomeFragment extends Fragment {
                 ReportBean reportBean = gson.fromJson(report, ReportBean.class);
                 Log.d("fan","====解析后的reportBean==:"+reportBean.toString());
                 //updateUiOfReport(reportBean);
-                //setLineView(mLineChartView,hScrollView);
             }
         }
     };
@@ -112,13 +124,7 @@ public class HomeFragment extends Fragment {
         if(todayReport == null){
             return;
         }
-        //tvWeather.setText(todayWeather.getWea()+"("+todayWeather.getDay()+")");
-        //tvWin.setText(todayWeather.getWin()[0]+todayWeather.getWinSpeed());
-        ///tvAir.setText("空气："+todayWeather.getAir()+todayWeather.getAirLevel()+"\n"+todayWeather.getAirTips());
-        //ivWeather.setImageResource(getImgResOfWeather(todayWeather.getWeaImg()));
-        //Collections.reverse(dayReports);
         dayReports.remove(6); // 去掉当天的天气
-
         mReportAdapter = new BeforeReportAdapter(this.getActivity(), dayReports);
         rlvFutureWeather.setAdapter(mReportAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity(),LinearLayoutManager.HORIZONTAL,false);
@@ -129,28 +135,171 @@ public class HomeFragment extends Fragment {
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View fragmentHomeView = binding.getRoot();
-        //fragmentHomeView.findViewById(R.id.rlv_future_weather);
-        //rlvFutureWeather= container.findViewById(R.id.rlv_future_weather);
         userName = getActivity().getIntent().getStringExtra("userName");
-        //System.out.println("=============userName=====:"+userName);
+        Log.d("fan","===userName==:"+ userName);
+        mStationSpinner = fragmentHomeView.findViewById(R.id.sp_station);
+        mIndexSpinner = fragmentHomeView.findViewById(R.id.sp_index);
+        tvStation = (TextView) fragmentHomeView.findViewById(R.id.tv_station);
+        tvReportData = (TextView) fragmentHomeView.findViewById(R.id.tv_reportdata);
+        tvTem = (TextView) fragmentHomeView.findViewById(R.id.tv_tem);
         try {
-            initView(fragmentHomeView,userName);
+            StationBean stationBean = NetUtil.getStationInfo(userName);
+            mStations = getStationList(stationBean);
+            stationsMap = getStationMap(stationBean);
+            mSpAdapter = new ArrayAdapter<String>(this.getActivity(),R.layout.sp_item_layout,mStations);
+            mStationSpinner.setAdapter(mSpAdapter);
         } catch (IOException e) {
             e.printStackTrace();
         }
+       ////为mStationSpinner设置监听事件
+        Log.d("fan","===cccccccccccccccccc==:");
+        mStationSpinner.setOnItemSelectedListener(listenerStation);
+        mIndexSpinner.setOnItemSelectedListener(listenerIndex);
+     /////////////
+        //setLineChart(fragmentHomeView);
+       /* try {
+            initView(fragmentHomeView,userName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
         return fragmentHomeView;
     }
-    /*@Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
-        initView();
-    }*/
+    AdapterView.OnItemSelectedListener listenerStation = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                tvStation.setText(stationsMap.get(mStations[position]).toString()) ;
+                Log.d("fan","===stationId==:"+ tvStation.getText().toString());
+                IndexBean indexbean = null;
+                try {
+                    indexbean = NetUtil.getIndexInfo(tvStation.getText().toString());
+                    mIndexs = getIndexOfStation(indexbean);
+                    mIndexAdapter = new ArrayAdapter<String>(parent.getContext(), R.layout.index_item_layout,mIndexs);
+                    mIndexSpinner.setAdapter(mIndexAdapter);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                indexMap = getIndexOfStationMap(indexbean);
+                Log.d("fan","===indexMap==:"+ indexMap.toString());
+                if(mStationSpinner.isSelected() && mIndexSpinner.isSelected()){
+                     setLineChart();//绘制折线图
+                }
+
+        }
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
+    AdapterView.OnItemSelectedListener listenerIndex = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedIndex = mIndexs[position];
+                Log.d("fan", "===selectedIndex==:" + selectedIndex);
+                String selectConfigId = (String) indexMap.get(selectedIndex);
+                Log.d("fan", "===selectConfigId==:" + selectConfigId);
+                Date endDate = new Date();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                Calendar c = Calendar.getInstance();
+                c.add(Calendar.DATE, -7);
+                String startDateStr = sdf.format(c.getTime());
+                String endDateStr = sdf.format(endDate);
+                try {
+                    //String reportOfIndex = NetUtil.getReportOfIndex(selectConfigId, tvStation.getText().toString(), startDateStr, endDateStr);
+                    String reportOfIndex = NetUtil.getReportOfIndex(selectConfigId, tvStation.getText().toString(),
+                            "2022-01-01", "2022-01-08");
+                    tvReportData.setText(reportOfIndex);
+                    Log.d("fan","-----reportOfIndex======"+reportOfIndex);
+                    if(mStationSpinner.isSelected() && mIndexSpinner.isSelected() &&!"".equals(reportOfIndex)){
+                        setLineChart();//绘制折线图
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        }
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
+    private void setData(ReportBean reportBean) {
+        if(reportBean == null){
+            return ;
+        }
+        List<DayReportBean> dayReports = reportBean.getmDayReportBeans();
+        if(dayReports == null){
+            return ;
+        }
+        Iterator it = dayReports.iterator();
+        int count = 0 ;
+        entries = new ArrayList<>();
+        while(it.hasNext() && count<12 ){
+            DayReportBean dayReportBean = (DayReportBean)it.next();
+            it.next();
+            float time = Float.parseFloat(dayReportBean.getAcquisitionTime().substring(11,13));
+            float value = Float.parseFloat(dayReportBean.getCol1());
+            entries.add(new Entry(time,value));
+            count++;
+        }
+    }
+
+    private ReportBean getData(String reportResult) {
+        Gson gson = new Gson();
+        ReportBean reportBean = gson.fromJson(reportResult, ReportBean.class);
+        return reportBean;
+    }
+    private void setLineChart(){
+        String reportResult = tvReportData.getText().toString();
+        Log.d("fan","=&&&&&&&&&&&reportResult==:"+reportResult);
+        ReportBean reportBean = getData(reportResult);
+        setData(reportBean);
+        lineChart = binding.getRoot().findViewById(R.id.linechart);
+        LineDataSet dataSet = new LineDataSet(entries,"");
+        dataSet.setColor(Color.parseColor("#000000"));//线条颜色
+        dataSet.setCircleColor(Color.parseColor("#000000"));//圆点颜色
+        dataSet.setCircleRadius(1f);//设置焦点圆心的大小
+        dataSet.setLineWidth(1.5f);//线条宽度
+        dataSet.setValueTextColor(Color.parseColor("#000000"));//设置显示值的文字颜色
+        dataSet.setValueTextSize(13f);//设置显示值的文字大小
+        YAxis rightAxis = lineChart.getAxisRight();
+        rightAxis.setEnabled(false);//右侧Y轴不显示
+        YAxis leftAxis = lineChart.getAxisLeft();//左侧Y轴
+        leftAxis.setTextSize(10f);
+        XAxis xAxis = lineChart.getXAxis();
+        xAxis.setTextColor(Color.RED);//设置X轴刻度颜色
+        xAxis.setTextSize(13f);//设置X轴刻度字体大小
+        xAxis.setDrawAxisLine(true);//设置为true，则绘制该行旁边的轴线
+        xAxis.setDrawGridLines(true);//绘制网格线
+        xAxis.setDrawLabels(true);//绘制标签，即X轴上的对应数值
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);//
+        xAxis.setGranularity(1f);//设置最小间隔
+        xAxis.setEnabled(true);
+        xAxis.setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float v, AxisBase axis) {
+                return String.valueOf((int)v).concat("点");
+            }
+        });
+        Legend legend = lineChart.getLegend();//图例
+        legend.setForm(Legend.LegendForm.LINE);//设置图例的形状
+        legend.setTextSize(15f);//设置图例字体大小
+        legend.setFormSize(15f);//设置图例形状大小
+        legend.setTextColor(Color.BLUE);//设置图例颜色
+        legend.setEnabled(false);//不显示图例
+        Description description = lineChart.getDescription();//图表的描述信息
+        description.setEnabled(true);//是否显示图表描述信息
+        LineData lineData = new LineData(dataSet);
+        lineChart.setTouchEnabled(false);//设置是否可触摸
+        lineChart.setScaleEnabled(true);//设置是否可缩放
+        lineChart.setData(lineData);
+        lineChart.setNoDataText("暂无数据");//无数据时显示的文字
+        lineChart.invalidate();//图表刷新
+    }
+
 
     private void updateUiOfWeather(WeatherBean weatherBean) {
         if(weatherBean == null){
@@ -176,41 +325,6 @@ public class HomeFragment extends Fragment {
 //        rlvFutureWeather.setAdapter(mWeatherAdapter);
 //        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity(),LinearLayoutManager.HORIZONTAL,false);
 //        rlvFutureWeather.setLayoutManager(layoutManager);
-    }
-    private int getImgResOfWeather(String weaStr){
-        int result = 0;
-        switch(weaStr){
-            case "xue":
-                result = R.drawable.icon_weather_daxue;
-                break;
-            case "lei":
-                result = R.drawable.icon_weather_leizhenyu;
-                break;
-            case "shachen":
-                result = R.drawable.icon_weather_mai;
-                break;
-            case "wu":
-                result = R.drawable.icon_weather_wu;
-                break;
-            case "bingbo":
-                result = R.drawable.icon_weather_bingbao;
-                break;
-            case "yun":
-                result = R.drawable.icon_weather_duoyun_day;
-                break;
-            case "yu":
-                result = R.drawable.icon_weather_dayu;
-                break;
-            case "yin":
-                result = R.drawable.icon_weather_yin;
-                break;
-            case "qing":
-                result = R.drawable.icon_weather_qing;
-                break;
-            default:
-                result = R.drawable.icon_weather_dafeng;
-        }
-        return  result;
     }
 
 
@@ -283,7 +397,7 @@ public class HomeFragment extends Fragment {
 
     }*/
 
-    private void initView(View fragmentHomeView ,String userName) throws IOException {
+    /*private void initView(View fragmentHomeView ,String userName) throws IOException {
         mStationSpinner = fragmentHomeView.findViewById(R.id.sp_station);
         mIndexSpinner = fragmentHomeView.findViewById(R.id.sp_index);
         tvStation = (TextView) fragmentHomeView.findViewById(R.id.tv_station);
@@ -337,7 +451,7 @@ public class HomeFragment extends Fragment {
                         String reportOfIndex =  NetUtil.getReportOfIndex(selectConfigId,tvStation.getText().toString(),startDateStr,endDateStr);
                         tvReportData.setText(reportOfIndex);
                         Log.d("fan","====tvReportData.text==:"+tvReportData.getText().toString());
-                        setLineView(mLineChartView,hScrollView,tvReportData.getText().toString());
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -349,8 +463,7 @@ public class HomeFragment extends Fragment {
             });
         String reportResult = tvReportData.getText().toString();
         Log.d("fan","====reportResult==:"+reportResult);
-
-    }
+    }*/
     private void getReportOfIndex(String selectConfigId, String stationId, String startDateStr, String endDateStr) {
         //开启子线程，请求网络
         new Thread(new Runnable() {
@@ -374,7 +487,7 @@ public class HomeFragment extends Fragment {
     private Map getIndexOfStationMap(IndexBean indexbean) {
         LinkedHashMap indexMap = new LinkedHashMap();
         List<IndexItemsBean> indexItems = indexbean.getmIndexItemBeans();
-        Log.d("fan","====index=====Items==:"+indexItems.toString());
+        //Log.d("fan","====index=====Items==:"+indexItems.toString());
         if(indexItems == null){
             return null;
         }else{
@@ -384,7 +497,6 @@ public class HomeFragment extends Fragment {
                 Log.d("fan","*********index=====Items==:"+item.toString());
                 indexMap.put(item.getDescription(),item.getCollectorConfigId());
             }
-
         }
         Log.d("fan","*********indexMap==:"+indexMap);
         return indexMap;
@@ -392,7 +504,7 @@ public class HomeFragment extends Fragment {
 
     private String[] getIndexOfStation(IndexBean indexbean) throws IOException {
         List<IndexItemsBean> indexItems = indexbean.getmIndexItemBeans();
-        Log.d("fan","====indexItems==:"+indexItems.toString());
+        //Log.d("fan","====indexItems==:"+indexItems.toString());
         int count = indexbean.getTotal();
         String[] indexs = new String[count];
         int i =0;
@@ -408,25 +520,22 @@ public class HomeFragment extends Fragment {
             for(int j=0; j<count;j++){
                 System.out.println("======indexs =====:"+indexs[j] );
             }
-
         }
-
         return indexs;
     }
     private Map getIndexMap(StationBean stationBean) {
         LinkedHashMap stationMap = new LinkedHashMap();
         List<StationItemBean> stationItems = stationBean.getmItemBeans();
-        Log.d("fan","====station=====Items==:"+stationItems.toString());
+        //Log.d("fan","====station=====Items==:"+stationItems.toString());
         if(stationItems == null){
             return null;
         }else{
             Iterator it = stationItems.iterator();
             while(it.hasNext()){
                 StationItemBean item = (StationItemBean) it.next();
-                Log.d("fan","*********station=====Items==:"+item.toString());
+                //Log.d("fan","*********station=====Items==:"+item.toString());
                 stationMap.put(item.getCollectorName(),item.getId());
             }
-
         }
         Log.d("fan","*********stationMap==:"+stationMap);
         return stationMap;
@@ -434,17 +543,16 @@ public class HomeFragment extends Fragment {
     private LinkedHashMap getStationMap(StationBean stationBean) {
         LinkedHashMap stationMap = new LinkedHashMap();
         List<StationItemBean> stationItems = stationBean.getmItemBeans();
-        Log.d("fan","====station=====Items==:"+stationItems.toString());
+        //Log.d("fan","====station=====Items==:"+stationItems.toString());
         if(stationItems == null){
             return null;
         }else{
             Iterator it = stationItems.iterator();
             while(it.hasNext()){
                 StationItemBean item = (StationItemBean) it.next();
-                Log.d("fan","*********station=====Items==:"+item.toString());
+                //Log.d("fan","*********station=====Items==:"+item.toString());
                 stationMap.put(item.getCollectorName(),item.getId());
             }
-
         }
         Log.d("fan","*********stationMap==:"+stationMap);
         return stationMap;
@@ -452,7 +560,7 @@ public class HomeFragment extends Fragment {
 
     private String[] getStationList(StationBean stationBean) {
         List<StationItemBean> stationItems = stationBean.getmItemBeans();
-        Log.d("fan","====stationItems==:"+stationItems.toString());
+        //Log.d("fan","====stationItems==:"+stationItems.toString());
         int count = stationBean.getTotal();
         String[] stations = new String[count];
         int i =0;
@@ -468,9 +576,7 @@ public class HomeFragment extends Fragment {
             for(int j=0; j<count;j++){
                 System.out.println("======station =====:"+stations[j] );
             }
-
         }
-
         return stations;
     }
 
@@ -494,61 +600,40 @@ public class HomeFragment extends Fragment {
             }
         }).start();
     }
-
-    public void onClick(View v) {
-        Intent intent = new Intent();
-        switch (v.getId()) {
-            //  case R.id.main_iv_add:
-            //    intent.setClass(this,CityManagerActivity.class);
-            //    break;
+    private int getImgResOfWeather(String weaStr){
+        int result = 0;
+        switch(weaStr){
+            case "xue":
+                result = R.drawable.icon_weather_daxue;
+                break;
+            case "lei":
+                result = R.drawable.icon_weather_leizhenyu;
+                break;
+            case "shachen":
+                result = R.drawable.icon_weather_mai;
+                break;
+            case "wu":
+                result = R.drawable.icon_weather_wu;
+                break;
+            case "bingbo":
+                result = R.drawable.icon_weather_bingbao;
+                break;
+            case "yun":
+                result = R.drawable.icon_weather_duoyun_day;
+                break;
+            case "yu":
+                result = R.drawable.icon_weather_dayu;
+                break;
+            case "yin":
+                result = R.drawable.icon_weather_yin;
+                break;
+            case "qing":
+                result = R.drawable.icon_weather_qing;
+                break;
+            default:
+                result = R.drawable.icon_weather_dafeng;
         }
-        startActivity(intent);
+        return  result;
     }
 
-     private void setLineView( LineChartView mLineChartView,HScrollView hScrollView ,String reportResult){
-         Log.d("fan","*********00000000000000reportResult==:"+reportResult);
-//       Gson gson = new Gson();
-//       ReportBean reportBean = gson.fromJson(reportResult, ReportBean.class);
-//       Log.d("fan","====*******reportBean==:"+reportBean.toString());
-//       if(reportBean == null){
-//           return ;
-//       }
-//       List<DayReportBean> dayReports = reportBean.getmDayReportBeans();
-//       if(dayReports == null){
-//           return;
-//       }
-//       DayReportBean todayReport = dayReports.get(0);
-//       if(todayReport == null){
-//             return;
-//       }
-//       dayReports.remove(0); // 去掉当天的天气
-
-        //时间 (x轴)
-        String[] xItem = {"00:00","01:00","02:00","03:00","04:00","05:00","06:00","07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00",
-                "16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00"};
-        ArrayList xItemArray = new ArrayList();
-        for (int i = 0; i < xItem.length; i++) {
-            xItemArray.add(xItem[i]);
-        }
-
-         Log.d("fan","*********111111111111111111==:");
-        //天气
-        //String[] weather = {"多云","多云","阴天","小雨","小雨","小雨","小雨","小雨","小雨","小雨","小雨","小雨","阴天","阴天","阴天","多云","多云","多云","中雨","中雨","多云","多云","多云","多云"};
-         String[] weather = {"","","","","","","","","","","","","","","","","","","","","","","",""};
-         ArrayList weatherArray = new ArrayList();
-        for (int i = 0; i < weather.length; i++) {
-            weatherArray.add(weather[i]);
-        }
-        //温度
-        Double[] yItem = {0000.24,0000.26,0000.25,0000.30,0000.23,0000.26,0000.30,0009.06,0186.13,0472.95,0727.53,0890.82,0990.19,0937.92,0774.03,0512.55,0243.60,0022.98,0000.18,0000.29,0000.27,0000.27,0000.28,0000.21};
-        ArrayList<Double> yItemArray = new ArrayList<>();
-        for (int i = 0; i < yItem.length; i++) {
-            yItemArray.add(yItem[i]);
-        }
-         Log.d("fan","*********2222222222222222==:");
-        mLineChartView.setXItem(xItemArray);
-        mLineChartView.setYItem(yItemArray);
-        mLineChartView.setWeather(weatherArray);
-        mLineChartView.setmHScrollView(hScrollView);
-    }
 }

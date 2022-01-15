@@ -57,7 +57,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
       if(!"".equals(userName) && !"".equals(password)){
            try {
                 String status = NetUtil.getloginInfo(userName,password);
-                Log.d("fan","====status==:"+status);
+                //Log.d("fan","====status==:"+status);
                 if("S".equals(status)){
                     ToastUtil.showMessage(LoginActivity.this,success);
                     intent = new Intent(LoginActivity.this,MainActivity.class);
