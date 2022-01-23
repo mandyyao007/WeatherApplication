@@ -34,8 +34,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         //找到控件
         mBtnLogin = findViewById(R.id.btn_login);
-        mEtUser = findViewById(R.id.et_1);//用户名
-        mEtPassword = findViewById(R.id.et_2);//密码
+        mEtUser = findViewById(R.id.et_username);//用户名
+        mEtPassword = findViewById(R.id.et_password);//密码
         mBtnLogin.setOnClickListener((View.OnClickListener) this);
         //  在Android4.0以后，会发现，只要是写在主线程（就是Activity）中的HTTP请求，运行时都会报错，这是因为Android在4.0以后为了防止应用的ANR（Aplication Not Response）异常，
         //  Android这个设计是为了防止网络请求时间过长而导致界面假死的情况发生。
@@ -62,6 +62,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     ToastUtil.showMessage(LoginActivity.this,success);
                     intent = new Intent(LoginActivity.this,MainActivity.class);
                     intent.putExtra("userName",userName);
+                    intent.putExtra("stationId", "25");
+                    intent.putExtra("stationName","qqqqq");
                     startActivity(intent);
                 }else{
                     intent = null;

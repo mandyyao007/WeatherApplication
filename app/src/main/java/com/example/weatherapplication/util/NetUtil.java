@@ -22,10 +22,10 @@ import java.util.List;
 
 public class NetUtil {
     public static final String URL_WEATHER_WITH_FUTURE = "https://tianqiapi.com/api?unescape=1&version=v1&appid=17358133&appsecret=A2V2yvEE";
-    public static final String URL_LOGIN = "http://10.68.201.78:9000/user/check_login";
-    public static final String URL_STATION = "http://10.68.201.78:9000/basic/show_collector_list";
-    public static final String URL_INDEX = "http://10.68.201.78:9000/basic/show_collector_config_list";
-    public static final String URL_REPORT_DATA = "http://10.68.201.78:9000/basic/show_report_data_list";
+    public static final String URL_LOGIN =  "http://10.68.201.78:9000/user/check_login";//"http://47.98.106.23:9000/user/check_login";
+    public static final String URL_STATION = "http://10.68.201.78:9000/basic/show_collector_list";//"http://47.98.106.23:9000/basic/show_collector_list";
+    public static final String URL_INDEX = "http://10.68.201.78:9000/basic/show_collector_config_list";;//"http://47.98.106.23:9000/basic/show_collector_config_list";
+    public static final String URL_REPORT_DATA = "http://10.68.201.78:9000/basic/show_report_data_list"; //"http://47.98.106.23:9000/basic/show_report_data_list";
     public static String service(String urlStr,String method) throws IOException {
         String result = "";
         HttpURLConnection connection = null;
@@ -133,6 +133,12 @@ public class NetUtil {
         StationBean stationBean = gson.fromJson(result, StationBean.class);
         //Log.d("fan","====解析后的stationBean==:"+stationBean.toString());
         return stationBean;
+    }
+    public static  List<StationItemBean>  getStationItemInfo(String userName) throws IOException {
+        StationBean stationBean = getStationInfo(userName);
+        List<StationItemBean> stationItems = stationBean.getmItemBeans();
+        Log.d("fan","-----stationItems======"+stationItems);
+        return stationItems;
     }
 
     public static IndexBean getIndexInfo(String collectorId) throws IOException {
