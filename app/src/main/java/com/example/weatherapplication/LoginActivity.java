@@ -64,6 +64,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     intent.putExtra("userName",userName);
                     intent.putExtra("stationId", "25");
                     intent.putExtra("stationName","qqqqq");
+                   // intent.putExtra("fragment_flag",2);
                     startActivity(intent);
                 }else{
                     intent = null;

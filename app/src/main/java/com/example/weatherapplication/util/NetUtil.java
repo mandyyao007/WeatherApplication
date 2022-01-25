@@ -8,6 +8,8 @@ import com.example.weatherapplication.bean.LoginBean;
 import com.example.weatherapplication.bean.ReportBean;
 import com.example.weatherapplication.bean.StationBean;
 import com.example.weatherapplication.bean.StationItemBean;
+import com.example.weatherapplication.bean.WeatherStationBean;
+import com.example.weatherapplication.bean.WeatherStationItemBean;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -25,6 +27,7 @@ public class NetUtil {
     public static final String URL_LOGIN =  "http://10.68.201.78:9000/user/check_login";//"http://47.98.106.23:9000/user/check_login";
     public static final String URL_STATION = "http://10.68.201.78:9000/basic/show_collector_list";//"http://47.98.106.23:9000/basic/show_collector_list";
     public static final String URL_INDEX = "http://10.68.201.78:9000/basic/show_collector_config_list";;//"http://47.98.106.23:9000/basic/show_collector_config_list";
+    public static final String URL_WEATHER_STATION = "http://10.68.201.78:9000/basic/show_weather_station_list";//"http://47.98.106.23:9000/basic/show_collector_list";
     public static final String URL_REPORT_DATA = "http://10.68.201.78:9000/basic/show_report_data_list"; //"http://47.98.106.23:9000/basic/show_report_data_list";
     public static String service(String urlStr,String method) throws IOException {
         String result = "";
@@ -89,43 +92,27 @@ public class NetUtil {
         return status;
 
     }
-
-//    public static String[] getStationInfo(String userName) throws IOException {
-//        String result ="";
-//        //拼接出URL
-//        String stationUrl = URL_STATION+"?userName="+userName+"&weatherStationId=1";
-//        Log.d("fan","-----stationUrl======"+stationUrl);
-//        result = service(stationUrl,"POST");
-//        Log.d("fan","-----result======"+result);
-//        Gson gson = new Gson();
-//        StationBean stationBean = gson.fromJson(result, StationBean.class);
-//        Log.d("fan","====解析后的stationBean==:"+stationBean.toString());
-//        List<StationItemBean> stationItems = stationBean.getmItemBeans();
-//        Log.d("fan","====stationItems==:"+stationItems.toString());
-//        int count = stationBean.getTotal();
-//        String[] stations = new String[count];
-//        int i =0;
-//        if(stationItems == null){
-//            return null;
-//        }else{
-//            Iterator it = stationItems.iterator();
-//            while(it.hasNext()){
-//               StationItemBean items = (StationItemBean) it.next();
-//                stations[i] = items.getCollectorName();
-//               i++;
-//            }
-//            for(int j=0; j<count;j++){
-//                System.out.println("======station =====:"+stations[j] );
-//            }
-//
-//        }
-//
-//        return stations;
-//    }
-    public static StationBean getStationInfo(String userName) throws IOException {
+    public static  List<WeatherStationItemBean>  getWeatherStationItemInfo(String userName) throws IOException {
+        WeatherStationBean weatherStationBean = getWearherStationInfo(userName);
+        List<WeatherStationItemBean> weatherStationItem = weatherStationBean.getmItemBeans();
+        Log.d("fan","-----weatherStationItem======"+weatherStationItem);
+        return weatherStationItem;
+    }
+    public static WeatherStationBean getWearherStationInfo(String userName) throws IOException {
         String result ="";
         //拼接出URL
-        String stationUrl = URL_STATION+"?userName="+userName+"&weatherStationId=14";
+        String weatherStationUrl = URL_WEATHER_STATION+"?userName="+userName;
+        Log.d("fan","-----weatherStationUrl======"+weatherStationUrl);
+        result = service(weatherStationUrl,"POST");
+        Gson gson = new Gson();
+        WeatherStationBean weatherStationBean = gson.fromJson(result, WeatherStationBean.class);
+        //Log.d("fan","====解析后的stationBean==:"+stationBean.toString());
+        return weatherStationBean;
+    }
+    public static StationBean getStationInfo(String userName,String weatherStationId) throws IOException {
+        String result ="";
+        //拼接出URL
+        String stationUrl = URL_STATION+"?userName="+userName+"&weatherStationId=" +weatherStationId;
         Log.d("fan","-----stationUrl======"+stationUrl);
         result = service(stationUrl,"POST");
         //Log.d("fan","-----result======"+result);
@@ -134,8 +121,8 @@ public class NetUtil {
         //Log.d("fan","====解析后的stationBean==:"+stationBean.toString());
         return stationBean;
     }
-    public static  List<StationItemBean>  getStationItemInfo(String userName) throws IOException {
-        StationBean stationBean = getStationInfo(userName);
+    public static  List<StationItemBean>  getStationItemInfo(String userName,String weatherStationId) throws IOException {
+        StationBean stationBean = getStationInfo(userName,weatherStationId);
         List<StationItemBean> stationItems = stationBean.getmItemBeans();
         Log.d("fan","-----stationItems======"+stationItems);
         return stationItems;

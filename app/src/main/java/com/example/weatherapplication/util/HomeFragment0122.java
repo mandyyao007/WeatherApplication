@@ -149,7 +149,7 @@ public class HomeFragment0122 extends Fragment implements View.OnClickListener{
         tvTem = (TextView) fragmentHomeView.findViewById(R.id.tv_tem);
         ivAdd = (ImageView) fragmentHomeView.findViewById(R.id.iv_add);
         try {
-            StationBean stationBean = NetUtil.getStationInfo(userName);
+            StationBean stationBean = NetUtil.getStationInfo(userName,"14");
             mStations = getStationList(stationBean);
             stationsMap = getStationMap(stationBean);
             mSpAdapter = new ArrayAdapter<String>(this.getActivity(),R.layout.sp_item_layout,mStations);

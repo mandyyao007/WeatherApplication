@@ -15,7 +15,7 @@ import com.example.weatherapplication.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-
+    NavController navController = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,11 +27,28 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
+                R.id.navigation_dashboard ,   R.id.navigation_home, R.id.navigation_notifications)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
     }
 
+    protected void onResume() {
+        // 获取从其他Activity发送过来跳转Fragment的标志fragment_flag(名称随意)
+        int fragmentFlag = this.getIntent().getIntExtra("fragment_flag", 0);
+        switch (fragmentFlag){
+            case 1:
+                // 控制跳转到底部导航项(navigation_home为该Fragment的对应控件的id值)
+                navController.navigate(R.id.navigation_home);
+                break;
+            case 2:
+                navController.navigate(R.id.navigation_dashboard);
+                break;
+            case 3:
+                navController.navigate(R.id.navigation_notifications);
+                break;
+        }
+        super.onResume();
+    }
 }

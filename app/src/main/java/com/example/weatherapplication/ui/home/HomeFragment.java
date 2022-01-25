@@ -100,6 +100,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         tvStation.setText(stationName);
         tvReportData = (TextView) fragmentHomeView.findViewById(R.id.tv_reportdata);
         ivAdd = (ImageView) fragmentHomeView.findViewById(R.id.iv_add);
+        lineChart = (LineChart) fragmentHomeView.findViewById(R.id.linechart);
        ///index列表
         try {
             IndexBean indexbean = NetUtil.getIndexInfo(stationId);
@@ -115,6 +116,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         ////为mIndexSpinner设置监听事件
         mIndexSpinner.setOnItemSelectedListener(listenerIndex);
         ivAdd.setOnClickListener(this);
+        setData();
+        LineData lineData = new LineData();
+        LineDataSet lineDataSet = new LineDataSet(entries,"");
+        lineData.addDataSet(lineDataSet);
+        lineChart.setData(lineData);
+        lineChart.invalidate();
+
         return fragmentHomeView;
     }
     @Override
@@ -128,7 +136,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     AdapterView.OnItemSelectedListener listenerIndex = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            if (first) {
+            setData();
+            lineChart.notifyDataSetChanged();
+                        System.out.println("ccccccccccc");
+                        lineChart.getData().notifyDataChanged();
+            lineChart.invalidate();
+           /*if (first) {
                 System.out.println("111111111");
                 first= false;//第一次不触发
             } else {
@@ -150,15 +163,20 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                     tvReportData.setText(reportOfIndex);
                     Log.d("fan","-----reportOfIndex======"+reportOfIndex);
                     //if(mStationSpinner.isSelected() && mIndexSpinner.isSelected() &&!"".equals(reportOfIndex)){
-                    setLineChart();//绘制折线图
+                        setData();
+                        System.out.println("bbbbbbbbbbb");
+//                        lineChart.notifyDataSetChanged();
+//                        System.out.println("ccccccccccc");
+//                        lineChart.getData().notifyDataChanged();
+//                        System.out.println("dddddddddddd");
+//                        lineChart.invalidate();
+                        System.out.println("eeeeeeeeee");
                     // }
-                     }//else{////如果没有选指标，做什么动作呢？
-
-                    //  }
-                } catch (IOException e) {
+                    }
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
+            }*/
         }
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
@@ -169,6 +187,28 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+    private void setData() {
+        int count = 0 ;
+        Log.d("fan","=&&&&&&&&==000000000000==:"+(lineChart.getData()!=null) +"======:"+(lineChart.getData().getDataSetCount()));
+        if(lineChart.getData()!=null && lineChart.getData().getDataSetCount()>=1){
+            lineChart.getData().getDataSetByIndex(0).removeLast();
+            Log.d("fan","=&&&&&&&&==11111111111==:");
+           lineChart.getData().getDataSetByIndex(0).addEntry(new Entry(11,new Random().nextInt(100)));
+        }else{
+            entries = new ArrayList<>();
+            Log.d("fan","=&&&&&&&&==2222222222==:");
+            while( count<12 ){
+                entries.add(new Entry(count,new Random().nextInt(100)));
+                count++;
+            }
+        }
+
+//        if(entries!=null){
+//            System.out.println("aaaaaaaaaaa");
+//            entries.clear();
+//        }
+
     }
     private void setData(ReportBean reportBean) {
         if(reportBean == null){
@@ -186,7 +226,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
             it.next();
             float time = Float.parseFloat(dayReportBean.getAcquisitionTime().substring(11,13));
             float value = Float.parseFloat(dayReportBean.getCol1());
-            entries.add(new Entry(time,value));
+            entries.add(new Entry(count,new Random().nextInt(100)));
             count++;
         }
         System.out.println("=======entries=======:"+entries.toString());
@@ -201,51 +241,57 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         String reportResult = tvReportData.getText().toString();
         Log.d("fan","=&&&&&&&&&&&reportResult==:"+reportResult);
         ReportBean reportBean = getData(reportResult);
-        if(reportBean.getmDayReportBeans() != null){
-            setData(reportBean);
-            lineChart = binding.getRoot().findViewById(R.id.linechart);
+        if(reportBean != null  && reportBean.getmDayReportBeans() != null){
+            //setData(reportBean);
+
             Log.d("fan","=&&&&&&&&&&&entries==:"+entries);
-            LineDataSet dataSet = new LineDataSet(entries,"数据");
-            dataSet.setColor(Color.parseColor("#000000"));//线条颜色
-            dataSet.setCircleColor(Color.parseColor("#000000"));//圆点颜色
-            dataSet.setCircleRadius(1f);//设置焦点圆心的大小
-            dataSet.setLineWidth(1.5f);//线条宽度
-            dataSet.setValueTextColor(Color.parseColor("#000000"));//设置显示值的文字颜色
-            dataSet.setValueTextSize(13f);//设置显示值的文字大小
-            YAxis rightAxis = lineChart.getAxisRight();
-            rightAxis.setEnabled(false);//右侧Y轴不显示
-            YAxis leftAxis = lineChart.getAxisLeft();//左侧Y轴
-            leftAxis.setTextSize(10f);
-            XAxis xAxis = lineChart.getXAxis();
-            xAxis.setTextColor(Color.RED);//设置X轴刻度颜色
-            xAxis.setTextSize(13f);//设置X轴刻度字体大小
-            xAxis.setDrawAxisLine(true);//设置为true，则绘制该行旁边的轴线
-            xAxis.setDrawGridLines(true);//绘制网格线
-            xAxis.setDrawLabels(true);//绘制标签，即X轴上的对应数值
-            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);//
-            xAxis.setGranularity(1f);//设置最小间隔
-            xAxis.setEnabled(true);
-            xAxis.setValueFormatter(new IAxisValueFormatter() {
-                @Override
-                public String getFormattedValue(float v, AxisBase axis) {
-                    return String.valueOf((int)v).concat("点");
-                }
-            });
-            Legend legend = lineChart.getLegend();//图例
-            legend.setForm(Legend.LegendForm.LINE);//设置图例的形状
-            legend.setTextSize(15f);//设置图例字体大小
-            legend.setFormSize(15f);//设置图例形状大小
-            legend.setTextColor(Color.BLUE);//设置图例颜色
-            legend.setEnabled(false);//不显示图例
-            Description description = lineChart.getDescription();//图表的描述信息
-            description.setEnabled(true);//是否显示图表描述信息
-            LineData lineData = new LineData(dataSet);
-            lineChart.setTouchEnabled(false);//设置是否可触摸
-            lineChart.setScaleEnabled(true);//设置是否可缩放
-            lineChart.setData(lineData);
-            lineChart.setNoDataText("暂无数据");//无数据时显示的文字
-            lineChart.invalidate();//图表刷新
-            System.out.println("ffffffffffffffffff");
+            //if(entries!= null){
+              //lineChart.setVisibility(View.VISIBLE);
+               // LineDataSet dataSet = new LineDataSet(entries,"数据");
+               // Log.d("fan","=&&&&&&&&&&&dataSet==:"+dataSet);
+//                dataSet.setColor(Color.parseColor("#000000"));//线条颜色
+//                dataSet.setCircleColor(Color.parseColor("#000000"));//圆点颜色
+//                dataSet.setCircleRadius(1f);//设置焦点圆心的大小
+//                dataSet.setLineWidth(1.5f);//线条宽度
+//                dataSet.setValueTextColor(Color.parseColor("#000000"));//设置显示值的文字颜色
+//                dataSet.setValueTextSize(13f);//设置显示值的文字大小
+               // YAxis rightAxis = lineChart.getAxisRight();
+               // rightAxis.setEnabled(false);//右侧Y轴不显示
+               // YAxis leftAxis = lineChart.getAxisLeft();//左侧Y轴
+               // ///leftAxis.setTextSize(10f);
+               // XAxis xAxis = lineChart.getXAxis();
+//                xAxis.setTextColor(Color.RED);//设置X轴刻度颜色
+//                xAxis.setTextSize(13f);//设置X轴刻度字体大小
+//                xAxis.setDrawAxisLine(true);//设置为true，则绘制该行旁边的轴线
+//                xAxis.setDrawGridLines(true);//绘制网格线
+//                xAxis.setDrawLabels(true);//绘制标签，即X轴上的对应数值
+//                xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);//
+//                xAxis.setGranularity(1f);//设置最小间隔
+//                xAxis.setEnabled(true);
+//                xAxis.setValueFormatter(new IAxisValueFormatter() {
+//                    @Override
+//                    public String getFormattedValue(float v, AxisBase axis) {
+//                        return String.valueOf((int)v).concat("点");
+//                    }
+//                });
+//                Legend legend = lineChart.getLegend();//图例
+//                legend.setForm(Legend.LegendForm.LINE);//设置图例的形状
+//                legend.setTextSize(15f);//设置图例字体大小
+//                legend.setFormSize(15f);//设置图例形状大小
+//                legend.setTextColor(Color.BLUE);//设置图例颜色
+//                legend.setEnabled(false);//不显示图例
+//                Description description = lineChart.getDescription();//图表的描述信息
+//                description.setEnabled(true);//是否显示图表描述信息
+               // LineData lineData = new LineData();
+               // lineData.addDataSet(dataSet);
+//                lineChart.setTouchEnabled(false);//设置是否可触摸
+//                lineChart.setScaleEnabled(true);//设置是否可缩放
+               // lineChart.setData(lineData);
+                //lineChart.setNoDataText("暂无数据");//无数据时显示的文字
+               // lineChart.invalidate();//图表刷新
+               // System.out.println("ffffffffffffffffff"+lineChart.isShown());
+           // }
+
         }
 
     }

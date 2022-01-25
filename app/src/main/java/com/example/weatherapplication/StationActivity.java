@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -18,6 +20,7 @@ import com.example.weatherapplication.util.NetUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PrimitiveIterator;
 
 public class StationActivity extends AppCompatActivity implements View.OnClickListener {
     private ImageView backIv;
@@ -25,19 +28,40 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
     private List<StationItemBean> mDatas; //列表数据源
     private StationAdapter adapter;
     private String userName;
+    private String weatherStationId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_station);
-        stationLv = (ListView) findViewById(R.id.station_lv);
-        backIv = (ImageView)findViewById(R.id.station_iv_back);
+        //  在Android4.0以后，会发现，只要是写在主线程（就是Activity）中的HTTP请求，运行时都会报错，这是因为Android在4.0以后为了防止应用的ANR（Aplication Not Response）异常，
+        //  Android这个设计是为了防止网络请求时间过长而导致界面假死的情况发生。
+        //以下适用于数据量很小的情况
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+        userName = getIntent().getStringExtra("userName");
+        weatherStationId = getIntent().getStringExtra("weatherStationId");
+        Log.d("fan","=$$$$$$$$$$$$=userName==:"+ userName);
+        Log.d("fan","=$$$$$$$$$$==weatherStationId==:"+ weatherStationId);
+        initView();
+        initAdapter();
+        stationLv.setOnItemClickListener(listener);
+        backIv.setOnClickListener(this);
+    }
+
+    private void initAdapter() {
         mDatas = new ArrayList<>();
         // 设置适配器
         adapter = new StationAdapter(this, mDatas);
         stationLv.setAdapter(adapter);
-        stationLv.setOnItemClickListener(listener);
-        backIv.setOnClickListener(this);
     }
+
+    private void initView() {
+        stationLv = (ListView) findViewById(R.id.station_lv);
+        backIv = (ImageView)findViewById(R.id.station_iv_back);
+    }
+
     AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long arg3) {
@@ -55,8 +79,12 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
     protected void onResume() {
         super.onResume();
         userName = this.getIntent().getStringExtra("userName");
+        weatherStationId = this.getIntent().getStringExtra("weatherStationId");
         try {
-            List<StationItemBean> stationItems = NetUtil.getStationItemInfo(userName);;
+            if(weatherStationId == null){
+               weatherStationId ="14";
+            }
+            List<StationItemBean> stationItems = NetUtil.getStationItemInfo(userName,weatherStationId);;
             System.out.println("=================stationItems==========:"+stationItems);
             mDatas.clear();
             mDatas.addAll(stationItems);
