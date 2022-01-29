@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.weatherapplication.R;
 import com.example.weatherapplication.bean.DayWeatherBean;
-import com.example.weatherapplication.ui.home.HomeFragment;
 
 import java.util.List;
 

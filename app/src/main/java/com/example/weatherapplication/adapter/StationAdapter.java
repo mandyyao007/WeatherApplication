@@ -8,9 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.weatherapplication.R;
-import com.example.weatherapplication.bean.StationBean;
 import com.example.weatherapplication.bean.StationItemBean;
-import com.google.gson.Gson;
 
 import java.util.List;
 

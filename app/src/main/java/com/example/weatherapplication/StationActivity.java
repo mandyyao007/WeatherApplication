@@ -10,17 +10,14 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.weatherapplication.adapter.StationAdapter;
-import com.example.weatherapplication.bean.StationBean;
 import com.example.weatherapplication.bean.StationItemBean;
 import com.example.weatherapplication.util.NetUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.PrimitiveIterator;
 
 public class StationActivity extends AppCompatActivity implements View.OnClickListener {
     private ImageView backIv;
@@ -40,10 +37,11 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
+        /////
         userName = getIntent().getStringExtra("userName");
         weatherStationId = getIntent().getStringExtra("weatherStationId");
-        Log.d("fan","=$$$$$$$$$$$$=userName==:"+ userName);
-        Log.d("fan","=$$$$$$$$$$==weatherStationId==:"+ weatherStationId);
+        Log.d("StationActivity","========userName==:"+ userName);
+        Log.d("StationActivity","======weatherStationId==:"+ weatherStationId);
         initView();
         initAdapter();
         stationLv.setOnItemClickListener(listener);
@@ -67,10 +65,14 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long arg3) {
 				Intent intent = new Intent();
 				StationItemBean selectedStation = mDatas.get(arg2);
-				System.out.println("====selectedStation===:"+ selectedStation);
+                Log.d("StationActivity","=$$$$$$$$$$$$=selectedStation==:"+ selectedStation);
+                Log.d("StationActivity","=$$$$$$$$$$$$=stationName==:"+  selectedStation.getCollectorName());
+                Log.d("StationActivity","=$$$$$$$$$$$$=weatherStationId==:"+ weatherStationId);
                 intent.putExtra("stationId", selectedStation.getId());
                 intent.putExtra("userName", userName);
                 intent.putExtra("stationName", selectedStation.getCollectorName());
+                intent.putExtra("weatherStationId",weatherStationId);
+                intent.putExtra("fragment_flag", 2);
 				intent.setClass(StationActivity.this, MainActivity.class);
 				startActivity(intent);
 			}

@@ -27,9 +27,9 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_dashboard ,   R.id.navigation_home, R.id.navigation_notifications)
+                R.id.navigation_dashboard ,  R.id.navigation_home, R.id.navigation_notifications)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
     }
@@ -40,10 +40,10 @@ public class MainActivity extends AppCompatActivity {
         switch (fragmentFlag){
             case 1:
                 // 控制跳转到底部导航项(navigation_home为该Fragment的对应控件的id值)
-                navController.navigate(R.id.navigation_home);
+                navController.navigate(R.id.navigation_dashboard);
                 break;
             case 2:
-                navController.navigate(R.id.navigation_dashboard);
+                navController.navigate(R.id.navigation_home);
                 break;
             case 3:
                 navController.navigate(R.id.navigation_notifications);

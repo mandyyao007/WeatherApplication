@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,47 +11,45 @@
         android:id="@+id/et_username"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:textSize="16sp"
-        android:textColor="@color/black"
-        android:hint="用户名"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/bg_username"
+        android:gravity="center"
+        android:layout_centerVertical="true"
+        android:hint="请输入用户名"
         android:maxLines="1"
         android:padding="5dp"
-        android:layout_marginTop="300dp"
-        android:background="@drawable/bg_username"
-        />
+        android:textColor="@color/black"
+        android:textSize="16sp" />
+
     <EditText
         android:id="@+id/et_password"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:textSize="16sp"
-        android:textColor="@color/black"
-        android:hint="密  码"
+        android:layout_below="@id/et_username"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/bg_username"
+        android:gravity="center"
+        android:hint="请输入密码"
+        android:inputType="textPassword"
         android:maxLines="1"
         android:padding="5dp"
-        android:layout_marginTop="5dp"
-        android:inputType="textPassword"
-        android:background="@drawable/bg_username"
-        />
-    <LinearLayout
+        android:textColor="@color/black"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/btn_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:paddingTop="10dp"
-        >
+        android:layout_below="@id/et_password"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:background="@color/transparent"
+        android:text="登录"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="18sp" />
 
-        <Button
-            android:id="@+id/btn_login"
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="登录"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:background="@color/transparent"
-            />
-
-        />
-    </LinearLayout>
-</LinearLayout>
+</RelativeLayout >

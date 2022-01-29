@@ -5,17 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.weatherapplication.bean.LoginBean;
 import com.example.weatherapplication.util.NetUtil;
 import com.example.weatherapplication.util.ToastUtil;
-import com.google.gson.Gson;
 
 import java.io.IOException;
 
@@ -62,9 +59,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     ToastUtil.showMessage(LoginActivity.this,success);
                     intent = new Intent(LoginActivity.this,MainActivity.class);
                     intent.putExtra("userName",userName);
-                    intent.putExtra("stationId", "25");
-                    intent.putExtra("stationName","qqqqq");
-                   // intent.putExtra("fragment_flag",2);
+                    //intent.putExtra("stationId", "25");
+                   // intent.putExtra("stationName","qqqqq");
                     startActivity(intent);
                 }else{
                     intent = null;

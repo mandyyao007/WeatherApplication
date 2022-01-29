@@ -2,7 +2,6 @@ package com.example.weatherapplication.util;
 
 import android.util.Log;
 
-import com.example.weatherapplication.bean.DayWeatherBean;
 import com.example.weatherapplication.bean.IndexBean;
 import com.example.weatherapplication.bean.LoginBean;
 import com.example.weatherapplication.bean.ReportBean;
@@ -19,16 +18,18 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Iterator;
 import java.util.List;
 
 public class NetUtil {
+    //  public static final String HTTPHOST = "10.68.201.78:9000";
+    public static final String HTTPHOST = "47.98.106.23:9000";
     public static final String URL_WEATHER_WITH_FUTURE = "https://tianqiapi.com/api?unescape=1&version=v1&appid=17358133&appsecret=A2V2yvEE";
-    public static final String URL_LOGIN =  "http://10.68.201.78:9000/user/check_login";//"http://47.98.106.23:9000/user/check_login";
-    public static final String URL_STATION = "http://10.68.201.78:9000/basic/show_collector_list";//"http://47.98.106.23:9000/basic/show_collector_list";
-    public static final String URL_INDEX = "http://10.68.201.78:9000/basic/show_collector_config_list";;//"http://47.98.106.23:9000/basic/show_collector_config_list";
-    public static final String URL_WEATHER_STATION = "http://10.68.201.78:9000/basic/show_weather_station_list";//"http://47.98.106.23:9000/basic/show_collector_list";
-    public static final String URL_REPORT_DATA = "http://10.68.201.78:9000/basic/show_report_data_list"; //"http://47.98.106.23:9000/basic/show_report_data_list";
+    public static final String URL_LOGIN =  "http://"+HTTPHOST+"/user/check_login";//"http://47.98.106.23:9000/user/check_login";
+    public static final String URL_STATION = "http://"+HTTPHOST+"/basic/show_collector_list";//"http://47.98.106.23:9000/basic/show_collector_list";
+    public static final String URL_INDEX = "http://"+HTTPHOST+"/basic/show_collector_config_list";;//"http://47.98.106.23:9000/basic/show_collector_config_list";
+    public static final String URL_WEATHER_STATION = "http://"+HTTPHOST+"/basic/show_weather_station_list";//"http://47.98.106.23:9000/basic/show_collector_list";
+    public static final String URL_REPORT_DATA = "http://"+HTTPHOST+"/basic/show_report_data_list"; //"http://47.98.106.23:9000/basic/show_report_data_list";
+    public static final String URL_TODAY_DATA = "http://"+HTTPHOST+"/basic/show_CDV_data_list"; //"http://47.98.106.23:9000/basic/show_report_data_list";
     public static String service(String urlStr,String method) throws IOException {
         String result = "";
         HttpURLConnection connection = null;
@@ -166,6 +167,27 @@ public class NetUtil {
 //        ReportBean reportBean = gson.fromJson(result, ReportBean.class);
 //        Log.d("fan","====解析后的reportBean==:"+reportBean.toString());
         return reportResult;
+    }
+    public static ReportBean getReportDataOfIndex(String selectConfigId, String stationId, String startDateStr, String endDateStr) throws IOException {
+        String reportResult = getReportOfIndex(selectConfigId,stationId,startDateStr,endDateStr);
+        Log.d("fan","-----reportResult======"+reportResult);
+        Gson gson = new Gson();
+        ReportBean reportBean = gson.fromJson(reportResult, ReportBean.class);
+        Log.d("fan","====解析后的reportBean==:"+reportBean.toString());
+        return reportBean;
+    }
+
+    public static ReportBean getNewestData(String selectConfigId, String stationId, int count) throws IOException {
+        String dataResult ="";
+        //拼接出URL
+        String newestDataUrl = URL_TODAY_DATA+"?collectorConfigId="+selectConfigId+"&collectorId="+stationId+"&count="+count;
+        Log.d("fan","-----newestDataUrl======"+newestDataUrl);
+        dataResult = service(newestDataUrl,"POST");
+        Log.d("fan","-----getNewestData  result======"+dataResult);
+        Gson gson = new Gson();
+        ReportBean reportBean = gson.fromJson(dataResult, ReportBean.class);
+        Log.d("fan","====getNewestData====解析后的reportBean==:"+reportBean.toString());
+        return reportBean;
     }
 
 }
