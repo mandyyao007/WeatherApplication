@@ -105,9 +105,10 @@ public class NetUtil {
         String weatherStationUrl = URL_WEATHER_STATION+"?userName="+userName;
         Log.d("fan","-----weatherStationUrl======"+weatherStationUrl);
         result = service(weatherStationUrl,"POST");
+        Log.d("fan","-----result======"+result);
         Gson gson = new Gson();
         WeatherStationBean weatherStationBean = gson.fromJson(result, WeatherStationBean.class);
-        //Log.d("fan","====解析后的stationBean==:"+stationBean.toString());
+        Log.d("fan","====weatherStationBean==:"+weatherStationBean.toString());
         return weatherStationBean;
     }
     public static StationBean getStationInfo(String userName,String weatherStationId) throws IOException {
