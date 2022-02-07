@@ -26,6 +26,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.weatherapplication.LoginActivity;
 import com.example.weatherapplication.R;
 import com.example.weatherapplication.StationActivity;
+import com.example.weatherapplication.adapter.simpleArrayAdapter;
 import com.example.weatherapplication.bean.DayReportBean;
 import com.example.weatherapplication.bean.IndexBean;
 import com.example.weatherapplication.bean.IndexItemsBean;
@@ -66,7 +67,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     private FragmentHomeBinding binding;
     ////
     private AppCompatSpinner  mIndexSpinner;
-    private ArrayAdapter<String> mIndexAdapter;
+    private simpleArrayAdapter mIndexAdapter;
     private String[] mIndexs,indexsUint;
     private TextView tvStation,tvIndex,tvIndexUint;
     private ImageView ivAdd,ivPerson;
@@ -137,9 +138,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
             if(stationId!= null){
                 IndexBean indexbean = NetUtil.getIndexInfo(stationId);
                 mIndexs = getIndexOfStation(indexbean);
-                mIndexAdapter = new ArrayAdapter<String>(this.getActivity(), R.layout.index_item_layout,mIndexs);
+                mIndexAdapter = new simpleArrayAdapter<String>(this.getActivity(), R.layout.index_item_layout,mIndexs);
                 mIndexAdapter.setDropDownViewResource(R.layout.index_item_layout);
                 mIndexSpinner.setAdapter(mIndexAdapter);
+                mIndexSpinner.setSelection(mIndexs.length - 1);
                 //mIndexSpinner.setDropDownWidth(100);//设置下拉菜单的宽度
                 indexMap = getIndexOfStationMap(indexbean);
                 Log.d("HomeFragment","===indexMap==:"+ indexMap.toString());
@@ -342,7 +344,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 xAxis.setValueFormatter(new IAxisValueFormatter() {
                     @Override
                     public String getFormattedValue(float v, AxisBase axis) {
-                        return String.valueOf((int) v);
+                        return String.valueOf((int) v+":00");
                     }
                 });
                 Legend legend = lineChart.getLegend();//图例
@@ -352,7 +354,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                // legend.setTextColor(Color.BLUE);//设置图例颜色
                 legend.setEnabled(false);//不显示图例
                 Description description = lineChart.getDescription();//图表的描述信息
-                description.setEnabled(true);//是否显示图表描述信息
+                description.setEnabled(false);//是否显示图表描述信息
                 LineData lineData = new LineData();
                 lineData.addDataSet(dataSet);
                 lineChart.setTouchEnabled(false);//设置是否可触摸
@@ -395,12 +397,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
             return null;
         }else{
             Iterator it = indexItems.iterator();
-            indexMap.put("请选择监测指标","-1");
             while(it.hasNext()){
                 IndexItemsBean item = (IndexItemsBean) it.next();
                 Log.d("fan","*********index=====Items==:"+item.toString());
                 indexMap.put(item.getDescription(),item.getCollectorConfigId());
             }
+            indexMap.put("请选择监测指标","-1");
         }
         Log.d("fan","*********indexMap==:"+indexMap);
         return indexMap;
@@ -412,12 +414,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         int count = indexbean.getTotal();
         String[] indexs = new String[count+1];
         indexsUint = new String[count+1];
-        int i = 1;
+        int i = 0;
         if(indexItems == null){
             return null;
         }else{
-            indexs[0] = "请选择监测指标";
-            indexsUint[0] = "";
             Iterator it = indexItems.iterator();
             while(it.hasNext()){
                 IndexItemsBean item = (IndexItemsBean) it.next();
@@ -425,6 +425,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 indexsUint[i] = item.getUnit();
                 i++;
             }
+            indexs[i] = "请选择监测指标";
+            indexsUint[i] = "";
             for(int j=0; j<=count;j++){
                 System.out.println("======indexs =====:"+indexs[j] +"("+indexsUint[j]+")");
             }

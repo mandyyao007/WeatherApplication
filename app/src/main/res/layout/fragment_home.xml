@@ -4,7 +4,7 @@
     android:id="@+id/main_out_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_main"
+    android:background="@drawable/bg_home"
     android:orientation="vertical"
     android:gravity="center_horizontal">
     <LinearLayout
@@ -49,7 +49,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/layout_top"
-        android:layout_marginTop="60dp">
+        android:layout_marginTop="40dp">
     <TextView
         android:id="@+id/tv_index"
         android:layout_width="wrap_content"
@@ -77,75 +77,123 @@
         android:layout_below="@+id/tv_index"
         android:layout_marginTop="20dp"
         android:backgroundTint="@color/white"
-        android:dropDownVerticalOffset="25dp"
+        android:dropDownVerticalOffset="30dp"
         android:overlapAnchor="true"
         android:popupBackground="@color/transparent"
         android:spinnerMode="dropdown"
-        android:gravity="center|center_horizontal"/>
-    <RelativeLayout
+        android:gravity="center|center_horizontal"
+        android:textAlignment="center"/>
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/layout_top"
+        android:gravity="center_vertical"
         android:layout_marginTop="100dp"
         android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btn_one_day"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="35dp"
-            android:layout_gravity="left"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/btn_home"
-            android:paddingTop="1dp"
-            android:paddingBottom="1dp"
-            android:text="近1天"
-            android:textColor="@color/white"
-            android:textSize="15sp" />
-
-        <Button
-            android:id="@+id/btn_seven_day"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="   ">
+            </TextView>
+            <Button
+                android:id="@+id/btn_one_day"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_gravity="left"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/btn_home"
+                android:paddingTop="1dp"
+                android:paddingBottom="1dp"
+                android:text="近1天"
+                android:textColor="@color/white"
+                android:textSize="15sp"/>
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="35dp"
-            android:layout_gravity="left"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="20dp"
-            android:layout_toRightOf="@+id/btn_one_day"
-            android:background="@drawable/btn_home"
-            android:paddingTop="1dp"
-            android:paddingBottom="1dp"
-            android:text="近7天"
-            android:textColor="@color/white"
-            android:textSize="15sp" />
-        <Button
-            android:id="@+id/btn_thirty_day"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="   ">
+            </TextView>
+            <Button
+                android:id="@+id/btn_seven_day"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_weight="1"
+                android:layout_gravity="left"
+                android:layout_marginTop="20dp"
+                android:layout_toRightOf="@+id/btn_one_day"
+                android:background="@drawable/btn_home"
+                android:paddingTop="1dp"
+                android:paddingBottom="1dp"
+                android:text="近7天"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="35dp"
-            android:layout_gravity="left"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/btn_home"
-            android:layout_toRightOf="@+id/btn_seven_day"
-            android:text="近30天"
-            android:paddingTop="1dp"
-            android:paddingBottom="1dp"
-            android:textColor="@color/white"
-            android:textSize="15sp" />
-        <Button
-            android:id="@+id/btn_ninty_day"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="   ">
+            </TextView>
+            <Button
+                android:id="@+id/btn_thirty_day"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_weight="1"
+                android:layout_gravity="left"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/btn_home"
+                android:layout_toRightOf="@+id/btn_seven_day"
+                android:text="近30天"
+                android:paddingTop="1dp"
+                android:paddingBottom="1dp"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="35dp"
-            android:layout_gravity="left"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/btn_home"
-            android:layout_toRightOf="@+id/btn_thirty_day"
-            android:text="近90天"
-            android:paddingTop="1dp"
-            android:paddingBottom="1dp"
-            android:textColor="@color/white"
-            android:textSize="15sp" />
-    </RelativeLayout>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="   ">
+            </TextView>
+            <Button
+                android:id="@+id/btn_ninty_day"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_weight="1"
+                android:layout_gravity="left"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/btn_home"
+                android:layout_toRightOf="@+id/btn_thirty_day"
+                android:text="近90天"
+                android:paddingTop="1dp"
+                android:paddingBottom="1dp"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="   ">
+            </TextView>
+        </LinearLayout>
+    </LinearLayout>
  <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">

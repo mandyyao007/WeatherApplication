@@ -22,7 +22,7 @@ import java.util.List;
 
 public class NetUtil {
     //  public static final String HTTPHOST = "10.68.201.78:9000";
-    public static final String HTTPHOST = "47.98.106.23:9000";
+   public static final String HTTPHOST = "47.98.106.23:9000";
     public static final String URL_WEATHER_WITH_FUTURE = "https://tianqiapi.com/api?unescape=1&version=v1&appid=17358133&appsecret=A2V2yvEE";
     public static final String URL_LOGIN =  "http://"+HTTPHOST+"/user/check_login";//"http://47.98.106.23:9000/user/check_login";
     public static final String URL_STATION = "http://"+HTTPHOST+"/basic/show_collector_list";//"http://47.98.106.23:9000/basic/show_collector_list";
