@@ -144,12 +144,12 @@
                 android:layout_height="35dp"
                 android:layout_gravity="left"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/btn_home"
+                android:background="@drawable/button_selector"
                 android:paddingTop="1dp"
                 android:paddingBottom="1dp"
                 android:text="近1天"
                 android:textColor="@color/white"
-                android:textSize="15sp"/>
+                android:textSize="15sp" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -170,7 +170,7 @@
                 android:layout_gravity="left"
                 android:layout_marginTop="20dp"
                 android:layout_toRightOf="@+id/btn_one_day"
-                android:background="@drawable/btn_home"
+                android:background="@drawable/button_selector"
                 android:paddingTop="1dp"
                 android:paddingBottom="1dp"
                 android:text="近7天"
@@ -195,7 +195,7 @@
                 android:layout_weight="1"
                 android:layout_gravity="left"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/btn_home"
+                android:background="@drawable/button_selector"
                 android:layout_toRightOf="@+id/btn_seven_day"
                 android:text="近30天"
                 android:paddingTop="1dp"
@@ -221,7 +221,7 @@
                 android:layout_weight="1"
                 android:layout_gravity="left"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/btn_home"
+                android:background="@drawable/button_selector"
                 android:layout_toRightOf="@+id/btn_thirty_day"
                 android:text="近90天"
                 android:paddingTop="1dp"
@@ -237,6 +237,7 @@
         </LinearLayout>
     </LinearLayout>
 <ScrollView
+        android:id="@+id/scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"

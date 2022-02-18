@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.core.graphics.ColorUtils;
 
 /*
-  获取状态栏高度
+  获取沉浸式状态栏
  */
 public class StatusBarUtils {
     public static int getHeight(Context context) {

@@ -10,26 +10,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.weatherapplication.LoginActivity;
 import com.example.weatherapplication.R;
 import com.example.weatherapplication.StationActivity;
-import com.example.weatherapplication.adapter.simpleArrayAdapter;
 import com.example.weatherapplication.bean.DayReportBean;
 import com.example.weatherapplication.bean.IndexBean;
 import com.example.weatherapplication.bean.IndexItemsBean;
 import com.example.weatherapplication.bean.ReportBean;
-import com.example.weatherapplication.bean.StationBean;
-import com.example.weatherapplication.bean.StationItemBean;
 import com.example.weatherapplication.databinding.FragmentHomeBinding;
 import com.example.weatherapplication.util.NetUtil;
 import com.github.mikephil.charting.charts.LineChart;
@@ -45,7 +41,6 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,7 +49,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 public class HomeFragment extends Fragment implements View.OnClickListener{
 
@@ -69,6 +63,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     private List<Entry> entries1,entries2,entries3;
     String weatherStationId = null;
     private Button btOneDay,btSevenDay, btThirtyDay,btNintyDay,btMeteorology,btPlant,btSoil;
+    private ScrollView scrollView;
 
     private Handler mHandler = new Handler(Looper.myLooper()){
         @Override
@@ -94,10 +89,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 btMeteorology.setOnClickListener(this);
                 btPlant.setOnClickListener(this);
                 btSoil.setOnClickListener(this);
+                btOneDay.setOnClickListener(dayListener);
+                btSevenDay.setOnClickListener(dayListener);
+                btThirtyDay.setOnClickListener(dayListener);
+                btNintyDay.setOnClickListener(dayListener);
             }else{
                 btMeteorology.setVisibility(View.INVISIBLE);//如果没有选中station直接打开数据，就不显示按钮
                 btPlant.setVisibility(View.INVISIBLE);
                 btSoil.setVisibility(View.INVISIBLE);
+                btOneDay.setVisibility(View.INVISIBLE);
+                btThirtyDay.setVisibility(View.INVISIBLE);
+                btSevenDay.setVisibility(View.INVISIBLE);
+                btNintyDay.setVisibility(View.INVISIBLE);
             }
             ivAdd.setOnClickListener(this);
             ivPerson.setOnClickListener(this);
@@ -154,6 +157,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         tvNewestData1 = fragmentHomeView.findViewById(R.id.newestData_tv_1);
         tvNewestData2 = fragmentHomeView.findViewById(R.id.newestData_tv_2);
         tvNewestData3 = fragmentHomeView.findViewById(R.id.newestData_tv_3);
+        scrollView = fragmentHomeView.findViewById(R.id.scrollview);
     }
     @Override
     public void onClick(View v) {
@@ -170,40 +174,34 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 startActivity(intent);
                 break;
             case R.id.btn_meteorology:
-                setEnable(btMeteorology);
+                setBtnEnable(btMeteorology,"category");
+                setDaysButtonEnable();
                 selectedIndex = new String[]{"AirTC_Avg1-Avg", "RH_Avg1-Avg", "PAR_Avg1-Avg"};
                 indexsUint =new String[]{"Dec C","%","umol.s-1.m-2"};
-                clickAndDraw(selectedIndex,indexsUint);
+                setScrollInvisiable();
+               // clickAndDraw(selectedIndex,indexsUint,v);
                 break;
             case R.id.btn_plant:
-                setEnable(btPlant);
+                setBtnEnable(btPlant,"category");
+                setDaysButtonEnable();
                 selectedIndex = new String[]{"DD_Avg1-Avg", "TDP_Avg1-Avg"};
                 indexsUint =new String[]{"mm","mV"};
-                clickAndDraw(selectedIndex,indexsUint);
+                setScrollInvisiable();
+                //clickAndDraw(selectedIndex,indexsUint,v);
                 break;
             case R.id.btn_soil:
-                setEnable(btSoil);
+                setBtnEnable(btSoil,"category");
+                setDaysButtonEnable();
                 selectedIndex = new String[]{"SoilVWC_Avg1-Avg", "SoilEC_Avg1-Avg", "SoilTemp_Avg1-Avg"};
                 indexsUint =new String[]{"m3/m3","uS/cm","deg_C"};
-                clickAndDraw(selectedIndex,indexsUint);
+                setScrollInvisiable();
+               // clickAndDraw(selectedIndex,indexsUint,v);
                 break;
         }
 
     }
-    private void setEnable(Button btn) {
-        List<Button> buttonList=new ArrayList<>();
-        if (buttonList.size()==0){
-            buttonList.add(btMeteorology);
-            buttonList.add(btPlant);
-            buttonList.add(btSoil);
-        }
-        for (int i = 0; i <buttonList.size() ; i++) {
-            buttonList.get(i).setEnabled(true);
-        }
-        btn.setEnabled(false);
-    }
-    private void clickAndDraw(String[] selectedIndex,String[] selectedIndexUint){
-        Log.d("HomeFragment", "===selectedIndex  count=:" + selectedIndex.length);
+
+    private void setScrollInvisiable() {
         tvChartname1.setVisibility(View.INVISIBLE);
         tvNewestData1.setVisibility(View.INVISIBLE);
         lineChart1.setVisibility(View.INVISIBLE);
@@ -213,6 +211,65 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         tvChartname3.setVisibility(View.INVISIBLE);
         tvNewestData3.setVisibility(View.INVISIBLE);
         lineChart3.setVisibility(View.INVISIBLE);
+    }
+
+    private void setDaysButtonEnable() {
+        btOneDay.setEnabled(true);
+        btSevenDay.setEnabled(true);
+        btThirtyDay.setEnabled(true);
+        btNintyDay.setEnabled(true);
+    }
+
+    View.OnClickListener dayListener =  new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            int days = 0;
+            switch(v.getId()){
+                case R.id.btn_one_day:
+                    days = 1;
+                    setBtnEnable(btOneDay,"days");
+                    drawChart(selectedIndex,indexsUint,days);
+                    break;
+                case R.id.btn_seven_day:
+                    days = 7;
+                    setBtnEnable(btSevenDay,"days");
+                    drawChart(selectedIndex,indexsUint,days);
+                    break;
+                case R.id.btn_thirty_day:
+                    days = 30;
+                    setBtnEnable(btThirtyDay,"days");
+                    drawChart(selectedIndex,indexsUint,days);
+                    break;
+                case R.id.btn_ninty_day:
+                    days = 90;
+                    setBtnEnable(btNintyDay,"days");
+                    drawChart(selectedIndex,indexsUint,days);
+                    break;
+            }
+        }
+    };
+    private void setBtnEnable(Button btn,String category) {
+        List<Button> buttonList = new ArrayList<>();
+        if (buttonList.size() == 0){
+            if("category".equals(category)){
+                buttonList.add(btMeteorology);
+                buttonList.add(btPlant);
+                buttonList.add(btSoil);
+            }else{
+                buttonList.add(btOneDay);
+                buttonList.add(btSevenDay);
+                buttonList.add(btThirtyDay);
+                buttonList.add(btNintyDay);
+            }
+        }
+        for (int i = 0; i <buttonList.size() ; i++) {
+            buttonList.get(i).setEnabled(true);
+        }
+        btn.setEnabled(false);
+    }
+    private void drawChart(String[] selectedIndex, String[] selectedIndexUint,int days) {
+        Log.d("HomeFragment", "===selectedIndex  count=:" + selectedIndex.length);
+        ReportBean  reportBean = null;
         for(int i=0; i<selectedIndex.length;i++){
             String index = selectedIndex[i];
             String indexUint = selectedIndexUint[i];
@@ -241,10 +298,25 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                             newestData = dayReportBean.getCol1();
                         }
                     }
-                    ReportBean  reportBean = NetUtil.getReportDataOfIndex(selectConfigId, stationId,"2022-01-25", "2022-01-26");
+                    Log.d("HomeFragment", "=============days==:" + days);
+                    switch(days){
+                        case 1:
+                            reportBean= NetUtil.getReportDataOfIndex(selectConfigId, stationId,"2022-01-25", "2022-01-26");
+                            break;
+                        case 7:
+                            reportBean= NetUtil.getReportDataOfIndex(selectConfigId, stationId,"2022-01-27", "2022-01-28");
+                            break;
+                        case 30:
+                            reportBean= NetUtil.getReportDataOfIndex(selectConfigId, stationId,"2022-02-01", "2022-02-02");
+                            break;
+                        case 90:
+                            reportBean= NetUtil.getReportDataOfIndex(selectConfigId, stationId,"2022-02-04", "2022-02-05");
+                            break;
+                    }
                     Log.d("HomeFragment", "===reportBean==:" + reportBean);
                     if(reportBean != null  && reportBean.getmDayReportBeans() != null) {
                         if(i==0){
+                            scrollView.scrollTo(0,0);
                             tvChartname1.setText(index);
                             tvChartname1.setVisibility(View.VISIBLE);
                             tvNewestData1.setText(newestData);
@@ -280,6 +352,22 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                             lineChart3.getData().notifyDataChanged();
                             lineChart3.invalidate();
                         }
+                    }else{
+                        if(i==0){
+                            tvChartname1.setVisibility(View.INVISIBLE);
+                            tvNewestData1.setVisibility(View.INVISIBLE);
+                            lineChart1.setVisibility(View.INVISIBLE);
+                        }
+                        if(i==1){
+                            tvChartname2.setVisibility(View.INVISIBLE);
+                            tvNewestData2.setVisibility(View.INVISIBLE);
+                            lineChart2.setVisibility(View.INVISIBLE);
+                        }
+                        if(i==2){
+                            tvChartname3.setVisibility(View.INVISIBLE);
+                            tvNewestData3.setVisibility(View.INVISIBLE);
+                            lineChart3.setVisibility(View.INVISIBLE);
+                        }
                     }
                 }
 
@@ -288,6 +376,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
             }
         }
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

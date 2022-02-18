@@ -1,6 +1,5 @@
 package com.example.weatherapplication.ui.dashboard;
 
-
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -8,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -33,7 +33,6 @@ import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.example.weatherapplication.R;
 import com.example.weatherapplication.StationActivity;
-import com.example.weatherapplication.adapter.simpleArrayAdapter;
 import com.example.weatherapplication.bean.WeatherStationItemBean;
 import com.example.weatherapplication.databinding.FragmentDashboardBinding;
 import com.example.weatherapplication.util.NetUtil;
@@ -41,7 +40,6 @@ import com.example.weatherapplication.util.NetUtil;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-
 
 public class DashboardFragment extends Fragment {
 
@@ -52,13 +50,11 @@ public class DashboardFragment extends Fragment {
     private LocationClient mLocationClient;
     private String userName;
     private View pop;
-    private TextView tvPop;
     ////2022/02/15
     private TextView tvStationName;
     private ListView detailLvLeft,detailLvRight,valueLvLeft,valueLvRight;
     private String[] mDatasLeft,mDatasRight,mValueDatasLeft,mValueRight; //列表数据源
-    private simpleArrayAdapter detailAdapterLeft,detailAdapterRight,valueAdapterLeft,valueAdapterRight;
-    private LinearLayout mLayout;
+    private ArrayAdapter detailAdapterLeft,detailAdapterRight,valueAdapterLeft,valueAdapterRight;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -68,7 +64,6 @@ public class DashboardFragment extends Fragment {
         View rootView = binding.getRoot();
         userName = getActivity().getIntent().getStringExtra("userName");
         Log.d("DashboardFragment","-----userName======"+userName);
-        //userName = "admin";
 //        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 //            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 //        }else {
@@ -101,7 +96,7 @@ public class DashboardFragment extends Fragment {
         Log.d("DashboardFragment","-----maxZoomLevel======"+maxZoomLevel+"-----minZoomLevel======"+minZoomLevel);
         LocationClientOption option = new LocationClientOption();
         MapStatusUpdate mapStatusUpdate = null;
-        //设置地图中心点，默认是天安门
+        //设置地图中心点，默认是上海园林，百度地图的默认中心是天安门
         mapStatusUpdate = MapStatusUpdateFactory.newLatLng(new LatLng( 31.38771,121.531994));
         mBaiduMap.setMapStatus(mapStatusUpdate);
         mBaiduMap.setMyLocationEnabled(true);
@@ -115,7 +110,7 @@ public class DashboardFragment extends Fragment {
         //设置locationClientOption
         mLocationClient.setLocOption(locationOption);
         mLocationClient.start(); //开启地图定位图层
-        mapStatusUpdate = MapStatusUpdateFactory.zoomTo(18);//设置地图缩放为15
+        mapStatusUpdate = MapStatusUpdateFactory.zoomTo(18);//设置地图缩放为18
         mBaiduMap.setMapStatus(mapStatusUpdate);
         initMarker();///初始化标志
         mBaiduMap.setOnMarkerClickListener(markerClickListener);//注册点击监听器事件
@@ -172,10 +167,10 @@ public class DashboardFragment extends Fragment {
                 Log.d("DashboardFragment","-----mDatasRight======"+mDatasRight);
                 Log.d("DashboardFragment","-----mValueDatasLeft======"+mValueDatasLeft);
                 Log.d("DashboardFragment","-----mValueRight======"+mValueRight);
-                detailAdapterLeft = new simpleArrayAdapter(getActivity(),R.layout.layout_markerdetail_item, mDatasLeft);
-                detailAdapterRight = new simpleArrayAdapter(getActivity(),R.layout.layout_markerdetail_item, mDatasRight);
-                valueAdapterLeft = new simpleArrayAdapter(getActivity(),R.layout.layout_markerdetail_item, mValueDatasLeft);
-                valueAdapterRight = new simpleArrayAdapter(getActivity(),R.layout.layout_markerdetail_item, mValueRight);
+                detailAdapterLeft = new ArrayAdapter(getActivity(),R.layout.layout_markerdetail_item, mDatasLeft);
+                detailAdapterRight = new ArrayAdapter(getActivity(),R.layout.layout_markerdetail_item, mDatasRight);
+                valueAdapterLeft = new ArrayAdapter(getActivity(),R.layout.layout_markerdetail_item, mValueDatasLeft);
+                valueAdapterRight = new ArrayAdapter(getActivity(),R.layout.layout_markerdetail_item, mValueRight);
                 detailLvLeft.setAdapter(detailAdapterLeft);
                 detailLvRight.setAdapter(detailAdapterRight);
                 valueLvLeft.setAdapter(valueAdapterLeft);

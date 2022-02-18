@@ -1,7 +1,6 @@
 package com.example.weatherapplication.bean;
 
 import com.google.gson.annotations.SerializedName;
-//"acquisitionTime":"2021-11-25 00:00:00","col1":"0000.28","collectorName":"连云港班庄气象监测站"
 public class DayReportBean {
     @SerializedName("acquisitionTime")
     private String acquisitionTime;

@@ -107,10 +107,8 @@ public class NetUtil {
         String stationUrl = URL_STATION+"?userName="+userName+"&weatherStationId=" +weatherStationId;
         Log.d("fan","-----stationUrl======"+stationUrl);
         result = service(stationUrl,"POST");
-        //Log.d("fan","-----result======"+result);
         Gson gson = new Gson();
         StationBean stationBean = gson.fromJson(result, StationBean.class);
-        //Log.d("fan","====解析后的stationBean==:"+stationBean.toString());
         return stationBean;
     }
     public static  List<StationItemBean>  getStationItemInfo(String userName,String weatherStationId) throws IOException {
@@ -126,10 +124,8 @@ public class NetUtil {
         String indexUrl = URL_INDEX+"?collectorId="+collectorId;
         //Log.d("fan","-----indexUrl======"+indexUrl);
         result = service(indexUrl,"POST");
-       // Log.d("fan","-----indexBean  result======"+result);
         Gson gson = new Gson();
         IndexBean indexBean = gson.fromJson(result, IndexBean.class);
-        //Log.d("fan","====解析后的indexBean==:"+indexBean.toString());
         return indexBean;
 
     }
@@ -139,7 +135,6 @@ public class NetUtil {
         String reportUrl = URL_REPORT_DATA+"?collectorConfigId="+collectorConfigId+"&collectorId="+collectorId+"&endDate="+endDateStr+"&startDate="+startDateStr;
         Log.d("fan","-----reportUrl======"+reportUrl);
         result = service(reportUrl,"POST");
-        //Log.d("fan","-----reportBean  result======"+result);
         Gson gson = new Gson();
         ReportBean reportBean = gson.fromJson(result, ReportBean.class);
         Log.d("fan","====解析后的reportBean==:"+reportBean.toString());
@@ -153,10 +148,6 @@ public class NetUtil {
         String reportUrl = URL_REPORT_DATA+"?collectorConfigId="+selectConfigId+"&collectorId="+stationId+"&endDate="+endDateStr+"&startDate="+startDateStr;
         Log.d("fan","-----reportUrl======"+reportUrl);
         reportResult = service(reportUrl,"POST");
-//        Log.d("fan","-----reportBean  result======"+result);
-//        Gson gson = new Gson();
-//        ReportBean reportBean = gson.fromJson(result, ReportBean.class);
-//        Log.d("fan","====解析后的reportBean==:"+reportBean.toString());
         return reportResult;
     }
     public static ReportBean getReportDataOfIndex(String selectConfigId, String stationId, String startDateStr, String endDateStr) throws IOException {

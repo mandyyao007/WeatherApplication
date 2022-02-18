@@ -12,27 +12,23 @@
         <item>空气湿度:</item>
         <item>树木液流:</item>
         <item>树木胸径:</item>
-        <item></item>
     </string-array>
     <string-array name="value_left">
         <item>12℃</item>
         <item>87.1%</item>
         <item>0.343mV</item>
         <item>11.29mm</item>
-        <item></item>
     </string-array>
     <string-array name="index_right">
         <item>光合有效辐射:</item>
         <item>土壤体积含水量:</item>
         <item>土壤盐分:</item>
         <item>土壤温度:</item>
-        <item></item>
     </string-array>
     <string-array name="value_right">
         <item>0 umol.s-1.m-2</item>
         <item>37.18m3/m3</item>
         <item>221.60uS/cm</item>
         <item>8.1deg_C</item>
-        <item></item>
     </string-array>
 </resources>

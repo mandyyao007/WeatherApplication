@@ -1,7 +1,6 @@
 package com.example.weatherapplication.bean;
 
 import com.google.gson.annotations.SerializedName;
-///{"col":"","collectorConfigId":"3","description":"光合有效辐射-Avg","maskType":"","name":"","unit":""}
 public class IndexItemsBean {
     @SerializedName("col")
     private String col;
