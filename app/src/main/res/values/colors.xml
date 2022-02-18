@@ -13,5 +13,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorLine">#24c2f0</color>
-    <color name="gray">#CACECF</color>
+    <color name="gray">#A6A9AA</color>
+    <color name="light_gray">#DEE3E4</color>
+    <color name="half_transparent">#80FFFFFF</color>
+    <color name="stationTop">#F5F5F5</color>
 </resources>

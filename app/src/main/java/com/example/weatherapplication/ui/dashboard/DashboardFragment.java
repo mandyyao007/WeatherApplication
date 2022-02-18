@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,12 +29,11 @@ import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MapViewLayoutParams;
 import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
-import com.baidu.mapapi.map.Overlay;
 import com.baidu.mapapi.map.OverlayOptions;
-import com.baidu.mapapi.map.TextOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.example.weatherapplication.R;
 import com.example.weatherapplication.StationActivity;
+import com.example.weatherapplication.adapter.simpleArrayAdapter;
 import com.example.weatherapplication.bean.WeatherStationItemBean;
 import com.example.weatherapplication.databinding.FragmentDashboardBinding;
 import com.example.weatherapplication.util.NetUtil;
@@ -52,6 +53,12 @@ public class DashboardFragment extends Fragment {
     private String userName;
     private View pop;
     private TextView tvPop;
+    ////2022/02/15
+    private TextView tvStationName;
+    private ListView detailLvLeft,detailLvRight,valueLvLeft,valueLvRight;
+    private String[] mDatasLeft,mDatasRight,mValueDatasLeft,mValueRight; //列表数据源
+    private simpleArrayAdapter detailAdapterLeft,detailAdapterRight,valueAdapterLeft,valueAdapterRight;
+    private LinearLayout mLayout;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -95,7 +102,7 @@ public class DashboardFragment extends Fragment {
         LocationClientOption option = new LocationClientOption();
         MapStatusUpdate mapStatusUpdate = null;
         //设置地图中心点，默认是天安门
-        mapStatusUpdate = MapStatusUpdateFactory.newLatLng(new LatLng( 31.24149,121.49203));
+        mapStatusUpdate = MapStatusUpdateFactory.newLatLng(new LatLng( 31.38771,121.531994));
         mBaiduMap.setMapStatus(mapStatusUpdate);
         mBaiduMap.setMyLocationEnabled(true);
         //定位初始化
@@ -108,7 +115,7 @@ public class DashboardFragment extends Fragment {
         //设置locationClientOption
         mLocationClient.setLocOption(locationOption);
         mLocationClient.start(); //开启地图定位图层
-        mapStatusUpdate = MapStatusUpdateFactory.zoomTo(10);//设置地图缩放为15
+        mapStatusUpdate = MapStatusUpdateFactory.zoomTo(18);//设置地图缩放为15
         mBaiduMap.setMapStatus(mapStatusUpdate);
         initMarker();///初始化标志
         mBaiduMap.setOnMarkerClickListener(markerClickListener);//注册点击监听器事件
@@ -141,14 +148,42 @@ public class DashboardFragment extends Fragment {
         public boolean onMarkerClick(Marker marker) {
             //显示一个泡泡，单击泡泡有事件
             if(pop == null){
-                pop = View.inflate(getActivity(),R.layout.layout_pop,null);
-                tvPop = (TextView )pop.findViewById(R.id.tv_pop);
-                mMapView.addView(pop,createLayoutParams(marker.getPosition()));
+                try{
+                    pop = View.inflate(getActivity(),R.layout.layout_markerdetail,null);
+                    tvStationName = (TextView )pop.findViewById(R.id.tv_station_name);
+                    detailLvLeft = (ListView) pop.findViewById(R.id.detail_left_lv);
+                    detailLvRight = (ListView) pop.findViewById(R.id.detail_right_lv);
+                    valueLvLeft = (ListView) pop.findViewById(R.id.value_left_lv);
+                    valueLvRight = (ListView) pop.findViewById(R.id.value_right_lv);
+                    mMapView.addView(pop,createLayoutParams(marker.getPosition()));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }else{
                 mMapView.updateViewLayout(pop,createLayoutParams(marker.getPosition()));
             }
-            tvPop.setText(marker.getTitle());
-            pop.setOnClickListener(new View.OnClickListener() {
+            try{
+                tvStationName.setText(marker.getTitle());
+                mDatasLeft = getResources().getStringArray(R.array.index_left);
+                mDatasRight = getResources().getStringArray(R.array.index_right);
+                mValueDatasLeft  = getResources().getStringArray(R.array.value_left);
+                mValueRight = getResources().getStringArray(R.array.value_right);
+                Log.d("DashboardFragment","-----mDatasLeft======"+mDatasLeft);
+                Log.d("DashboardFragment","-----mDatasRight======"+mDatasRight);
+                Log.d("DashboardFragment","-----mValueDatasLeft======"+mValueDatasLeft);
+                Log.d("DashboardFragment","-----mValueRight======"+mValueRight);
+                detailAdapterLeft = new simpleArrayAdapter(getActivity(),R.layout.layout_markerdetail_item, mDatasLeft);
+                detailAdapterRight = new simpleArrayAdapter(getActivity(),R.layout.layout_markerdetail_item, mDatasRight);
+                valueAdapterLeft = new simpleArrayAdapter(getActivity(),R.layout.layout_markerdetail_item, mValueDatasLeft);
+                valueAdapterRight = new simpleArrayAdapter(getActivity(),R.layout.layout_markerdetail_item, mValueRight);
+                detailLvLeft.setAdapter(detailAdapterLeft);
+                detailLvRight.setAdapter(detailAdapterRight);
+                valueLvLeft.setAdapter(valueAdapterLeft);
+                valueLvRight.setAdapter(valueAdapterRight);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            tvStationName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //将userName和stationId串到StationActity
@@ -170,7 +205,9 @@ public class DashboardFragment extends Fragment {
         MapViewLayoutParams.Builder builder =  new MapViewLayoutParams.Builder();
         builder.layoutMode(MapViewLayoutParams.ELayoutMode.mapMode);//指定坐标类型为经纬度
         builder.position(position);//设置标志的位置
-        builder.yOffset(-80);//设置View的偏移量
+        builder.yOffset(-90);//设置View的偏移量
+        builder.width(mMapView.getWidth());
+        builder.height(400);
         MapViewLayoutParams params = builder.build();
         return params;
     }

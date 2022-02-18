@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.weatherapplication.util.NetUtil;
+import com.example.weatherapplication.util.StatusBarUtils;
 import com.example.weatherapplication.util.ToastUtil;
 
 import java.io.IOException;
@@ -28,7 +29,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        StatusBarUtils.setTransparent(this);
         //找到控件
         mBtnLogin = findViewById(R.id.btn_login);
         mEtUser = findViewById(R.id.et_username);//用户名
@@ -59,8 +60,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     ToastUtil.showMessage(LoginActivity.this,success);
                     intent = new Intent(LoginActivity.this,MainActivity.class);
                     intent.putExtra("userName",userName);
-                    //intent.putExtra("stationId", "25");
-                   // intent.putExtra("stationName","qqqqq");
                     startActivity(intent);
                 }else{
                     intent = null;

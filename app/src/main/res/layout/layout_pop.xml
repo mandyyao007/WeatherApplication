@@ -12,5 +12,4 @@
         android:gravity="center"
         android:background="@drawable/tv_pop">
     </TextView>
-
 </LinearLayout>

@@ -10,7 +10,7 @@
         android:id="@+id/station_top_layout"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="#F5F5F5">
+        android:background="@color/stationTop">
       <ImageView
           android:id="@+id/station_iv_back"
           android:layout_height="match_parent"

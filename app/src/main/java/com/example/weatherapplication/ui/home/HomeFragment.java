@@ -1,6 +1,5 @@
 package com.example.weatherapplication.ui.home;
 
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,11 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatSpinner;
@@ -52,8 +49,6 @@ import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -65,20 +60,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
     private HomeViewModel homeViewModel;
     private FragmentHomeBinding binding;
-    ////
-    private AppCompatSpinner  mIndexSpinner;
-    private simpleArrayAdapter mIndexAdapter;
-    private String[] mIndexs,indexsUint;
-    private TextView tvStation,tvIndex,tvIndexUint;
+    private String[] mIndexs,indexsUint,selectedIndex;
+    private TextView tvStation,tvChartname1,tvChartname2,tvChartname3,tvNewestData1,tvNewestData2,tvNewestData3;
     private ImageView ivAdd,ivPerson;
     String  userName,stationId,stationName;
     private Map indexMap;
-    private LineChart lineChart;
-    private List<Entry> entries;
-    boolean first=true;//spinner第一次不触发
-    String reportOfIndex = null;
+    private LineChart lineChart1,lineChart2,lineChart3;
+    private List<Entry> entries1,entries2,entries3;
     String weatherStationId = null;
-    private Button btOneDay,btSevenDay, btThirtyDay,btNintyDay;
+    private Button btOneDay,btSevenDay, btThirtyDay,btNintyDay,btMeteorology,btPlant,btSoil;
 
     private Handler mHandler = new Handler(Looper.myLooper()){
         @Override
@@ -98,17 +88,43 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View fragmentHomeView = binding.getRoot();
         initView(fragmentHomeView);
-        if(stationId!= null) {
-            mIndexSpinner.setOnItemSelectedListener(listenerIndex); ////为mIndexSpinner设置监听事件
-            initSpinner();
-        }else{
-            mIndexSpinner.setVisibility(View.INVISIBLE);//如果没有选中station直接打开数据，就不显示下拉框
+        try{
+            if(stationId!= null) {
+                initIndex();
+                btMeteorology.setOnClickListener(this);
+                btPlant.setOnClickListener(this);
+                btSoil.setOnClickListener(this);
+            }else{
+                btMeteorology.setVisibility(View.INVISIBLE);//如果没有选中station直接打开数据，就不显示按钮
+                btPlant.setVisibility(View.INVISIBLE);
+                btSoil.setVisibility(View.INVISIBLE);
+            }
+            ivAdd.setOnClickListener(this);
+            ivPerson.setOnClickListener(this);
+            lineChart1.setNoDataText("");//无数据时显示的文字
+            lineChart2.setNoDataText("");
+            lineChart3.setNoDataText("");
+        }catch (Exception e) {
+            e.printStackTrace();
         }
-        ivAdd.setOnClickListener(this);
-        ivPerson.setOnClickListener(this);
-        lineChart.setNoDataText("");//无数据时显示的文字
         return fragmentHomeView;
     }
+
+    private void initIndex() {
+        try {
+            if(stationId!= null){
+                IndexBean indexbean = NetUtil.getIndexInfo(stationId);
+                mIndexs  =  getIndexOfStation(indexbean);
+                Log.d("HomeFragment","===mIndexs==:"+ mIndexs);
+                indexMap =  getIndexOfStationMap(indexbean);
+                Log.d("HomeFragment","===indexMap==:"+ indexMap.toString());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void initView(View fragmentHomeView) {
         userName = getActivity().getIntent().getStringExtra("userName");
         stationId = getActivity().getIntent().getStringExtra("stationId");
@@ -118,166 +134,172 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         Log.d("HomeFragment","=&&&&&&&&==stationId==:"+ stationId);
         Log.d("HomeFragment","=&&&&&&&&==stationName==:"+ stationName);
         Log.d("HomeFragment","=&&&&&&&&==weatherStationId==:"+ weatherStationId);
-        mIndexSpinner = fragmentHomeView.findViewById(R.id.sp_index);
         tvStation = fragmentHomeView.findViewById(R.id.tv_station);
-        tvIndex = fragmentHomeView.findViewById(R.id.tv_index);
-        tvIndexUint =  fragmentHomeView.findViewById(R.id.tv_index_unit);
         tvStation.setText(stationName);
         ivAdd = (ImageView) fragmentHomeView.findViewById(R.id.iv_add);
-        lineChart = (LineChart) fragmentHomeView.findViewById(R.id.linechart);
+        lineChart1 = (LineChart) fragmentHomeView.findViewById(R.id.linechart_1);
+        lineChart2 = (LineChart) fragmentHomeView.findViewById(R.id.linechart_2);
+        lineChart3 = (LineChart) fragmentHomeView.findViewById(R.id.linechart_3);
         btOneDay = fragmentHomeView.findViewById(R.id.btn_one_day);
         btSevenDay = fragmentHomeView.findViewById(R.id.btn_seven_day);
         btThirtyDay = fragmentHomeView.findViewById(R.id.btn_thirty_day);
         btNintyDay = fragmentHomeView.findViewById(R.id.btn_ninty_day);
         ivPerson = fragmentHomeView.findViewById(R.id.iv_person);
+        btMeteorology = fragmentHomeView.findViewById(R.id.btn_meteorology);
+        btPlant = fragmentHomeView.findViewById(R.id.btn_plant);
+        btSoil  = fragmentHomeView.findViewById(R.id.btn_soil);
+        tvChartname1 = fragmentHomeView.findViewById(R.id.chartname_tv_1);
+        tvChartname2 = fragmentHomeView.findViewById(R.id.chartname_tv_2);
+        tvChartname3 = fragmentHomeView.findViewById(R.id.chartname_tv_3);
+        tvNewestData1 = fragmentHomeView.findViewById(R.id.newestData_tv_1);
+        tvNewestData2 = fragmentHomeView.findViewById(R.id.newestData_tv_2);
+        tvNewestData3 = fragmentHomeView.findViewById(R.id.newestData_tv_3);
     }
-
-    private void initSpinner() {
-        ///index列表
-        try {
-            if(stationId!= null){
-                IndexBean indexbean = NetUtil.getIndexInfo(stationId);
-                mIndexs = getIndexOfStation(indexbean);
-                mIndexAdapter = new simpleArrayAdapter<String>(this.getActivity(), R.layout.index_item_layout,mIndexs);
-                mIndexAdapter.setDropDownViewResource(R.layout.index_item_layout);
-                mIndexSpinner.setAdapter(mIndexAdapter);
-                mIndexSpinner.setSelection(mIndexs.length - 1);
-                //mIndexSpinner.setDropDownWidth(100);//设置下拉菜单的宽度
-                indexMap = getIndexOfStationMap(indexbean);
-                Log.d("HomeFragment","===indexMap==:"+ indexMap.toString());
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            Field popup = AppCompatSpinner.class.getDeclaredField("mPopup");
-            popup.setAccessible(true);
-            // Get private mPopup member variable and try cast to ListPopupWindow
-            android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(mIndexSpinner);
-            // Set popupWindow height to 50px
-            popupWindow.setHeight(50);
-        }
-        catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
-            // silently fail...
-        }
-
-    }
-
     @Override
     public void onClick(View v) {
         Intent intent = null;
         switch (v.getId()) {
             case R.id.iv_add:
-                Log.d("HomeFragment", "click11111111111111111111");
                 intent = new Intent(getActivity(), StationActivity.class);
                 intent.putExtra("userName",userName);
                 intent.putExtra("weatherStationId",weatherStationId);
-
+                startActivity(intent);
                 break;
             case R.id.iv_person:
-                Log.d("HomeFragment", "click2222222222222222222222");
                 intent = new Intent(getActivity(), LoginActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.btn_meteorology:
+                setEnable(btMeteorology);
+                selectedIndex = new String[]{"AirTC_Avg1-Avg", "RH_Avg1-Avg", "PAR_Avg1-Avg"};
+                indexsUint =new String[]{"Dec C","%","umol.s-1.m-2"};
+                clickAndDraw(selectedIndex,indexsUint);
+                break;
+            case R.id.btn_plant:
+                setEnable(btPlant);
+                selectedIndex = new String[]{"DD_Avg1-Avg", "TDP_Avg1-Avg"};
+                indexsUint =new String[]{"mm","mV"};
+                clickAndDraw(selectedIndex,indexsUint);
+                break;
+            case R.id.btn_soil:
+                setEnable(btSoil);
+                selectedIndex = new String[]{"SoilVWC_Avg1-Avg", "SoilEC_Avg1-Avg", "SoilTemp_Avg1-Avg"};
+                indexsUint =new String[]{"m3/m3","uS/cm","deg_C"};
+                clickAndDraw(selectedIndex,indexsUint);
                 break;
         }
-        startActivity(intent);
-    }
 
-    AdapterView.OnItemSelectedListener listenerIndex = new AdapterView.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            if (first) {
-                Log.d("HomeFragment", "1111111111111111111111111111");
-                first= false;//第一次不触发
-            } else {
-                String selectedIndex = mIndexs[position];
-                String selectedUint = "";
-                if(indexsUint != null){
-                    selectedUint = indexsUint[position];
-                }
-                //tvIndexUint.setText(selectedUint);
-                Log.d("HomeFragment", "===selectedIndex==:" + selectedIndex);
-                Log.d("HomeFragment", "===selectedUint==:" + selectedUint);
-                String selectConfigId = (String) indexMap.get(selectedIndex);
-                Log.d("HomeFragment", "===selectConfigId==:" + selectConfigId);
-                Date endDate = new Date();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd:hh:mm");
-                Calendar c = Calendar.getInstance();
-                c.add(Calendar.DATE, -1);
-                String startDateStr = sdf.format(c.getTime());
-                String endDateStr = sdf.format(endDate);
-                try {
-                    if(!"-1".equals(selectConfigId)){
-                        int count = 1;
-                        ReportBean newestRrpotData = NetUtil.getNewestData(selectConfigId, stationId,1);
-                        if(newestRrpotData != null  && newestRrpotData.getmDayReportBeans() != null) {
-                            List<DayReportBean> dayReports = newestRrpotData.getmDayReportBeans();
-                            if(dayReports == null){
-                                return ;
-                            }
-                            Iterator it = dayReports.iterator();
-                            while(it.hasNext()){
-                                DayReportBean dayReportBean = (DayReportBean)it.next();
-                                Log.d("HomeFragment", "===dayReportBean.getCol1()==:" + dayReportBean.getCol1());
-                                Log.d("HomeFragment", "===selectedUint==:" + selectedUint);
-                                tvIndex.setText(dayReportBean.getCol1());
-                                tvIndexUint.setText(selectedUint);
-                            }
+    }
+    private void setEnable(Button btn) {
+        List<Button> buttonList=new ArrayList<>();
+        if (buttonList.size()==0){
+            buttonList.add(btMeteorology);
+            buttonList.add(btPlant);
+            buttonList.add(btSoil);
+        }
+        for (int i = 0; i <buttonList.size() ; i++) {
+            buttonList.get(i).setEnabled(true);
+        }
+        btn.setEnabled(false);
+    }
+    private void clickAndDraw(String[] selectedIndex,String[] selectedIndexUint){
+        Log.d("HomeFragment", "===selectedIndex  count=:" + selectedIndex.length);
+        tvChartname1.setVisibility(View.INVISIBLE);
+        tvNewestData1.setVisibility(View.INVISIBLE);
+        lineChart1.setVisibility(View.INVISIBLE);
+        tvChartname2.setVisibility(View.INVISIBLE);
+        tvNewestData2.setVisibility(View.INVISIBLE);
+        lineChart2.setVisibility(View.INVISIBLE);
+        tvChartname3.setVisibility(View.INVISIBLE);
+        tvNewestData3.setVisibility(View.INVISIBLE);
+        lineChart3.setVisibility(View.INVISIBLE);
+        for(int i=0; i<selectedIndex.length;i++){
+            String index = selectedIndex[i];
+            String indexUint = selectedIndexUint[i];
+            String selectConfigId = (String) indexMap.get(index);
+            Log.d("HomeFragment", "===selectConfigId==:" + selectConfigId+"=====indexUint===:"+indexUint+"=====index===:"+index);
+            Date endDate = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd:hh:mm");
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.DATE, -1);
+            String startDateStr = sdf.format(c.getTime());
+            String endDateStr = sdf.format(endDate);
+            String newestData = "";
+            try {
+                if(!"-1".equals(selectConfigId)){
+                    ///最上面显示的是最新的记录
+                    ReportBean newestRrpotData = NetUtil.getNewestData(selectConfigId, stationId,1);
+                    if(newestRrpotData != null  && newestRrpotData.getmDayReportBeans() != null) {
+                        List<DayReportBean> dayReports = newestRrpotData.getmDayReportBeans();
+                        if(dayReports == null){
+                            return ;
                         }
-                        //String reportOfIndex = NetUtil.getReportOfIndex(selectConfigId, stationId, startDateStr, endDateStr);
-                        ReportBean  reportBean = NetUtil.getReportDataOfIndex(selectConfigId, stationId,"2022-01-25", "2022-01-26");
-//                        ReportBean reportBean = NetUtil.getNewestData(selectConfigId, stationId,12);;
-                        Log.d("HomeFragment", "===reportBean==:" + reportBean);
-                        if(reportBean != null  && reportBean.getmDayReportBeans() != null) {
-                            lineChart.zoom(0.25f,1f,0,0);
-                            setLineChart(reportBean);
-                            lineChart.notifyDataSetChanged();
-                            lineChart.getData().notifyDataChanged();
-                            lineChart.invalidate();
+                        Iterator it = dayReports.iterator();
+                        while(it.hasNext()){
+                            DayReportBean dayReportBean = (DayReportBean)it.next();
+                            Log.d("HomeFragment", "===dayReportBean.getCol1()==:" + dayReportBean.getCol1());
+                            newestData = dayReportBean.getCol1();
                         }
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    ReportBean  reportBean = NetUtil.getReportDataOfIndex(selectConfigId, stationId,"2022-01-25", "2022-01-26");
+                    Log.d("HomeFragment", "===reportBean==:" + reportBean);
+                    if(reportBean != null  && reportBean.getmDayReportBeans() != null) {
+                        if(i==0){
+                            tvChartname1.setText(index);
+                            tvChartname1.setVisibility(View.VISIBLE);
+                            tvNewestData1.setText(newestData);
+                            tvNewestData1.setVisibility(View.VISIBLE);
+                            lineChart1.setVisibility(View.VISIBLE);
+                            lineChart1.zoom(0.25f,1f,0,0);
+                            setLineChart(reportBean,lineChart1,entries1,index,indexUint);
+                            lineChart1.notifyDataSetChanged();
+                            lineChart1.getData().notifyDataChanged();
+                            lineChart1.invalidate();
+                        }
+                        if(i==1){
+                            tvChartname2.setText(index);
+                            tvChartname2.setVisibility(View.VISIBLE);
+                            tvNewestData2.setText(newestData);
+                            tvNewestData2.setVisibility(View.VISIBLE);
+                            lineChart2.setVisibility(View.VISIBLE);
+                            lineChart2.zoom(0.25f,1f,0,0);
+                            setLineChart(reportBean,lineChart2,entries2,index,indexUint);
+                            lineChart2.notifyDataSetChanged();
+                            lineChart2.getData().notifyDataChanged();
+                            lineChart2.invalidate();
+                        }
+                        if(i==2){
+                            tvChartname3.setText(index);
+                            tvChartname3.setVisibility(View.VISIBLE);
+                            tvNewestData3.setText(newestData);
+                            tvNewestData3.setVisibility(View.VISIBLE);
+                            lineChart3.setVisibility(View.VISIBLE);
+                            lineChart3.zoom(0.25f,1f,0,0);
+                            setLineChart(reportBean,lineChart3,entries3,index,indexUint);
+                            lineChart3.notifyDataSetChanged();
+                            lineChart3.getData().notifyDataChanged();
+                            lineChart3.invalidate();
+                        }
+                    }
                 }
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-
-        }
-    };
+    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
-    private void setData() {
-        int count = 0 ;
-        Log.d("HomeFragment","=&&&&&&&&==000000000000==:"+(lineChart.getData()!=null));
-        if(lineChart.getData()!=null ){
-            Log.d("HomeFragment","=&&&&&&&&==222222222222==:"+(lineChart.getData().getDataSetCount()));
-        }
-        if(lineChart.getData()!=null && lineChart.getData().getDataSetCount()>=1){
-            lineChart.getData().getDataSetByIndex(0).removeLast();
-            Log.d("HomeFragment","=&&&&&&&&==11111111111==:");
-           lineChart.getData().getDataSetByIndex(0).addEntry(new Entry(11,new Random().nextInt(100)));
-        }else{
-            entries = new ArrayList<>();
-            Log.d("HomeFragment","=&&&&&&&&==2222222222==:");
-            while( count<12 ){
-                entries.add(new Entry(count,new Random().nextInt(100)));
-                count++;
-            }
-        }
-
-    }
-    private void setData(ReportBean reportBean) {
+    private List<Entry> setData(ReportBean reportBean,List<Entry> entries) {
         if(reportBean == null){
-            return ;
+            return null;
         }
         List<DayReportBean> dayReports = reportBean.getmDayReportBeans();
         if(dayReports == null){
-            return ;
+            return null;
         }
         Iterator it = dayReports.iterator();
         int count = 0;
@@ -292,19 +314,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
             entries.add(new Entry(time,value));
             Log.d("HomeFragment", count+"==============value==:" +value);
             count++;
-//            if(dayReportBean.getAcquisitionTime()!=null && dayReportBean.getCol1()!= null ){
-//                tvIndex.setText(value+"");
-//            }
-//            if(tvIndex.getText()!= null){
-//                tvIndexUint.setText(selectedUint);
-//            }
         }
-        //反转entries
-//        if(entries!= null && !entries.isEmpty()){
-//            Collections.reverse(entries);
-//        }
-
         Log.d("HomeFragment", "==============entries==:" + entries.toString());
+        return entries;
     }
     private ReportBean getData(String reportResult) {
         Gson gson = new Gson();
@@ -312,31 +324,32 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         Log.d("HomeFragment", "=========getData=====reportBean==:" + reportBean);
         return reportBean;
     }
-    private void setLineChart(ReportBean reportBean){
-            setData(reportBean);
+    private void setLineChart(ReportBean reportBean,LineChart lineChart,List<Entry> entries,String index,String indexUint){
+            entries = setData(reportBean,entries);
             Log.d("HomeFragment", "=&&&&&&&&&&&entries==:" + entries);
             if (entries != null) {
-                LineDataSet dataSet = new LineDataSet(entries, "数据");
+                try {
+                LineDataSet dataSet = new LineDataSet(entries, index);
                 Log.d("HomeFragment", "=&&&&&&&&&&&dataSet==:" + dataSet);
                 dataSet.setColor(Color.parseColor("#FFFFFFFF"));//线条颜色
                 dataSet.setCircleColor(Color.parseColor("#FFFFFFFF"));//圆点颜色
                 dataSet.setCircleRadius(2f);//设置焦点圆心的大小
                 dataSet.setLineWidth(1.5f);//线条宽度
                 dataSet.setValueTextColor(Color.parseColor("#FFFFFFFF"));//设置显示值的文字颜色
-                dataSet.setValueTextSize(13f);//设置显示值的文字大小
+                dataSet.setValueTextSize(7f);//设置显示值的文字大小
                 dataSet.setCubicIntensity(0.9f);//设置曲线的平滑度
                 dataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
                 YAxis rightAxis = lineChart.getAxisRight();
                 rightAxis.setEnabled(false);//右侧Y轴不显示
                 YAxis leftAxis = lineChart.getAxisLeft();//左侧Y轴
                 leftAxis.setTextSize(10f);
-                leftAxis.setDrawGridLines(false);//绘制网格线
+                leftAxis.setDrawGridLines(true);//绘制网格线
                 leftAxis.setEnabled(false);
                 XAxis xAxis = lineChart.getXAxis();
                 xAxis.setTextColor(Color.BLUE);//设置X轴刻度颜色
                 xAxis.setTextSize(13f);//设置X轴刻度字体大小
                 xAxis.setDrawAxisLine(true);//设置为true，则绘制该行旁边的轴线
-                xAxis.setDrawGridLines(false);//绘制网格线
+                xAxis.setDrawGridLines(true);//绘制网格线
                 xAxis.setDrawLabels(true);//绘制标签，即X轴上的对应数值
                 xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);//
                 xAxis.setGranularity(1f);//设置最小间隔
@@ -348,24 +361,30 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                     }
                 });
                 Legend legend = lineChart.getLegend();//图例
-                legend.setForm(Legend.LegendForm.LINE);//设置图例的形状
-                legend.setTextSize(15f);//设置图例字体大小
-                legend.setFormSize(15f);//设置图例形状大小
-               // legend.setTextColor(Color.BLUE);//设置图例颜色
-                legend.setEnabled(false);//不显示图例
+                legend.setForm(Legend.LegendForm.EMPTY);//设置图例的形状
+                legend.setTextSize(13f);//设置图例字体大小
+                legend.setTextColor(Color.WHITE);//设置图例颜色
+                legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);//设置图例位置
+                legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+                legend.setEnabled(false);//显示图例
                 Description description = lineChart.getDescription();//图表的描述信息
-                description.setEnabled(false);//是否显示图表描述信息
+                description.setText(indexUint);//显示单位
+                description.setTextSize(10f);
+                description.setTextColor(Color.WHITE);
+                description.setEnabled(true);//是否显示图表描述信息
                 LineData lineData = new LineData();
                 lineData.addDataSet(dataSet);
                 lineChart.setTouchEnabled(false);//设置是否可触摸
                 lineChart.setScaleEnabled(true);//设置是否可缩放
                 lineChart.setData(lineData);
                 lineChart.zoom(4,1,0,0);
-                //lineChart.setNoDataText("no data!");//无数据时显示的文字
                 lineChart.setExtraBottomOffset(10);//距离底部距离
                 lineChart.setTouchEnabled( true);//设置chart是否可以触摸
                 lineChart.setDragEnabled( true); //设置是否可以拖拽
                 lineChart.invalidate();//图表刷新
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -392,7 +411,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     private Map getIndexOfStationMap(IndexBean indexbean) {
         LinkedHashMap indexMap = new LinkedHashMap();
         List<IndexItemsBean> indexItems = indexbean.getmIndexItemBeans();
-        //Log.d("fan","====index=====Items==:"+indexItems.toString());
         if(indexItems == null){
             return null;
         }else{
@@ -402,7 +420,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 Log.d("fan","*********index=====Items==:"+item.toString());
                 indexMap.put(item.getDescription(),item.getCollectorConfigId());
             }
-            indexMap.put("请选择监测指标","-1");
         }
         Log.d("fan","*********indexMap==:"+indexMap);
         return indexMap;
@@ -410,10 +427,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
     private String[] getIndexOfStation(IndexBean indexbean) throws IOException {
         List<IndexItemsBean> indexItems = indexbean.getmIndexItemBeans();
-        //Log.d("fan","====indexItems==:"+indexItems.toString());
         int count = indexbean.getTotal();
-        String[] indexs = new String[count+1];
-        indexsUint = new String[count+1];
+        String[] indexs = new String[count];
+        indexsUint = new String[count];
         int i = 0;
         if(indexItems == null){
             return null;
@@ -425,69 +441,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 indexsUint[i] = item.getUnit();
                 i++;
             }
-            indexs[i] = "请选择监测指标";
-            indexsUint[i] = "";
-            for(int j=0; j<=count;j++){
+            for(int j=0; j<count;j++){
                 System.out.println("======indexs =====:"+indexs[j] +"("+indexsUint[j]+")");
             }
         }
         return indexs;
     }
-    private Map getIndexMap(StationBean stationBean) {
-        LinkedHashMap stationMap = new LinkedHashMap();
-        List<StationItemBean> stationItems = stationBean.getmItemBeans();
-        //Log.d("fan","====station=====Items==:"+stationItems.toString());
-        if(stationItems == null){
-            return null;
-        }else{
-            Iterator it = stationItems.iterator();
-            while(it.hasNext()){
-                StationItemBean item = (StationItemBean) it.next();
-                //Log.d("fan","*********station=====Items==:"+item.toString());
-                stationMap.put(item.getCollectorName(),item.getId());
-            }
-        }
-        Log.d("fan","*********stationMap==:"+stationMap);
-        return stationMap;
-    }
-    private LinkedHashMap getStationMap(StationBean stationBean) {
-        LinkedHashMap stationMap = new LinkedHashMap();
-        List<StationItemBean> stationItems = stationBean.getmItemBeans();
-        //Log.d("fan","====station=====Items==:"+stationItems.toString());
-        if(stationItems == null){
-            return null;
-        }else{
-            Iterator it = stationItems.iterator();
-            while(it.hasNext()){
-                StationItemBean item = (StationItemBean) it.next();
-                //Log.d("fan","*********station=====Items==:"+item.toString());
-                stationMap.put(item.getCollectorName(),item.getId());
-            }
-        }
-        Log.d("fan","*********stationMap==:"+stationMap);
-        return stationMap;
-    }
-
-    private String[] getStationList(StationBean stationBean) {
-        List<StationItemBean> stationItems = stationBean.getmItemBeans();
-        //Log.d("fan","====stationItems==:"+stationItems.toString());
-        int count = stationBean.getTotal();
-        String[] stations = new String[count];
-        int i =0;
-        if(stationItems == null){
-            return null;
-        }else{
-            Iterator it = stationItems.iterator();
-            while(it.hasNext()){
-               StationItemBean item = (StationItemBean) it.next();
-               stations[i] = item.getCollectorName();
-               i++;
-            }
-            for(int j=0; j<count;j++){
-                System.out.println("======station =====:"+stations[j] );
-            }
-        }
-        return stations;
-    }
-
 }

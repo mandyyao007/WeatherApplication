@@ -8,8 +8,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class WeatherStationItemBean {
     @SerializedName("weatherStationName")
-    private String weatherStationName;
-    @SerializedName("weatherStationId")
+    private String weatherStationName;    @SerializedName("weatherStationId")
     private String weatherStationId;
 
     @SerializedName("latitude")

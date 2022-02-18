@@ -14,6 +14,7 @@ import android.widget.ListView;
 import com.example.weatherapplication.adapter.StationAdapter;
 import com.example.weatherapplication.bean.StationItemBean;
 import com.example.weatherapplication.util.NetUtil;
+import com.example.weatherapplication.util.StatusBarUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_station);
+        StatusBarUtils.setColor(this, getResources().getColor(R.color.stationTop));
         //  在Android4.0以后，会发现，只要是写在主线程（就是Activity）中的HTTP请求，运行时都会报错，这是因为Android在4.0以后为了防止应用的ANR（Aplication Not Response）异常，
         //  Android这个设计是为了防止网络请求时间过长而导致界面假死的情况发生。
         //以下适用于数据量很小的情况
