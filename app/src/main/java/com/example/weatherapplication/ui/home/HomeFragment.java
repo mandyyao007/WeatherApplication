@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -28,6 +30,7 @@ import com.example.weatherapplication.bean.IndexItemsBean;
 import com.example.weatherapplication.bean.ReportBean;
 import com.example.weatherapplication.databinding.FragmentHomeBinding;
 import com.example.weatherapplication.util.NetUtil;
+import com.example.weatherapplication.util.ToastUtil;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
@@ -175,7 +178,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 break;
             case R.id.btn_meteorology:
                 setBtnEnable(btMeteorology,"category");
-                setDaysButtonEnable();
+                //setDaysButtonEnable();
                 selectedIndex = new String[]{"AirTC_Avg1-Avg", "RH_Avg1-Avg", "PAR_Avg1-Avg"};
                 indexsUint =new String[]{"Dec C","%","umol.s-1.m-2"};
                 setScrollInvisiable();
@@ -183,20 +186,34 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 break;
             case R.id.btn_plant:
                 setBtnEnable(btPlant,"category");
-                setDaysButtonEnable();
                 selectedIndex = new String[]{"DD_Avg1-Avg", "TDP_Avg1-Avg"};
                 indexsUint =new String[]{"mm","mV"};
                 setScrollInvisiable();
-                //clickAndDraw(selectedIndex,indexsUint,v);
                 break;
             case R.id.btn_soil:
                 setBtnEnable(btSoil,"category");
-                setDaysButtonEnable();
                 selectedIndex = new String[]{"SoilVWC_Avg1-Avg", "SoilEC_Avg1-Avg", "SoilTemp_Avg1-Avg"};
                 indexsUint =new String[]{"m3/m3","uS/cm","deg_C"};
                 setScrollInvisiable();
-               // clickAndDraw(selectedIndex,indexsUint,v);
                 break;
+        }
+        checkDayBtnAndDraw(selectedIndex,indexsUint);
+
+    }
+
+    private void checkDayBtnAndDraw(String[] selectedIndex, String[] indexsUint) {
+        int days = 0;
+        if(!btOneDay.isEnabled()){
+            days =1;
+        }else if(!btSevenDay.isEnabled()){
+            days =7;
+        }else if(!btThirtyDay.isEnabled()){
+            days =30;
+        }else if(!btNintyDay.isEnabled()){
+            days =90;
+        }
+        if(days != 0){
+            drawChart(selectedIndex,indexsUint,days);
         }
 
     }
@@ -213,11 +230,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         lineChart3.setVisibility(View.INVISIBLE);
     }
 
-    private void setDaysButtonEnable() {
-        btOneDay.setEnabled(true);
-        btSevenDay.setEnabled(true);
-        btThirtyDay.setEnabled(true);
-        btNintyDay.setEnabled(true);
+    private void setDaysButtonEnable(Boolean b) {
+        btOneDay.setEnabled(b);
+        btSevenDay.setEnabled(b);
+        btThirtyDay.setEnabled(b);
+        btNintyDay.setEnabled(b);
     }
 
     View.OnClickListener dayListener =  new View.OnClickListener() {
@@ -228,24 +245,21 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 case R.id.btn_one_day:
                     days = 1;
                     setBtnEnable(btOneDay,"days");
-                    drawChart(selectedIndex,indexsUint,days);
                     break;
                 case R.id.btn_seven_day:
                     days = 7;
                     setBtnEnable(btSevenDay,"days");
-                    drawChart(selectedIndex,indexsUint,days);
                     break;
                 case R.id.btn_thirty_day:
                     days = 30;
                     setBtnEnable(btThirtyDay,"days");
-                    drawChart(selectedIndex,indexsUint,days);
                     break;
                 case R.id.btn_ninty_day:
                     days = 90;
                     setBtnEnable(btNintyDay,"days");
-                    drawChart(selectedIndex,indexsUint,days);
                     break;
             }
+            drawChart(selectedIndex,indexsUint,days);
         }
     };
     private void setBtnEnable(Button btn,String category) {
@@ -268,113 +282,122 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         btn.setEnabled(false);
     }
     private void drawChart(String[] selectedIndex, String[] selectedIndexUint,int days) {
-        Log.d("HomeFragment", "===selectedIndex  count=:" + selectedIndex.length);
-        ReportBean  reportBean = null;
-        for(int i=0; i<selectedIndex.length;i++){
-            String index = selectedIndex[i];
-            String indexUint = selectedIndexUint[i];
-            String selectConfigId = (String) indexMap.get(index);
-            Log.d("HomeFragment", "===selectConfigId==:" + selectConfigId+"=====indexUint===:"+indexUint+"=====index===:"+index);
-            Date endDate = new Date();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd:hh:mm");
-            Calendar c = Calendar.getInstance();
-            c.add(Calendar.DATE, -1);
-            String startDateStr = sdf.format(c.getTime());
-            String endDateStr = sdf.format(endDate);
-            String newestData = "";
-            try {
-                if(!"-1".equals(selectConfigId)){
-                    ///最上面显示的是最新的记录
-                    ReportBean newestRrpotData = NetUtil.getNewestData(selectConfigId, stationId,1);
-                    if(newestRrpotData != null  && newestRrpotData.getmDayReportBeans() != null) {
-                        List<DayReportBean> dayReports = newestRrpotData.getmDayReportBeans();
-                        if(dayReports == null){
-                            return ;
+        if(selectedIndex!= null){
+            Log.d("HomeFragment", "===selectedIndex  count=:" + selectedIndex.length);
+            ReportBean  reportBean = null;
+            for(int i=0; i<selectedIndex.length;i++){
+                String index = selectedIndex[i];
+                String indexUint = selectedIndexUint[i];
+                String selectConfigId = (String) indexMap.get(index);
+                Log.d("HomeFragment", "===selectConfigId==:" + selectConfigId+"=====indexUint===:"+indexUint+"=====index===:"+index);
+                Date endDate = new Date();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd:hh:mm");
+                Calendar c = Calendar.getInstance();
+                c.add(Calendar.DATE, -1);
+                String startDateStr = sdf.format(c.getTime());
+                String endDateStr = sdf.format(endDate);
+                String newestData = "";
+                try {
+                    if(!"-1".equals(selectConfigId)){
+                        ///最上面显示的是最新的记录
+                        ReportBean newestRrpotData = NetUtil.getNewestData(selectConfigId, stationId,1);
+                        if(newestRrpotData != null  && newestRrpotData.getmDayReportBeans() != null) {
+                            List<DayReportBean> dayReports = newestRrpotData.getmDayReportBeans();
+                            if(dayReports == null){
+                                return ;
+                            }
+                            Iterator it = dayReports.iterator();
+                            while(it.hasNext()){
+                                DayReportBean dayReportBean = (DayReportBean)it.next();
+                                Log.d("HomeFragment", "===dayReportBean.getCol1()==:" + dayReportBean.getCol1());
+                                newestData = dayReportBean.getCol1();
+                            }
                         }
-                        Iterator it = dayReports.iterator();
-                        while(it.hasNext()){
-                            DayReportBean dayReportBean = (DayReportBean)it.next();
-                            Log.d("HomeFragment", "===dayReportBean.getCol1()==:" + dayReportBean.getCol1());
-                            newestData = dayReportBean.getCol1();
+                        Log.d("HomeFragment", "=============days==:" + days);
+                        switch(days){
+                            case 1:
+                                reportBean= NetUtil.getReportDataOfIndex(selectConfigId, stationId,"2022-01-25", "2022-01-26");
+                                break;
+                            case 7:
+                                reportBean= NetUtil.getReportDataOfIndex(selectConfigId, stationId,"2022-01-27", "2022-01-28");
+                                break;
+                            case 30:
+                                reportBean= NetUtil.getReportDataOfIndex(selectConfigId, stationId,"2022-02-01", "2022-02-02");
+                                break;
+                            case 90:
+                                reportBean= NetUtil.getReportDataOfIndex(selectConfigId, stationId,"2022-02-04", "2022-02-05");
+                                break;
+                        }
+                        Log.d("HomeFragment", "===reportBean==:" + reportBean);
+                        if(reportBean != null  && reportBean.getmDayReportBeans() != null) {
+                            if(i==0){
+                                scrollView.scrollTo(0,0);
+                                tvChartname1.setText(index);
+                                tvChartname1.setVisibility(View.VISIBLE);
+                                tvNewestData1.setText(newestData);
+                                tvNewestData1.setVisibility(View.VISIBLE);
+                                lineChart1.setVisibility(View.VISIBLE);
+                                lineChart1.zoom(0.25f,1f,0,0);
+                                setLineChart(reportBean,lineChart1,entries1,index,indexUint);
+                                lineChart1.notifyDataSetChanged();
+                                lineChart1.getData().notifyDataChanged();
+                                lineChart1.invalidate();
+                            }
+                            if(i==1){
+                                tvChartname2.setText(index);
+                                tvChartname2.setVisibility(View.VISIBLE);
+                                tvNewestData2.setText(newestData);
+                                tvNewestData2.setVisibility(View.VISIBLE);
+                                lineChart2.setVisibility(View.VISIBLE);
+                                lineChart2.zoom(0.25f,1f,0,0);
+                                setLineChart(reportBean,lineChart2,entries2,index,indexUint);
+                                lineChart2.notifyDataSetChanged();
+                                lineChart2.getData().notifyDataChanged();
+                                lineChart2.invalidate();
+                            }
+                            if(i==2){
+                                tvChartname3.setText(index);
+                                tvChartname3.setVisibility(View.VISIBLE);
+                                tvNewestData3.setText(newestData);
+                                tvNewestData3.setVisibility(View.VISIBLE);
+                                lineChart3.setVisibility(View.VISIBLE);
+                                lineChart3.zoom(0.25f,1f,0,0);
+                                setLineChart(reportBean,lineChart3,entries3,index,indexUint);
+                                lineChart3.notifyDataSetChanged();
+                                lineChart3.getData().notifyDataChanged();
+                                lineChart3.invalidate();
+                            }
+                        }else{
+                            if(i==0){
+                                tvChartname1.setVisibility(View.INVISIBLE);
+                                tvNewestData1.setVisibility(View.INVISIBLE);
+                                lineChart1.setVisibility(View.INVISIBLE);
+                            }
+                            if(i==1){
+                                tvChartname2.setVisibility(View.INVISIBLE);
+                                tvNewestData2.setVisibility(View.INVISIBLE);
+                                lineChart2.setVisibility(View.INVISIBLE);
+                            }
+                            if(i==2){
+                                tvChartname3.setVisibility(View.INVISIBLE);
+                                tvNewestData3.setVisibility(View.INVISIBLE);
+                                lineChart3.setVisibility(View.INVISIBLE);
+                            }
                         }
                     }
-                    Log.d("HomeFragment", "=============days==:" + days);
-                    switch(days){
-                        case 1:
-                            reportBean= NetUtil.getReportDataOfIndex(selectConfigId, stationId,"2022-01-25", "2022-01-26");
-                            break;
-                        case 7:
-                            reportBean= NetUtil.getReportDataOfIndex(selectConfigId, stationId,"2022-01-27", "2022-01-28");
-                            break;
-                        case 30:
-                            reportBean= NetUtil.getReportDataOfIndex(selectConfigId, stationId,"2022-02-01", "2022-02-02");
-                            break;
-                        case 90:
-                            reportBean= NetUtil.getReportDataOfIndex(selectConfigId, stationId,"2022-02-04", "2022-02-05");
-                            break;
-                    }
-                    Log.d("HomeFragment", "===reportBean==:" + reportBean);
-                    if(reportBean != null  && reportBean.getmDayReportBeans() != null) {
-                        if(i==0){
-                            scrollView.scrollTo(0,0);
-                            tvChartname1.setText(index);
-                            tvChartname1.setVisibility(View.VISIBLE);
-                            tvNewestData1.setText(newestData);
-                            tvNewestData1.setVisibility(View.VISIBLE);
-                            lineChart1.setVisibility(View.VISIBLE);
-                            lineChart1.zoom(0.25f,1f,0,0);
-                            setLineChart(reportBean,lineChart1,entries1,index,indexUint);
-                            lineChart1.notifyDataSetChanged();
-                            lineChart1.getData().notifyDataChanged();
-                            lineChart1.invalidate();
-                        }
-                        if(i==1){
-                            tvChartname2.setText(index);
-                            tvChartname2.setVisibility(View.VISIBLE);
-                            tvNewestData2.setText(newestData);
-                            tvNewestData2.setVisibility(View.VISIBLE);
-                            lineChart2.setVisibility(View.VISIBLE);
-                            lineChart2.zoom(0.25f,1f,0,0);
-                            setLineChart(reportBean,lineChart2,entries2,index,indexUint);
-                            lineChart2.notifyDataSetChanged();
-                            lineChart2.getData().notifyDataChanged();
-                            lineChart2.invalidate();
-                        }
-                        if(i==2){
-                            tvChartname3.setText(index);
-                            tvChartname3.setVisibility(View.VISIBLE);
-                            tvNewestData3.setText(newestData);
-                            tvNewestData3.setVisibility(View.VISIBLE);
-                            lineChart3.setVisibility(View.VISIBLE);
-                            lineChart3.zoom(0.25f,1f,0,0);
-                            setLineChart(reportBean,lineChart3,entries3,index,indexUint);
-                            lineChart3.notifyDataSetChanged();
-                            lineChart3.getData().notifyDataChanged();
-                            lineChart3.invalidate();
-                        }
-                    }else{
-                        if(i==0){
-                            tvChartname1.setVisibility(View.INVISIBLE);
-                            tvNewestData1.setVisibility(View.INVISIBLE);
-                            lineChart1.setVisibility(View.INVISIBLE);
-                        }
-                        if(i==1){
-                            tvChartname2.setVisibility(View.INVISIBLE);
-                            tvNewestData2.setVisibility(View.INVISIBLE);
-                            lineChart2.setVisibility(View.INVISIBLE);
-                        }
-                        if(i==2){
-                            tvChartname3.setVisibility(View.INVISIBLE);
-                            tvNewestData3.setVisibility(View.INVISIBLE);
-                            lineChart3.setVisibility(View.INVISIBLE);
-                        }
-                    }
-                }
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
+        }else{
+            String message = "请先选择类别";
+            Toast toastCenter = Toast.makeText(getActivity().getApplicationContext(), message,Toast.LENGTH_SHORT);
+            toastCenter.setGravity(Gravity.CENTER,0,0);
+            toastCenter.show();
+            setDaysButtonEnable(true);
         }
+
     }
 
     @Override
