@@ -3,9 +3,12 @@
     <string name="title_home">数据</string>
     <string name="title_dashboard">地图</string>
     <string name="title_notifications">评价</string>
+    <string name="title_me">我</string>
     <string name="btn_meteorology">气象</string>
     <string name="btn_plant">植物</string>
     <string name="btn_soil">土壤</string>
+    <string name="btn_tree">植株</string>
+    <string name="btn_community">群落</string>
 
     <string-array name="index_left">
         <item>空气温度:</item>

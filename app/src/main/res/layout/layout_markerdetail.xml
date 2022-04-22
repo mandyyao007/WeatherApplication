@@ -32,31 +32,5 @@
                     android:layout_marginLeft="5dp"
                     android:layout_weight="1">
                 </ListView>
-                <ListView
-                    android:id="@+id/value_left_lv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:layout_weight="1">
-                </ListView>
-                <ImageView
-                    android:id="@+id/iv_mid_line"
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="#DCDCDC"/>
-                <ListView
-                    android:id="@+id/detail_right_lv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:layout_weight="1">
-                </ListView>
-                <ListView
-                    android:id="@+id/value_right_lv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:layout_weight="1">
-                </ListView>
         </LinearLayout>
 </LinearLayout>

@@ -2,11 +2,14 @@ package com.example.weatherapplication.util;
 
 import android.util.Log;
 
+import com.example.weatherapplication.bean.CollectorBean;
+import com.example.weatherapplication.bean.DaysDataItemBean;
 import com.example.weatherapplication.bean.IndexBean;
 import com.example.weatherapplication.bean.LoginBean;
 import com.example.weatherapplication.bean.ReportBean;
-import com.example.weatherapplication.bean.StationBean;
-import com.example.weatherapplication.bean.StationItemBean;
+import com.example.weatherapplication.bean.CollectorItemBean;
+import com.example.weatherapplication.bean.DaysDataBean;
+import com.example.weatherapplication.bean.TreeBean;
 import com.example.weatherapplication.bean.WeatherStationBean;
 import com.example.weatherapplication.bean.WeatherStationItemBean;
 import com.google.gson.Gson;
@@ -21,14 +24,18 @@ import java.net.URL;
 import java.util.List;
 
 public class NetUtil {
-    //public static final String HTTPHOST = "10.68.201.78:9000";
-    public static final String HTTPHOST = "47.98.106.23:9000";
-    public static final String URL_LOGIN =  "http://"+HTTPHOST+"/user/check_login";//"http://47.98.106.23:9000/user/check_login";
-    public static final String URL_STATION = "http://"+HTTPHOST+"/basic/show_collector_list";//"http://47.98.106.23:9000/basic/show_collector_list";
-    public static final String URL_INDEX = "http://"+HTTPHOST+"/basic/show_collector_config_list";;//"http://47.98.106.23:9000/basic/show_collector_config_list";
-    public static final String URL_WEATHER_STATION = "http://"+HTTPHOST+"/basic/show_weather_station_list";//"http://47.98.106.23:9000/basic/show_collector_list";
-    public static final String URL_REPORT_DATA = "http://"+HTTPHOST+"/basic/show_report_data_list"; //"http://47.98.106.23:9000/basic/show_report_data_list";
-    public static final String URL_TODAY_DATA = "http://"+HTTPHOST+"/basic/show_CDV_data_list"; //"http://47.98.106.23:9000/basic/show_report_data_list";
+    public static final String HTTPHOST = "10.68.201.78:9000";
+    // public static final String HTTPHOST = "47.98.106.23:9000";
+    //public static final String HTTPHOST = "106.15.5.62:9000";
+    public static final String URL_LOGIN =  "http://"+HTTPHOST+"/user/check_login";
+    public static final String URL_STATION = "http://"+HTTPHOST+"/basic/show_collector_list";
+    public static final String URL_INDEX = "http://"+HTTPHOST+"/basic/show_collector_config_list";
+    public static final String URL_WEATHER_STATION = "http://"+HTTPHOST+"/basic/show_weather_station_list";
+    public static final String URL_REPORT_DATA = "http://"+HTTPHOST+"/basic/show_report_data_list";
+    public static final String URL_TODAY_DATA = "http://"+HTTPHOST+"/basic/show_CDV_data_list";
+    public static final String URL_TREE = "http://"+HTTPHOST+"/basic/show_tree_list";
+    public static final String URL_TREE_DATA = "http://"+HTTPHOST+"/basic/show_tree_data_list";
+    public static final String URL_DAYS_DATA = "http://"+HTTPHOST+"/basic/show_CDV_data_by_type_list";
     public static String service(String urlStr,String method) throws IOException {
         String result = "";
         HttpURLConnection connection = null;
@@ -101,19 +108,19 @@ public class NetUtil {
         Log.d("fan","====weatherStationBean==:"+weatherStationBean.toString());
         return weatherStationBean;
     }
-    public static StationBean getStationInfo(String userName,String weatherStationId) throws IOException {
+    public static CollectorBean getStationInfo(String userName, String weatherStationId) throws IOException {
         String result ="";
         //拼接出URL
         String stationUrl = URL_STATION+"?userName="+userName+"&weatherStationId=" +weatherStationId;
         Log.d("fan","-----stationUrl======"+stationUrl);
         result = service(stationUrl,"POST");
         Gson gson = new Gson();
-        StationBean stationBean = gson.fromJson(result, StationBean.class);
-        return stationBean;
+        CollectorBean collectorBean = gson.fromJson(result, CollectorBean.class);
+        return collectorBean;
     }
-    public static  List<StationItemBean>  getStationItemInfo(String userName,String weatherStationId) throws IOException {
-        StationBean stationBean = getStationInfo(userName,weatherStationId);
-        List<StationItemBean> stationItems = stationBean.getmItemBeans();
+    public static  List<CollectorItemBean>  getStationItemInfo(String userName, String weatherStationId) throws IOException {
+        CollectorBean collectorBean = getStationInfo(userName,weatherStationId);
+        List<CollectorItemBean> stationItems = collectorBean.getmItemBeans();
         Log.d("fan","-----stationItems======"+stationItems);
         return stationItems;
     }
@@ -171,5 +178,45 @@ public class NetUtil {
         Log.d("fan","====getNewestData====解析后的reportBean==:"+reportBean.toString());
         return reportBean;
     }
-
+    public static TreeBean getTreeBean(String collectorId) throws IOException {
+        String dataResult ="";
+        //拼接出URL
+        String treeUrl = URL_TREE+"?collectorId="+collectorId;
+        Log.d("fan","-----getTreeBean======"+treeUrl);
+        dataResult = service(treeUrl,"POST");
+        Log.d("fan","-----getTreeBean  result======"+dataResult);
+        Gson gson = new Gson();
+        TreeBean treeBean = gson.fromJson(dataResult, TreeBean.class);
+        Log.d("fan","====getTreeBean====解析后的treeBean==:"+ treeBean.toString());
+        return treeBean;
+    }
+    public static CollectorItemBean.TreeDataBean getTreeDataBean(String treeId) throws IOException {
+        String dataResult ="";
+        //拼接出URL
+        String treeDataUrl = URL_TREE_DATA+"?day=1&treeId="+treeId;
+        Log.d("fan","-----getTreeDataBean====="+treeDataUrl);
+        dataResult = service(treeDataUrl,"POST");
+        Log.d("fan","-----getTreeDataBean  result======"+dataResult);
+        Gson gson = new Gson();
+        CollectorItemBean.TreeDataBean treeDataBean = gson.fromJson(dataResult, CollectorItemBean.TreeDataBean.class);
+        Log.d("fan","====getTreeDataBean====解析后的treeDataBean==:"+ treeDataBean.toString());
+        return treeDataBean;
+    }
+    public static List<DaysDataItemBean> getDaysData( String stationId,String configType, int day) throws IOException {
+        String dataResult ="";
+        //拼接出URL
+        String daysDataUrl = URL_DAYS_DATA+"?collectorId="+stationId+"&configType="+configType+"&day="+day;;
+        Log.d("fan","-----daysDataUrl======"+daysDataUrl);
+        dataResult = service(daysDataUrl,"POST");
+        Log.d("fan","-----getDaysData  result======"+dataResult);
+        Gson gson = new Gson();
+        DaysDataBean daysDataBean = gson.fromJson(dataResult, DaysDataBean.class);
+        Log.d("fan","====getDaysData====DaysDataBean==:"+daysDataBean.toString());
+        if(daysDataBean!= null && daysDataBean.getmItemBeans()!= null){
+            List<DaysDataItemBean> daysDataItemBeans =  daysDataBean.getmItemBeans();
+            return daysDataItemBeans;
+        }else{
+            return null;
+        }
+    }
 }

@@ -25,6 +25,8 @@ import com.example.weatherapplication.LoginActivity;
 import com.example.weatherapplication.R;
 import com.example.weatherapplication.StationActivity;
 import com.example.weatherapplication.bean.DayReportBean;
+import com.example.weatherapplication.bean.DaysDataItemBean;
+import com.example.weatherapplication.bean.DaysDataItemDetailBean;
 import com.example.weatherapplication.bean.IndexBean;
 import com.example.weatherapplication.bean.IndexItemsBean;
 import com.example.weatherapplication.bean.ReportBean;
@@ -47,6 +49,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -54,17 +58,17 @@ import java.util.List;
 import java.util.Map;
 
 public class HomeFragment extends Fragment implements View.OnClickListener{
-
+//git config --global http.sslVerify "false"
     private HomeViewModel homeViewModel;
     private FragmentHomeBinding binding;
     private String[] mIndexs,indexsUint,selectedIndex;
     private TextView tvStation,tvChartname1,tvChartname2,tvChartname3,tvNewestData1,tvNewestData2,tvNewestData3;
-    private ImageView ivAdd,ivPerson;
-    String  userName,stationId,stationName;
+    private ImageView ivAdd;
+    private String  userName,collectorId,collectorName,configType;//监测指标类型
     private Map indexMap;
     private LineChart lineChart1,lineChart2,lineChart3;
     private List<Entry> entries1,entries2,entries3;
-    String weatherStationId = null;
+    private String weatherStationId = null;
     private Button btOneDay,btSevenDay, btThirtyDay,btNintyDay,btMeteorology,btPlant,btSoil;
     private ScrollView scrollView;
 
@@ -87,7 +91,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         View fragmentHomeView = binding.getRoot();
         initView(fragmentHomeView);
         try{
-            if(stationId!= null) {
+            if(collectorId!= null) {
                 initIndex();
                 btMeteorology.setOnClickListener(this);
                 btPlant.setOnClickListener(this);
@@ -106,7 +110,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 btNintyDay.setVisibility(View.INVISIBLE);
             }
             ivAdd.setOnClickListener(this);
-            ivPerson.setOnClickListener(this);
             lineChart1.setNoDataText("");//无数据时显示的文字
             lineChart2.setNoDataText("");
             lineChart3.setNoDataText("");
@@ -118,14 +121,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
     private void initIndex() {
         try {
-            if(stationId!= null){
-                IndexBean indexbean = NetUtil.getIndexInfo(stationId);
+            if(collectorId!= null){
+                IndexBean indexbean = NetUtil.getIndexInfo(collectorId);
                 mIndexs  =  getIndexOfStation(indexbean);
-                Log.d("HomeFragment","===mIndexs==:"+ mIndexs);
+                //Log.d("HomeFragment","===mIndexs==:"+ mIndexs);
                 indexMap =  getIndexOfStationMap(indexbean);
-                Log.d("HomeFragment","===indexMap==:"+ indexMap.toString());
+                //Log.d("HomeFragment","===indexMap==:"+ indexMap.toString());
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -133,15 +135,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
     private void initView(View fragmentHomeView) {
         userName = getActivity().getIntent().getStringExtra("userName");
-        stationId = getActivity().getIntent().getStringExtra("stationId");
-        stationName = getActivity().getIntent().getStringExtra("stationName");
+        collectorId = getActivity().getIntent().getStringExtra("collectorId");
+        collectorName = getActivity().getIntent().getStringExtra("collectorName");
         weatherStationId = getActivity().getIntent().getStringExtra("weatherStationId");
         Log.d("HomeFragment","=&&&&&&&&==userName==:"+ userName);
-        Log.d("HomeFragment","=&&&&&&&&==stationId==:"+ stationId);
-        Log.d("HomeFragment","=&&&&&&&&==stationName==:"+ stationName);
+        Log.d("HomeFragment","=&&&&&&&&==collectorId==:"+ collectorId);
+        Log.d("HomeFragment","=&&&&&&&&==collectorName==:"+ collectorName);
         Log.d("HomeFragment","=&&&&&&&&==weatherStationId==:"+ weatherStationId);
         tvStation = fragmentHomeView.findViewById(R.id.tv_station);
-        tvStation.setText(stationName);
+        tvStation.setText(collectorName);
         ivAdd = (ImageView) fragmentHomeView.findViewById(R.id.iv_add);
         lineChart1 = (LineChart) fragmentHomeView.findViewById(R.id.linechart_1);
         lineChart2 = (LineChart) fragmentHomeView.findViewById(R.id.linechart_2);
@@ -150,7 +152,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         btSevenDay = fragmentHomeView.findViewById(R.id.btn_seven_day);
         btThirtyDay = fragmentHomeView.findViewById(R.id.btn_thirty_day);
         btNintyDay = fragmentHomeView.findViewById(R.id.btn_ninty_day);
-        ivPerson = fragmentHomeView.findViewById(R.id.iv_person);
         btMeteorology = fragmentHomeView.findViewById(R.id.btn_meteorology);
         btPlant = fragmentHomeView.findViewById(R.id.btn_plant);
         btSoil  = fragmentHomeView.findViewById(R.id.btn_soil);
@@ -170,38 +171,36 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 intent = new Intent(getActivity(), StationActivity.class);
                 intent.putExtra("userName",userName);
                 intent.putExtra("weatherStationId",weatherStationId);
-                startActivity(intent);
-                break;
-            case R.id.iv_person:
-                intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("page","home");
                 startActivity(intent);
                 break;
             case R.id.btn_meteorology:
                 setBtnEnable(btMeteorology,"category");
-                //setDaysButtonEnable();
-                selectedIndex = new String[]{"AirTC_Avg1-Avg", "RH_Avg1-Avg", "PAR_Avg1-Avg"};
-                indexsUint =new String[]{"Dec C","%","umol.s-1.m-2"};
-                setScrollInvisiable();
-               // clickAndDraw(selectedIndex,indexsUint,v);
-                break;
-            case R.id.btn_plant:
-                setBtnEnable(btPlant,"category");
-                selectedIndex = new String[]{"DD_Avg1-Avg", "TDP_Avg1-Avg"};
-                indexsUint =new String[]{"mm","mV"};
+                //selectedIndex = new String[]{"AirTC_Avg1-Avg", "RH_Avg1-Avg", "PAR_Avg1-Avg"};
+                //indexsUint =new String[]{"Dec C","%","umol.s-1.m-2"};
+                configType = "1";
                 setScrollInvisiable();
                 break;
             case R.id.btn_soil:
                 setBtnEnable(btSoil,"category");
-                selectedIndex = new String[]{"SoilVWC_Avg1-Avg", "SoilEC_Avg1-Avg", "SoilTemp_Avg1-Avg"};
-                indexsUint =new String[]{"m3/m3","uS/cm","deg_C"};
+                //selectedIndex = new String[]{"SoilVWC_Avg1-Avg", "SoilEC_Avg1-Avg", "SoilTemp_Avg1-Avg"};
+                //indexsUint =new String[]{"m3/m3","uS/cm","deg_C"};
+                configType = "2";
+                setScrollInvisiable();
+                break;
+            case R.id.btn_plant:
+                setBtnEnable(btPlant,"category");
+                //selectedIndex = new String[]{"DD_Avg1-Avg", "TDP_Avg1-Avg"};
+                //indexsUint =new String[]{"mm","mV"};
+                configType = "3";
                 setScrollInvisiable();
                 break;
         }
-        checkDayBtnAndDraw(selectedIndex,indexsUint);
+        checkDayBtnAndDraw(configType);
 
     }
 
-    private void checkDayBtnAndDraw(String[] selectedIndex, String[] indexsUint) {
+    private void checkDayBtnAndDraw(String configType) {
         int days = 0;
         if(!btOneDay.isEnabled()){
             days =1;
@@ -213,9 +212,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
             days =90;
         }
         if(days != 0){
-            drawChart(selectedIndex,indexsUint,days);
+            drawChart(configType,days);
         }
-
     }
 
     private void setScrollInvisiable() {
@@ -259,7 +257,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                     setBtnEnable(btNintyDay,"days");
                     break;
             }
-            drawChart(selectedIndex,indexsUint,days);
+            drawChart(configType,days);
         }
     };
     private void setBtnEnable(Button btn,String category) {
@@ -281,12 +279,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         }
         btn.setEnabled(false);
     }
-    private void drawChart(String[] selectedIndex, String[] selectedIndexUint,int days) {
-        if(selectedIndex!= null){
-            Log.d("HomeFragment", "===selectedIndex  count=:" + selectedIndex.length);
-            ReportBean  reportBean = null;
-            for(int i=0; i<selectedIndex.length;i++){
-                String index = selectedIndex[i];
+    private void drawChart(String configType,int days) {
+        if(configType!= null){
+            Log.d("HomeFragment", "=========configType=:" + configType);
+            List<DaysDataItemBean>  daysDataItemBean = null;
+            //for(int i=0; i<selectedIndex.length;i++){
+                /*String index = selectedIndex[i];
                 String indexUint = selectedIndexUint[i];
                 String selectConfigId = (String) indexMap.get(index);
                 Log.d("HomeFragment", "===selectConfigId==:" + selectConfigId+"=====indexUint===:"+indexUint+"=====index===:"+index);
@@ -295,12 +293,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 Calendar c = Calendar.getInstance();
                 c.add(Calendar.DATE, -1);
                 String startDateStr = sdf.format(c.getTime());
-                String endDateStr = sdf.format(endDate);
+                String endDateStr = sdf.format(endDate);*/
                 String newestData = "";
                 try {
-                    if(!"-1".equals(selectConfigId)){
+                    //if(!"-1".equals(selectConfigId)){
                         ///最上面显示的是最新的记录
-                        ReportBean newestRrpotData = NetUtil.getNewestData(selectConfigId, stationId,1);
+                        /*ReportBean newestRrpotData = NetUtil.getNewestData(selectConfigId, collectorId,1);
                         if(newestRrpotData != null  && newestRrpotData.getmDayReportBeans() != null) {
                             List<DayReportBean> dayReports = newestRrpotData.getmDayReportBeans();
                             if(dayReports == null){
@@ -312,60 +310,74 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                                 Log.d("HomeFragment", "===dayReportBean.getCol1()==:" + dayReportBean.getCol1());
                                 newestData = dayReportBean.getCol1();
                             }
-                        }
+                        }*/
                         Log.d("HomeFragment", "=============days==:" + days);
                         switch(days){
                             case 1:
-                                reportBean= NetUtil.getReportDataOfIndex(selectConfigId, stationId,"2022-01-25", "2022-01-26");
+                                daysDataItemBean= NetUtil.getDaysData(collectorId,configType,days);
                                 break;
                             case 7:
-                                reportBean= NetUtil.getReportDataOfIndex(selectConfigId, stationId,"2022-01-27", "2022-01-28");
+                                daysDataItemBean= NetUtil.getDaysData(collectorId,configType,days);
                                 break;
                             case 30:
-                                reportBean= NetUtil.getReportDataOfIndex(selectConfigId, stationId,"2022-02-01", "2022-02-02");
+                                daysDataItemBean= NetUtil.getDaysData(collectorId,configType,days);
                                 break;
                             case 90:
-                                reportBean= NetUtil.getReportDataOfIndex(selectConfigId, stationId,"2022-02-04", "2022-02-05");
+                                daysDataItemBean= NetUtil.getDaysData(collectorId,configType,days);
                                 break;
                         }
-                        Log.d("HomeFragment", "===reportBean==:" + reportBean);
-                        if(reportBean != null  && reportBean.getmDayReportBeans() != null) {
-                            if(i==0){
-                                scrollView.scrollTo(0,0);
-                                tvChartname1.setText(index);
-                                tvChartname1.setVisibility(View.VISIBLE);
-                                tvNewestData1.setText(newestData);
-                                tvNewestData1.setVisibility(View.VISIBLE);
-                                lineChart1.setVisibility(View.VISIBLE);
-                                lineChart1.zoom(0.25f,1f,0,0);
-                                setLineChart(reportBean,lineChart1,entries1,index,indexUint);
-                                lineChart1.notifyDataSetChanged();
-                                lineChart1.getData().notifyDataChanged();
-                                lineChart1.invalidate();
-                            }
-                            if(i==1){
-                                tvChartname2.setText(index);
-                                tvChartname2.setVisibility(View.VISIBLE);
-                                tvNewestData2.setText(newestData);
-                                tvNewestData2.setVisibility(View.VISIBLE);
-                                lineChart2.setVisibility(View.VISIBLE);
-                                lineChart2.zoom(0.25f,1f,0,0);
-                                setLineChart(reportBean,lineChart2,entries2,index,indexUint);
-                                lineChart2.notifyDataSetChanged();
-                                lineChart2.getData().notifyDataChanged();
-                                lineChart2.invalidate();
-                            }
-                            if(i==2){
-                                tvChartname3.setText(index);
-                                tvChartname3.setVisibility(View.VISIBLE);
-                                tvNewestData3.setText(newestData);
-                                tvNewestData3.setVisibility(View.VISIBLE);
-                                lineChart3.setVisibility(View.VISIBLE);
-                                lineChart3.zoom(0.25f,1f,0,0);
-                                setLineChart(reportBean,lineChart3,entries3,index,indexUint);
-                                lineChart3.notifyDataSetChanged();
-                                lineChart3.getData().notifyDataChanged();
-                                lineChart3.invalidate();
+                        Log.d("HomeFragment", "===daysDataItemBean==:" + daysDataItemBean);
+                        Log.d("HomeFragment", "===daysDataItemBean==:" + daysDataItemBean.size());
+                        int i = 0;
+                        if(daysDataItemBean != null) {
+                            Iterator it = daysDataItemBean.iterator();
+                            while(it.hasNext()){
+                                DaysDataItemBean item = (DaysDataItemBean) it.next();
+                                Log.d("HomeFragment", "===item==:" + item);
+                                if(i==0){
+                                    Log.d("HomeFragment", "======0000000000000000000000=="+ item);
+                                    scrollView.scrollTo(0,0);
+                                    tvChartname1.setText(item.getDescription());
+                                    tvChartname1.setVisibility(View.VISIBLE);
+                                    tvNewestData1.setText(newestData);
+                                    tvNewestData1.setVisibility(View.VISIBLE);
+                                    lineChart1.setVisibility(View.VISIBLE);
+                                    lineChart1.zoom(0f,1f,0,0);
+                                    lineChart1.zoom(0.25f,1f,0,0);
+                                    setLineChart(days,item,lineChart1,entries1,item.getDescription(),item.getUnit());
+                                    lineChart1.notifyDataSetChanged();
+                                    lineChart1.getData().notifyDataChanged();
+                                    lineChart1.invalidate();
+                                }
+                                if(i==1){
+                                    Log.d("HomeFragment", "======111111111111111111=="+ item);
+                                    tvChartname2.setText(item.getDescription());
+                                    tvChartname2.setVisibility(View.VISIBLE);
+                                    tvNewestData2.setText(newestData);
+                                    tvNewestData2.setVisibility(View.VISIBLE);
+                                    lineChart2.setVisibility(View.VISIBLE);
+                                    lineChart2.zoom(0f,1f,0,0);
+                                    lineChart2.zoom(0.25f,1f,0,0);
+                                    setLineChart(days,item,lineChart2,entries2,item.getDescription(),item.getUnit());
+                                    lineChart2.notifyDataSetChanged();
+                                    lineChart2.getData().notifyDataChanged();
+                                    lineChart2.invalidate();
+                                }
+                                if(i==2){
+                                    Log.d("HomeFragment", "======22222222222222222=="+ item);
+                                    tvChartname3.setText(item.getDescription());
+                                    tvChartname3.setVisibility(View.VISIBLE);
+                                    tvNewestData3.setText(newestData);
+                                    tvNewestData3.setVisibility(View.VISIBLE);
+                                    lineChart3.setVisibility(View.VISIBLE);
+                                    lineChart3.zoom(0f,1f,0,0);
+                                    lineChart3.zoom(0.25f,1f,0,0);
+                                    setLineChart(days,item,lineChart3,entries3,item.getDescription(),item.getUnit());
+                                    lineChart3.notifyDataSetChanged();
+                                    lineChart3.getData().notifyDataChanged();
+                                    lineChart3.invalidate();
+                                }
+                                i++;
                             }
                         }else{
                             if(i==0){
@@ -384,12 +396,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                                 lineChart3.setVisibility(View.INVISIBLE);
                             }
                         }
-                    }
+                   // }
 
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
+            //}
         }else{
             String message = "请先选择类别";
             Toast toastCenter = Toast.makeText(getActivity().getApplicationContext(), message,Toast.LENGTH_SHORT);
@@ -405,25 +417,39 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         super.onDestroyView();
         binding = null;
     }
-    private List<Entry> setData(ReportBean reportBean,List<Entry> entries) {
-        if(reportBean == null){
+    private List<Entry> setData(DaysDataItemBean daysDataItemBean,List<Entry> entries,int days) {
+        if(daysDataItemBean == null){
             return null;
         }
-        List<DayReportBean> dayReports = reportBean.getmDayReportBeans();
-        if(dayReports == null){
+        List<DaysDataItemDetailBean> dayDataDetailReports = daysDataItemBean.getmItemDetailBeans();
+        if(dayDataDetailReports == null){
             return null;
         }
-        Iterator it = dayReports.iterator();
+        Log.d("HomeFragment", "==============dayDataDetailReports==:" +dayDataDetailReports);
+        Collections.reverse(dayDataDetailReports);
+        Log.d("HomeFragment", "==========reverse====dayDataDetailReports==:" + dayDataDetailReports);
+        Iterator it = dayDataDetailReports.iterator();
         int count = 0;
         if(entries != null){
             entries.clear();
         }
         entries = new ArrayList<>();
         while(it.hasNext() && count < 24){
-            DayReportBean dayReportBean = (DayReportBean)it.next();
-            float time = Float.parseFloat(dayReportBean.getAcquisitionTime().substring(11,13));
-            float value = Float.parseFloat(dayReportBean.getCol1());
+            DaysDataItemDetailBean dayDataDetailReportBean = (DaysDataItemDetailBean)it.next();
+            float time = 0.0f;
+            if(days==1){
+                time = Float.parseFloat(dayDataDetailReportBean.getAcquisitionTime().substring(11,13));
+            }else if(days==7){
+                time = Float.parseFloat(dayDataDetailReportBean.getAcquisitionTime().substring(11,13));
+            }else{
+                time = Float.parseFloat(dayDataDetailReportBean.getAcquisitionTime().substring(11,13));
+            }
+            float value = 0.0f;
+            if(!"".equals(dayDataDetailReportBean.getValue())) {
+                value = Float.parseFloat(dayDataDetailReportBean.getValue());
+            }
             entries.add(new Entry(time,value));
+            Log.d("HomeFragment", "==============time==:" +time);
             Log.d("HomeFragment", count+"==============value==:" +value);
             count++;
         }
@@ -436,8 +462,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         Log.d("HomeFragment", "=========getData=====reportBean==:" + reportBean);
         return reportBean;
     }
-    private void setLineChart(ReportBean reportBean,LineChart lineChart,List<Entry> entries,String index,String indexUint){
-            entries = setData(reportBean,entries);
+    private void setLineChart(int days,DaysDataItemBean reportBean,LineChart lineChart,List<Entry> entries,String index,String indexUint){
+            entries = setData(reportBean,entries,days);
             Log.d("HomeFragment", "=&&&&&&&&&&&entries==:" + entries);
             if (entries != null) {
                 try {
@@ -466,12 +492,28 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);//
                 xAxis.setGranularity(1f);//设置最小间隔
                 xAxis.setEnabled(true);
-                xAxis.setValueFormatter(new IAxisValueFormatter() {
-                    @Override
-                    public String getFormattedValue(float v, AxisBase axis) {
-                        return String.valueOf((int) v+":00");
-                    }
-                });
+                if(days==1){
+                    xAxis.setValueFormatter(new IAxisValueFormatter() {
+                        @Override
+                        public String getFormattedValue(float v, AxisBase axis) {
+                            return String.valueOf((int) v+":00");
+                        }
+                    });
+                }else if(days ==7){
+                    xAxis.setValueFormatter(new IAxisValueFormatter() {
+                        @Override
+                        public String getFormattedValue(float v, AxisBase axis) {
+                            return String.valueOf((int) v+":00");
+                        }
+                    });
+                }else{
+                    xAxis.setValueFormatter(new IAxisValueFormatter() {
+                        @Override
+                        public String getFormattedValue(float v, AxisBase axis) {
+                            return String.valueOf((int) v+":00");
+                        }
+                    });
+                }
                 Legend legend = lineChart.getLegend();//图例
                 legend.setForm(Legend.LegendForm.EMPTY);//设置图例的形状
                 legend.setTextSize(13f);//设置图例字体大小
@@ -500,14 +542,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
             }
         }
 
-    private void getReportOfIndex(String selectConfigId, String stationId, String startDateStr, String endDateStr) {
+    private void getReportOfIndex(String selectConfigId, String collectorId, String startDateStr, String endDateStr) {
         //开启子线程，请求网络
         new Thread(new Runnable() {
             @Override
             public void run() {
                 //请求网络
                 try {
-                    String reportOfIndex =  NetUtil.getReportOfIndex(selectConfigId,stationId,startDateStr,endDateStr);
+                    String reportOfIndex =  NetUtil.getReportOfIndex(selectConfigId,collectorId,startDateStr,endDateStr);
                     //使用Handler将数据传送给主线程
                     Message message = new Message();
                     message.what = 0;

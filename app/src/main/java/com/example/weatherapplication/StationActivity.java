@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.example.weatherapplication.adapter.StationAdapter;
-import com.example.weatherapplication.bean.StationItemBean;
+import com.example.weatherapplication.bean.CollectorItemBean;
 import com.example.weatherapplication.util.NetUtil;
 import com.example.weatherapplication.util.StatusBarUtils;
 
@@ -23,10 +23,9 @@ import java.util.List;
 public class StationActivity extends AppCompatActivity implements View.OnClickListener {
     private ImageView backIv;
     private ListView stationLv;
-    private List<StationItemBean> mDatas; //列表数据源
+    private List<CollectorItemBean> mDatas; //列表数据源
     private StationAdapter adapter;
-    private String userName;
-    private String weatherStationId;
+    private String userName,weatherStationId,page;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,8 +41,10 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
         /////
         userName = getIntent().getStringExtra("userName");
         weatherStationId = getIntent().getStringExtra("weatherStationId");
+        page = getIntent().getStringExtra("page");
         Log.d("StationActivity","========userName==:"+ userName);
         Log.d("StationActivity","======weatherStationId==:"+ weatherStationId);
+        Log.d("StationActivity","======page==:"+ page);
         initView();
         initAdapter();
         stationLv.setOnItemClickListener(listener);
@@ -66,15 +67,20 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long arg3) {
 				Intent intent = new Intent();
-				StationItemBean selectedStation = mDatas.get(arg2);
-                Log.d("StationActivity","=$$$$$$$$$$$$=selectedStation==:"+ selectedStation);
-                Log.d("StationActivity","=$$$$$$$$$$$$=stationName==:"+  selectedStation.getCollectorName());
+				CollectorItemBean selectedCollector = mDatas.get(arg2);
+                Log.d("StationActivity","=$$$$$$$$$$$$=selectedCollector==:"+ selectedCollector);
+                Log.d("StationActivity","=$$$$$$$$$$$$=collectorId==:"+ selectedCollector.getId());
+                Log.d("StationActivity","=$$$$$$$$$$$$=CollectorName==:"+  selectedCollector.getCollectorName());
                 Log.d("StationActivity","=$$$$$$$$$$$$=weatherStationId==:"+ weatherStationId);
-                intent.putExtra("stationId", selectedStation.getId());
+                intent.putExtra("collectorId", selectedCollector.getId());
                 intent.putExtra("userName", userName);
-                intent.putExtra("stationName", selectedStation.getCollectorName());
+                intent.putExtra("collectorName", selectedCollector.getCollectorName());
                 intent.putExtra("weatherStationId",weatherStationId);
-                intent.putExtra("fragment_flag", 2);
+                if("home".equals(page) || page ==null){
+                    intent.putExtra("fragment_flag", 2);
+                }else{
+                    intent.putExtra("fragment_flag", 3);
+                }
 				intent.setClass(StationActivity.this, MainActivity.class);
 				startActivity(intent);
 			}
@@ -84,11 +90,12 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
         super.onResume();
         userName = this.getIntent().getStringExtra("userName");
         weatherStationId = this.getIntent().getStringExtra("weatherStationId");
+        page = getIntent().getStringExtra("page");
         try {
             if(weatherStationId == null){
-               weatherStationId ="14";
+               weatherStationId ="22";
             }
-            List<StationItemBean> stationItems = NetUtil.getStationItemInfo(userName,weatherStationId);;
+            List<CollectorItemBean> stationItems = NetUtil.getStationItemInfo(userName,weatherStationId);
             System.out.println("=================stationItems==========:"+stationItems);
             mDatas.clear();
             mDatas.addAll(stationItems);

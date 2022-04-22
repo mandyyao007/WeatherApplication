@@ -4,17 +4,17 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class StationBean {
+public class DaysDataBean {
     @SerializedName("total")
     private int total;
     @SerializedName("rows")
-    private List<StationItemBean> mItemBeans;
+    private List<DaysDataItemBean> mItemBeans;
 
-    public void setmItemBeans(List<StationItemBean> mItemBeans) {
+    public void setmItemBeans(List<DaysDataItemBean> mItemBeans) {
         this.mItemBeans = mItemBeans;
     }
 
-    public List<StationItemBean> getmItemBeans() {
+    public List<DaysDataItemBean> getmItemBeans() {
         return mItemBeans;
     }
 
@@ -28,7 +28,7 @@ public class StationBean {
 
     @Override
     public String toString() {
-        return "StationBean{" +
+        return "TreeDataBean{" +
                 "total=" + total +
                 ", mItemBeans=" + mItemBeans +
                 '}';

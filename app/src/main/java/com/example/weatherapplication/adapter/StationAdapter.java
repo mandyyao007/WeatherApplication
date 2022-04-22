@@ -8,15 +8,15 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.weatherapplication.R;
-import com.example.weatherapplication.bean.StationItemBean;
+import com.example.weatherapplication.bean.CollectorItemBean;
 
 import java.util.List;
 
 public class StationAdapter extends BaseAdapter {
     Context context;
-    List<StationItemBean> mDatas;
+    List<CollectorItemBean> mDatas;
 
-    public StationAdapter(Context context, List<StationItemBean> mDatas) {
+    public StationAdapter(Context context, List<CollectorItemBean> mDatas) {
         this.context = context;
         this.mDatas = mDatas;
     }
@@ -46,7 +46,7 @@ public class StationAdapter extends BaseAdapter {
         }else{
             holder = (ViewHolder) convertView.getTag();
         }
-        StationItemBean bean = mDatas.get(position);
+        CollectorItemBean bean = mDatas.get(position);
         holder.stationNameTv.setText(bean.getCollectorName());
         holder.latitudeTv.setText(bean.getLatitude());
         holder.longitudeTv.setText(bean.getLongitude());
