@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class NotificationsFragment extends Fragment implements View.OnClickListener{
@@ -51,9 +52,10 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
     private TextView tvStation,tvChartname1,tvChartname2,tvChartname3,tvChartname4,tvChartname5;
     String  userName,collectorId,collectorName,weatherStationId;
     private BarChart barChart1,barChart2,barChart3,barChart4,barChart5;
-    private Button btnTree,btCommunity;
+    private Button btnTree,btnCommunity,btOneDay,btSevenDay, btThirtyDay,btNintyDay;
     private ScrollView scrollView;
     String type = "";//tree or commnuity
+    private LinkedHashMap dataMap = new LinkedHashMap();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -66,10 +68,18 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         try{
             if(collectorId!= null) {
                 btnTree.setOnClickListener(this);
-                btCommunity.setOnClickListener(this);
+                btnCommunity.setOnClickListener(this);
+                btOneDay.setOnClickListener(dayListener);
+                btSevenDay.setOnClickListener(dayListener);
+                btThirtyDay.setOnClickListener(dayListener);
+                btNintyDay.setOnClickListener(dayListener);
             }else{
                 btnTree.setVisibility(View.INVISIBLE);//如果没有选中station直接打开数据，就不显示按钮
-                btCommunity.setVisibility(View.INVISIBLE);
+                btnCommunity.setVisibility(View.INVISIBLE);
+                btOneDay.setVisibility(View.INVISIBLE);
+                btThirtyDay.setVisibility(View.INVISIBLE);
+                btSevenDay.setVisibility(View.INVISIBLE);
+                btNintyDay.setVisibility(View.INVISIBLE);
             }
             ivAdd.setOnClickListener(this);
             barChart1.setNoDataText("");//无数据时显示的文字
@@ -101,18 +111,21 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         barChart4 = (BarChart) notificationFragmentView.findViewById(R.id.barchart_4);
         barChart5 = (BarChart) notificationFragmentView.findViewById(R.id.barchart_5);
         btnTree = notificationFragmentView.findViewById(R.id.btn_tree);
-        btCommunity = notificationFragmentView.findViewById(R.id.btn_community);
+        btnCommunity = notificationFragmentView.findViewById(R.id.btn_community);
         tvChartname1 = notificationFragmentView.findViewById(R.id.chartname_tv_1);
         tvChartname2 = notificationFragmentView.findViewById(R.id.chartname_tv_2);
         tvChartname3 = notificationFragmentView.findViewById(R.id.chartname_tv_3);
         tvChartname4 = notificationFragmentView.findViewById(R.id.chartname_tv_4);
         tvChartname5 = notificationFragmentView.findViewById(R.id.chartname_tv_5);
         scrollView = notificationFragmentView.findViewById(R.id.scrollview_eva);
+        btOneDay = notificationFragmentView.findViewById(R.id.btn_one_day);
+        btSevenDay = notificationFragmentView.findViewById(R.id.btn_seven_day);
+        btThirtyDay = notificationFragmentView.findViewById(R.id.btn_thirty_day);
+        btNintyDay = notificationFragmentView.findViewById(R.id.btn_ninty_day);
     }
     @Override
     public void onClick(View v) {
         Intent intent = null;
-        String  category= "";
         switch (v.getId()) {
             case R.id.iv_station:
                 intent = new Intent(getActivity(), StationActivity.class);
@@ -125,22 +138,67 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 setBtnEnable(btnTree,"type");
                 type = "tree" ;
                 Log.d("NotificationsFragment","=***************=tree=========");
-               //
                 break;
             case R.id.btn_community:
-                setBtnEnable(btCommunity,"type");
+                setBtnEnable(btnCommunity,"type");
                 type = "community" ;
                 Log.d("NotificationsFragment","=***************=community=========");
                 break;
         }
         setScrollInvisiable();
         try {
-            drawChart(type);
+            Log.d("NotificationsFragment", "======checkDayBtnAndDraw===========:");
+            checkDayBtnAndDraw(type);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    private void drawChart(String type) throws IOException {
+    View.OnClickListener dayListener =  new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            int days = 0;
+            switch(v.getId()){
+                case R.id.btn_one_day:
+                    days = 1;
+                    setBtnEnable(btOneDay,"days");
+                    break;
+                case R.id.btn_seven_day:
+                    days = 7;
+                    setBtnEnable(btSevenDay,"days");
+                    break;
+                case R.id.btn_thirty_day:
+                    days = 30;
+                    setBtnEnable(btThirtyDay,"days");
+                    break;
+                case R.id.btn_ninty_day:
+                    days = 90;
+                    setBtnEnable(btNintyDay,"days");
+                    break;
+            }
+            try {
+                drawChart(type,days);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+    private void checkDayBtnAndDraw(String type) throws IOException {
+            int days = 0;
+            if(!btOneDay.isEnabled()){
+                days =1;
+            }else if(!btSevenDay.isEnabled()){
+                days =7;
+            }else if(!btThirtyDay.isEnabled()){
+                days =30;
+            }else if(!btNintyDay.isEnabled()){
+                days =90;
+            }
+        Log.d("NotificationsFragment", "====checkDayBtnAndDraw=====days===========:"+days);
+            if(days != 0){
+                drawChart(type,days);
+            }
+    }
+    private void drawChart(String type,int days) throws IOException {
         if(type!= null && "tree".equals(type)){
             Log.d("NotificationsFragment", "===type=============:" + type);
             try {
@@ -159,7 +217,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                         Log.d("NotificationsFragment", "===treeItemBean  getCollectorId====:" + treeItemBean.getCollectorId());
                         Log.d("NotificationsFragment", "===treeItemBean  getTreeName====:" + treeItemBean.getTreeName());
                         if(treeItemBean.getTreeId()!= null){
-                            CollectorItemBean.TreeDataBean treeDataBean = NetUtil.getTreeDataBean(treeItemBean.getTreeId());
+                            CollectorItemBean.TreeDataBean treeDataBean = NetUtil.getTreeDataBean(treeItemBean.getTreeId(),days);
                             Log.d("NotificationsFragment", "===treeDataBean====:" + treeDataBean);
                             if(treeDataBean!= null && treeDataBean.getmTreeDataItemBeans()!=null){
                                 List<TreeDataItemBean> treeDataItemBeans = treeDataBean.getmTreeDataItemBeans();
@@ -170,95 +228,115 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                                 Iterator its = treeDataItemBeans.iterator();
                                 int i  = 1;
                                 while(its.hasNext()){
+                                    int count = 0;
                                     TreeDataItemBean treeDataItemBean = (TreeDataItemBean) its.next();
                                     if(!"test".equals(treeDataItemBean.getConfigName())){
                                         Log.d("NotificationsFragment", "===name====:" + treeDataItemBean.getConfigName().toString());
                                         List<TreeDataItemDetailBean>  treeDataItemDetailBeans = treeDataItemBean.getmTreeDataItemDetailBean();
                                         List<BarEntry>list = new ArrayList<>();//实例化一个List用来存储数据
-                                        //list.add(new BarEntry(1.0f ,60.0f));
-                                        /*for(int j=0;j<25;j++){
-                                            Random e = new Random();
-                                            list.add(new BarEntry(j ,e.nextFloat()*100));
-                                        }*/
                                         if(treeDataItemDetailBeans != null){
                                             Iterator iter = treeDataItemDetailBeans.iterator();
                                             while (iter.hasNext()){
                                                 TreeDataItemDetailBean treeDataItemDetailBean = (TreeDataItemDetailBean) iter.next();
                                                 Log.d("NotificationsFragment", "===treeDataItemDetailBean====:" + treeDataItemDetailBean);
                                                 if(treeDataItemDetailBean!=null ){
-                                                    float time = Float.parseFloat(treeDataItemDetailBean.getAcquisitionTime().substring(11,13));
+                                                    float time = 0.0f;
+                                                    if(days ==1){
+                                                        time = Float.parseFloat(treeDataItemDetailBean.getAcquisitionTime().substring(11,13));
+                                                    }else if(days==7){
+                                                        dataMap.put(count,treeDataItemDetailBean.getAcquisitionTime().substring(0,16));
+                                                        time = count;
+                                                    }else{
+                                                        dataMap.put(count,treeDataItemDetailBean.getAcquisitionTime().substring(0,10));
+                                                        time = count;
+                                                    }
                                                     float value = 0.0f;
                                                     if(!"".equals(treeDataItemDetailBean.getValue())){
                                                         if(!"-".equals(treeDataItemDetailBean.getValue())) {
                                                             value = Float.parseFloat(treeDataItemDetailBean.getValue());
+                                                            Log.d("NotificationsFragment", "===time====:" + time);
+                                                            Log.d("NotificationsFragment", "===dataMap.get(count)====:" + dataMap.get(count));
+                                                            Log.d("NotificationsFragment", "===value====:" + value);
+                                                            Log.d("NotificationsFragment", "===count====:" + count);
+                                                            list.add(new BarEntry(time,value));
                                                         }
-                                                        Log.d("NotificationsFragment", "===time====:" + time);
-                                                        Log.d("NotificationsFragment", "===value====:" + value);
-                                                        list.add(new BarEntry(time,value));
+
                                                     }
                                                 }
+                                                count++;
                                             }
                                         }
                                         Log.d("NotificationsFragment", "===list====:" + list);
                                         Collections.reverse(list);
                                         Log.d("NotificationsFragment", "===list 倒序====:" + list);
                                         Log.d("NotificationsFragment", "===list是否为空====:" + (list!= null));
+                                        Log.d("NotificationsFragment", "===list.size()====:" + (list.size()));
                                         //手机屏幕上显示6剩下的滑动直方图然后显示
-                                        if(list!= null){
+                                        if(list!= null && list.size()>0){
                                             float ratio = (float) list.size()/(float) 6;
                                             BarDataSet barDataSet=new BarDataSet(list,treeDataItemBean.getConfigName());
                                             barDataSet.setValueTextColor(Color.parseColor("#FFFFFFFF"));//设置显示值的文字颜色
                                             barDataSet.setValueTextSize(13f);//设置显示值的文字大小
                                             BarData barData=new BarData(barDataSet);
                                             if(i==1){
+                                                Log.d("NotificationsFragment", "1111111===============:" + i);
                                                 tvChartname1.setText(treeDataItemBean.getConfigName());
                                                 tvChartname1.setVisibility(View.VISIBLE);
                                                 barChart1.setData(barData);
                                                 barChart1.zoom(0,1f,0,0);
                                                 //显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
                                                 barChart1.zoom(1/ratio,1f,0,0);
-                                                setChart(ratio,barChart1,list);
+                                                setChart(ratio,barChart1,list,days);
                                                 barChart1.setVisibility(View.VISIBLE);
+                                                barChart1.setExtraBottomOffset(10);
                                             }
                                             if(i==2){
+                                                Log.d("NotificationsFragment", "2222222222===============:" + i);
                                                 tvChartname2.setText(treeDataItemBean.getConfigName());
                                                 tvChartname2.setVisibility(View.VISIBLE);
                                                 barChart2.setData(barData);
                                                 barChart2.zoom(0,1f,0,0);
                                                 //显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
                                                 barChart2.zoom(0.25f,1f,0,0);
-                                                setChart(ratio,barChart2,list);
+                                                setChart(ratio,barChart2,list,days);
                                                 barChart2.setVisibility(View.VISIBLE);
+                                                barChart2.setExtraBottomOffset(10);
                                             }
                                             if(i==3){
+                                                Log.d("NotificationsFragment", "33333333333333===============:" + i);
                                                 tvChartname3.setText(treeDataItemBean.getConfigName());
                                                 tvChartname3.setVisibility(View.VISIBLE);
                                                 barChart3.setData(barData);
                                                 barChart3.zoom(0,1f,0,0);
                                                 //显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
                                                 barChart3.zoom(0.25f,1f,0,0);
-                                                setChart(ratio,barChart3,list);
+                                                setChart(ratio,barChart3,list,days);
                                                 barChart3.setVisibility(View.VISIBLE);
+                                                barChart3.setExtraBottomOffset(10);
                                             }
                                             if(i==4){
+                                                Log.d("NotificationsFragment", "444444444444===============:" + i);
                                                 tvChartname4.setText(treeDataItemBean.getConfigName());
                                                 tvChartname4.setVisibility(View.VISIBLE);
                                                 barChart4.setData(barData);
                                                 barChart4.zoom(0,1f,0,0);
                                                 //显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
                                                 barChart4.zoom(0.25f,1f,0,0);
-                                                setChart(ratio,barChart4,list);
+                                                setChart(ratio,barChart4,list,days);
                                                 barChart4.setVisibility(View.VISIBLE);
+                                                barChart4.setExtraBottomOffset(10);
                                             }
                                             if(i==5){
+                                                Log.d("NotificationsFragment", "5555555555===============:" + i);
                                                 tvChartname5.setText(treeDataItemBean.getConfigName());
                                                 tvChartname5.setVisibility(View.VISIBLE);
                                                 barChart5.setData(barData);
                                                 barChart5.zoom(0,1f,0,0);
                                                 //显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
                                                 barChart5.zoom(0.25f,1f,0,0);
-                                                setChart(ratio,barChart5,list);
+                                                setChart(ratio,barChart5,list,days);
                                                 barChart5.setVisibility(View.VISIBLE);
+                                                barChart5.setExtraBottomOffset(10);
                                             }
                                         }
                                         i++;
@@ -273,6 +351,8 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
             } catch (Exception e) {
                     e.printStackTrace();
             }
+        }else if(type!= null && "community".equals(type)){
+            Log.d("NotificationsFragment", "&&&&&&&&&&&&&7type=============:" + type);
         }else{
             String message = "请先选择类别";
             Toast toastCenter = Toast.makeText(getActivity().getApplicationContext(), message,Toast.LENGTH_SHORT);
@@ -284,7 +364,8 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
     /*
      * 设置BarChart的数据
      * */
-    private void setChart(float ratio,BarChart barChart,List<BarEntry> list) {
+    private void setChart(float ratio,BarChart barChart,List<BarEntry> list,int days) {
+        Log.d("NotificationsFragment", "days===============:" + days);
         barChart.setDescription(null);                             //设置描述文字为null
         barChart.setBackgroundColor(Color.parseColor("#00000000"));  //设置背景颜色
         barChart.setDrawBarShadow(false);                          //绘制当前展示的内容顶部阴影
@@ -295,13 +376,12 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);             //设置label在底下
         xAxis.setDrawGridLines(false);                             //不设置竖型网格线
         xAxis.setTextColor(Color.parseColor("#ffffff"));
-        xAxis.setTextSize(11);
         xAxis.setDrawLabels(true);                                 //是否显示X坐标轴上的刻度，默认是true
         xAxis.setLabelCount(6,false);                //第一个参数是轴坐标的个数，第二个参数是 是否不均匀分布，true是不均匀分布
-        xAxis.setAxisMinimum(0);   //X轴最小数值
+        xAxis.setAxisMinimum(-0.4f);   //X轴最小数值
 
         YAxis leftAxis = barChart.getAxisLeft();              //获取到y轴，分左右
-        leftAxis.setLabelCount(3, true);                      //第一个参数是轴坐标的个数，第二个参数是 是否不均匀分布，true是不均匀分布
+        leftAxis.setLabelCount(3, true);         //第一个参数是轴坐标的个数，第二个参数是 是否不均匀分布，true是不均匀分布
         leftAxis.setDrawGridLines(true);                      //不要横网格
         leftAxis.setGridColor(Color.parseColor("#000000"));   //设置横网格颜色
         leftAxis.setSpaceTop(20f);                            //设置在图表上最高处的值相比轴上最高值的顶端空间（总轴范围的百分比）
@@ -311,20 +391,36 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         leftAxis.setDrawAxisLine(false);                      //设置为true,绘制轴线
         leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);       //y轴的数值显示在外侧
         //这里也可以自定义y轴显示样式。和x轴的自定义方法一样
-
         barChart.getAxisRight().setEnabled(false); // 隐藏右边 的坐标轴
         Legend legend = barChart.getLegend();
         legend.setEnabled(false);//不设置图例
         //显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
         barChart.zoom(4,1f,0,0);
-        xAxis.setValueFormatter(new IAxisValueFormatter() {
-            @Override
-            public String getFormattedValue(float v, AxisBase axis) {
-                return String.valueOf((int) v+":00");
-            }
-        });
+        if(days==1){
+            Log.d("NotificationsFragment", "======@@@@@@@@@@@=days===============:" + days);
+            xAxis.setTextSize(13f);//设置X轴刻度字体大小
+            xAxis.setLabelRotationAngle(0f);//不旋转
+            xAxis.setValueFormatter(new IAxisValueFormatter() {
+                @Override
+                public String getFormattedValue(float v, AxisBase axis) {
+                    return String.valueOf((int) v+":00");
+                }
+            });
+        }else{
+            Log.d("NotificationsFragment", "=====%%%%%%%%%%%%%%=days===============:" + days);
+            xAxis.setTextSize(10f);//设置X轴刻度字体大小
+            xAxis.setLabelRotationAngle(45f);//旋转45度
+            xAxis.setValueFormatter(new IAxisValueFormatter() {
+                @Override
+                public String getFormattedValue(float v, AxisBase axis) {
+                    Log.d("NotificationsFragment", "33dataMap.get((int) v)3===============:" + dataMap.get((int) v));
+                    return String.valueOf(dataMap.get((int) v));
+                }
+            });
+        }
+
         //从Y轴弹出的动画时间
-        barChart.animateY(1500);
+       // barChart.animateY(1500);
     }
 
     private void setScrollInvisiable() {
@@ -342,8 +438,15 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
     private void setBtnEnable(Button btn,String category) {
         List<Button> buttonList = new ArrayList<>();
         if (buttonList.size() == 0){
-            buttonList.add(btnTree);
-            buttonList.add(btCommunity);
+            if("type".equals(category)){
+                buttonList.add(btnTree);
+                buttonList.add(btnCommunity);
+            }else{
+                buttonList.add(btOneDay);
+                buttonList.add(btSevenDay);
+                buttonList.add(btThirtyDay);
+                buttonList.add(btNintyDay);
+            }
         }
         for (int i = 0; i <buttonList.size() ; i++) {
             buttonList.get(i).setEnabled(true);

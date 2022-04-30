@@ -21,7 +21,7 @@
         android:layout_marginBottom="5dp"
         android:background="#DCDCDC"/>
     <TextView
-        android:id="@+id/tx_type1"
+        android:id="@+id/tx_air"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="15sp"
@@ -38,45 +38,45 @@
          android:layout_marginBottom="5dp"
          android:layout_marginLeft="25dp">
             <TextView
-                android:id="@+id/tx_type1_tem"
+                android:id="@+id/tx_air_tem"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="空气温度："
+                android:text=""
                 android:textSize="13sp"
                 android:textColor="@color/black">
             </TextView>
         <TextView
-            android:id="@+id/val_type1_tem"
+            android:id="@+id/val_air_tem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="7"
-            android:text="23℃"
+            android:text=""
             android:textSize="13sp"
             android:gravity="left"
             android:textColor="@color/black">
         </TextView>
         <TextView
-            android:id="@+id/tx_type1_hum"
+            android:id="@+id/tx_air_hum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="空气湿度"
+            android:text=""
             android:textSize="13sp"
             android:textColor="@color/black">
         </TextView>
         <TextView
-            android:id="@+id/val_type1_hum"
+            android:id="@+id/val_air_hum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="6"
-            android:text="87.1%"
+            android:text=""
             android:textSize="13sp"
             android:textColor="@color/black">
         </TextView>
     </LinearLayout>
     <TextView
-        android:id="@+id/tx_type2"
+        android:id="@+id/tx_soil"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="15sp"
@@ -97,38 +97,38 @@
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="25dp">
             <TextView
-                android:id="@+id/tx_type2_tem"
+                android:id="@+id/tx_soil_tem"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="土壤温度:"
+                android:text=""
                 android:textSize="13sp"
                 android:textColor="@color/black">
             </TextView>
             <TextView
-                android:id="@+id/val_type2_tem"
+                android:id="@+id/val_soil_tem"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="6"
-                android:text="8.1deg_C"
+                android:text=""
                 android:textSize="13sp"
                 android:textColor="@color/black">
             </TextView>
             <TextView
-                android:id="@+id/tx_type2_hum"
+                android:id="@+id/tx_soil_hum"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="土壤湿度"
+                android:text=""
                 android:textSize="13sp"
                 android:textColor="@color/black">
             </TextView>
             <TextView
-                android:id="@+id/val_type2_hum"
+                android:id="@+id/val_soil_hum"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="6"
-                android:text="78.1%"
+                android:layout_weight="7"
+                android:text=""
                 android:textSize="13sp"
                 android:textColor="@color/black">
             </TextView>
@@ -139,25 +139,7 @@
             android:orientation="horizontal"
             android:layout_marginLeft="25dp">
             <TextView
-                android:id="@+id/tx_type2_salt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="土壤盐分:"
-                android:textSize="13sp"
-                android:textColor="@color/black">
-            </TextView>
-            <TextView
-                android:id="@+id/val_type2_salt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="6"
-                android:text="221.60uS/cm"
-                android:textSize="13sp"
-                android:textColor="@color/black">
-            </TextView>
-            <TextView
-                android:id="@+id/tx_type2_33"
+                android:id="@+id/tx_soil_salt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -166,7 +148,25 @@
                 android:textColor="@color/black">
             </TextView>
             <TextView
-                android:id="@+id/val_type2_33"
+                android:id="@+id/val_soil_salt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="6"
+                android:text=""
+                android:textSize="13sp"
+                android:textColor="@color/black">
+            </TextView>
+            <TextView
+                android:id="@+id/tx_soil_33"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text=""
+                android:textSize="13sp"
+                android:textColor="@color/black">
+            </TextView>
+            <TextView
+                android:id="@+id/val_soil_33"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="7"
@@ -178,7 +178,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/tx_type3"
+        android:id="@+id/tx_plant"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="15sp"
@@ -200,38 +200,38 @@
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="25dp">
             <TextView
-                android:id="@+id/tx_type3_fluid"
+                android:id="@+id/tx_plant_fluid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="树木液流:"
+                android:text=""
                 android:textSize="13sp"
                 android:textColor="@color/black">
             </TextView>
             <TextView
-                android:id="@+id/val_type3_fluid"
+                android:id="@+id/val_plant_fluid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="8"
-                android:text="0.343mV"
+                android:text=""
                 android:textSize="13sp"
                 android:textColor="@color/black">
             </TextView>
             <TextView
-                android:id="@+id/tx_type3_dia"
+                android:id="@+id/tx_plant_dia"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="树木胸径："
+                android:text=""
                 android:textSize="13sp"
                 android:textColor="@color/black">
             </TextView>
             <TextView
-                android:id="@+id/val_type3_dia"
+                android:id="@+id/val_plant_dia"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="5"
-                android:text="11.29mm"
+                android:text=""
                 android:textSize="13sp"
                 android:textColor="@color/black">
             </TextView>
@@ -242,25 +242,7 @@
             android:orientation="horizontal"
             android:layout_marginLeft="25dp">
             <TextView
-                android:id="@+id/tx_type3_rad"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="光合有效辐射:"
-                android:textSize="13sp"
-                android:textColor="@color/black">
-            </TextView>
-            <TextView
-                android:id="@+id/val_type3_rad"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="7"
-                android:text="0 umol.s-1.m-2"
-                android:textSize="13sp"
-                android:textColor="@color/black">
-            </TextView>
-            <TextView
-                android:id="@+id/tx_type3_33"
+                android:id="@+id/tx_plant_rad"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -269,7 +251,25 @@
                 android:textColor="@color/black">
             </TextView>
             <TextView
-                android:id="@+id/val_type3_33"
+                android:id="@+id/val_plant_rad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="7"
+                android:text=""
+                android:textSize="13sp"
+                android:textColor="@color/black">
+            </TextView>
+            <TextView
+                android:id="@+id/tx_plant_33"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text=""
+                android:textSize="13sp"
+                android:textColor="@color/black">
+            </TextView>
+            <TextView
+                android:id="@+id/val_plant_33"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

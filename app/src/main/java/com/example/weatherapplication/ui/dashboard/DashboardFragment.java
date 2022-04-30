@@ -39,6 +39,7 @@ import com.example.weatherapplication.MainActivity;
 import com.example.weatherapplication.R;
 import com.example.weatherapplication.bean.CollectorItemBean;
 import com.example.weatherapplication.bean.WeatherStationItemBean;
+import com.example.weatherapplication.buiness.StationFacade;
 import com.example.weatherapplication.databinding.FragmentDashboardBinding;
 import com.example.weatherapplication.util.NetUtil;
 
@@ -46,6 +47,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class DashboardFragment extends Fragment {
 
@@ -57,7 +59,8 @@ public class DashboardFragment extends Fragment {
     private String userName,collectorName,collectorId;
     private View pop;
     ////2022/02/15
-    private TextView tvStationName;
+    private TextView tvStationName,tvAirTem,tvAirHum,tvSoilTem,tvSoilHum,tvSoilSalt,tvPlantFluid,tvPlantDia,tvPlantRad,
+            valAirTem,valAirHum,valSoilTem,valSoilHum,valSoilSalt,valPlantFluid,valPlantDia,valPlantRad;
     private ListView detailLv,detailLvLeft,valueLvLeft;
     private String[] mDatas,mValueDatas,mValue,mDatasLeft,mValueDatasLeft; //列表数据源
     private ArrayAdapter detailAdapter,valueAdapter,detailAdapterLeft,valueAdapterLeft;
@@ -72,34 +75,34 @@ public class DashboardFragment extends Fragment {
         dashboardViewModel =  new ViewModelProvider(this).get(DashboardViewModel.class);
         SDKInitializer.initialize(getActivity().getApplicationContext());
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
-        View rootView = binding.getRoot();
+        View fragmentDashboardView = binding.getRoot();
         userName = getActivity().getIntent().getStringExtra("userName");
         Log.d("DashboardFragment","-----userName======"+userName);
 //        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 //            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 //        }else {
-            requestLocation();
+            requestLocation(fragmentDashboardView);
         //}
-        return rootView;
+        return fragmentDashboardView;
     }
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults,View fragmentDashboardView) {
         switch (requestCode) {
             case 1:
                 if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(getActivity(), "没有定位权限！", Toast.LENGTH_LONG).show();
                     getActivity().finish();
                 } else {
-                    requestLocation();
+                    requestLocation(fragmentDashboardView);
                 }
         }
     }
-    private void requestLocation() {
-        initLocation();
+    private void requestLocation(View fragmentDashboardView) {
+        initLocation(fragmentDashboardView);
         mLocationClient.start();
     }
-    private void initLocation() {  //初始化
+    private void initLocation(View fragmentDashboardView) {  //初始化
         mLocationClient = new LocationClient(getActivity().getApplicationContext());
-        mMapView = binding.getRoot().findViewById(R.id.bmapView);
+        mMapView = fragmentDashboardView.findViewById(R.id.bmapView);
         mBaiduMap = mMapView.getMap();//获取百度控制器
         mMapView.removeViewAt(1); // 不显示百度地图Logo
         float maxZoomLevel = mBaiduMap.getMaxZoomLevel();//获取地图最大缩放级别
@@ -154,7 +157,6 @@ public class DashboardFragment extends Fragment {
         mLatLnglist.add(position++, new LatLng(Float.parseFloat(weatherStationItemBean.getLatLng3().split(",")[1]),Float.parseFloat(weatherStationItemBean.getLatLng3().split(",")[0])));
         mLatLnglist.add(position++, new LatLng(Float.parseFloat(weatherStationItemBean.getLatLng4().split(",")[1]),Float.parseFloat(weatherStationItemBean.getLatLng4().split(",")[0])));
     }
-
     //拖拽监听器
     BaiduMap.OnMarkerDragListener markerDragListener = new BaiduMap.OnMarkerDragListener() {
         //标志正在拖动
@@ -176,8 +178,7 @@ public class DashboardFragment extends Fragment {
     BaiduMap.OnMapClickListener mapClickListener = new BaiduMap.OnMapClickListener() {
         @Override
         public void onMapClick(LatLng latLng) {
-            Log.d("DashboardFragment", "---地图被点击了==1111===" +pop.isShown());
-            Log.d("DashboardFragment", "---地图被点击了====2222="+ infoWindowShown);
+            Log.d("DashboardFragment", "---地图被点击了==1111===" +pop.isShown()+"---地图被点击了====2222="+ infoWindowShown);
             if(pop.isShown() && !infoWindowShown){
                 Log.d("DashboardFragment", "---地图被点击了=11111111111111111111====" );
                 infoWindowShown = true;
@@ -192,7 +193,6 @@ public class DashboardFragment extends Fragment {
         }
         @Override
         public void onMapPoiClick(MapPoi mapPoi) {
-
         }
     };
     //点击标志监听器
@@ -216,28 +216,28 @@ public class DashboardFragment extends Fragment {
             Bundle bundle = marker.getExtraInfo();
             String id = bundle.getString("id");
             Log.d("DashboardFragment", "-----id======" + id);
+            String collectorId = bundle.getString("collectorId");
+            Log.d("DashboardFragment", "-----collectorId======" + collectorId);
             if("1".equals(id) ||"2".equals(id)||"3".equals(id)||"4".equals(id)){
                 if (pop == null) {
                     try {
                         pop = View.inflate(getActivity(), R.layout.marker_layout, null);
-                        tvStationName = (TextView) pop.findViewById(R.id.tv_station_name);
-                        //detailLvLeft = (ListView) pop.findViewById(R.id.detail_left_lv);
+                        initPopView(pop,collectorId);
                         mMapView.addView(pop, createLayoutParams(marker.getPosition()));
                     } catch (Exception e) {
                     e.printStackTrace();
                     }
                 } else {
+                    try {
+                        initPopView(pop,collectorId);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     mMapView.updateViewLayout(pop, createLayoutParams(marker.getPosition()));
                 }
                 pop.setVisibility(View.VISIBLE);
                 try {
                     tvStationName.setText(marker.getTitle());
-                    //mDatasLeft = getResources().getStringArray(R.array.index_left);
-                   //mValueDatasLeft = getResources().getStringArray(R.array.value_left);
-                   ///detailAdapterLeft = new ArrayAdapter(getActivity(), R.layout.layout_markerdetail_item, mDatasLeft);
-                    //valueAdapterLeft = new ArrayAdapter(getActivity(), R.layout.layout_markerdetail_item, mValueDatasLeft);
-                    //detailLvLeft.setAdapter(detailAdapterLeft);
-                   // valueLvLeft.setAdapter(valueAdapterLeft);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -247,16 +247,15 @@ public class DashboardFragment extends Fragment {
                         //将userName和stationId串到StationActity
                         Intent intent = new Intent(getActivity(), MainActivity.class);
                         //从marker中获取info信息
-                        Bundle bundle = marker.getExtraInfo();
                         String weatherStationId = bundle.getString("weatherStationId");
                         intent.putExtra("weatherStationId", weatherStationId);
                         intent.putExtra("userName", userName);
                         intent.putExtra("fragment_flag", 2);
-                        intent.putExtra("collectorId",bundle.getString("collectorId"));
+                        intent.putExtra("collectorId",collectorId);
                         intent.putExtra("collectorName", bundle.getString("collectorName"));
                         Log.d("DashboardFragment", "-----weatherStationId======" + weatherStationId
                                 +"-----userName======" + userName);
-                        Log.d("DashboardFragment", "-----collectorId======" + bundle.getString("collectorId")
+                        Log.d("DashboardFragment", "-----collectorId======" + collectorId
                                 + "-----collectorName======" + bundle.getString("collectorName"));
                         startActivity(intent);
                     }
@@ -271,6 +270,108 @@ public class DashboardFragment extends Fragment {
             return true;
         }
     };
+
+    private void initPopView(View pop,String collectorId) throws IOException {
+        StationFacade stationFacade = StationFacade.getInstance();
+        tvStationName = (TextView) pop.findViewById(R.id.tv_station_name);
+        tvAirTem =  (TextView) pop.findViewById(R.id.tx_air_tem);
+        tvAirHum =  (TextView) pop.findViewById(R.id.tx_air_hum);
+        tvSoilTem =  (TextView) pop.findViewById(R.id.tx_soil_tem);
+        tvSoilHum = (TextView) pop.findViewById(R.id.tx_soil_hum);
+        tvSoilSalt = (TextView) pop.findViewById(R.id.tx_soil_salt);
+        tvPlantFluid = (TextView) pop.findViewById(R.id.tx_plant_fluid);
+        tvPlantDia = (TextView) pop.findViewById(R.id.tx_plant_dia);
+        tvPlantRad = (TextView) pop.findViewById(R.id.tx_plant_rad);
+        valAirTem = (TextView) pop.findViewById(R.id.val_air_tem);
+        valAirHum = (TextView) pop.findViewById(R.id.val_air_hum);
+        valSoilTem = (TextView) pop.findViewById(R.id.val_soil_tem);
+        valSoilHum = (TextView) pop.findViewById(R.id.val_soil_hum);
+        valSoilSalt = (TextView) pop.findViewById(R.id.val_soil_salt);
+        valPlantFluid = (TextView) pop.findViewById(R.id.val_plant_fluid);
+        valPlantDia = (TextView) pop.findViewById(R.id.val_plant_dia);
+        valPlantRad = (TextView) pop.findViewById(R.id.val_plant_rad);
+        Map indexMap = stationFacade.initIndex(collectorId);
+        for(Iterator it = indexMap.keySet().iterator();it.hasNext();){
+            String index = (String) it.next();
+            Log.d("DashboardFragment","===================index==========:"+index);
+            Log.d("DashboardFragment", "########collectorId======" + collectorId);
+            String tem = stationFacade.getNewestData(index,collectorId,1);
+            try {
+                if("空气温度".equals(index) || "AirTC_Avg1".equals(index) ){
+                    Log.d("DashboardFragment", "-----airTem======" + tem);
+                    tvAirTem.setText(index+":");
+                    valAirTem.setText(tem);
+                }
+                if("空气湿度".equals(index)||"RH_Avg1".equals(index)){
+                    Log.d("DashboardFragment", "-----airHum======" + tem);
+                    tvAirHum.setText(index+":");
+                    valAirHum.setText(tem);
+                }
+                if("土壤温度".equals(index) || "SoilTemp_Avg1".equals(index)){
+                    Log.d("DashboardFragment","111111111111111111");
+                    Log.d("DashboardFragment", "-----soilTem======" + tem);
+                    tvSoilTem.setText(index+":");
+                    valSoilTem.setText(tem);
+                }
+                if("土壤湿度".equals(index) || "SoilEC_Avg1".equals(index)){
+                    Log.d("DashboardFragment","222222222222222");
+                    Log.d("DashboardFragment", "-----soilHum======" + tem);
+                    tvSoilHum.setText(index+":");
+                    valSoilHum.setText(tem);
+                }
+                if("土壤盐分".equals(index) || "SoilVWC_Avg1".equals(index)){
+                    Log.d("DashboardFragment", "-----soilsalt======" + tem);
+                    tvSoilSalt.setText(index+":");
+                    valSoilSalt.setText(tem);
+                }
+
+                if("树干液流".equals(index)|| "DD_Avg1".equals(index)){
+                    Log.d("DashboardFragment","33333333333333333");
+                    Log.d("DashboardFragment", "-----plantfluid======" + tem);
+                     tvPlantFluid.setText(index+":");
+                     valPlantFluid.setText(tem);
+                }
+                if("54".equals(collectorId)){
+                    Log.d("DashboardFragment","4444444444444444");
+                    tvSoilTem.setText("");
+                    valSoilTem.setText("");
+                    tvSoilHum.setText("");
+                    valSoilHum.setText("");
+                    tvSoilSalt.setText("");
+                    valSoilSalt.setText("");
+                    tvPlantRad.setText("");
+                    valPlantRad.setText("");
+                    tvPlantDia.setText("");
+                    valPlantDia.setText("");
+                }
+                if("树木胸径增长".equals(index)|| ("PAR_Avg1".equals(index) && !"54".equals(collectorId))){
+                    Log.d("DashboardFragment","55555555555555551");
+                    Log.d("DashboardFragment", "-----plantdia======" + tem);
+                    if("树木胸径增长".equals(index)){
+                        tvPlantDia.setText(index.substring(0,4)+":");
+                    }else{
+                        tvPlantDia.setText(index+":");
+                    }
+                    valPlantDia.setText(tem);
+                }else if( ("PAR_Avg1".equals(index) && "54".equals(collectorId))){
+                    tvPlantFluid.setText(index+":");
+                    valPlantFluid.setText(tem);
+                }
+
+                if("光合有效辐射".equals(index)|| "TDP_Avg1".equals(index)){
+                    Log.d("DashboardFragment","66666666666666666");
+                    Log.d("DashboardFragment", "-----plantrad======" + tem);
+                    tvPlantRad.setText(index+":");
+                    valPlantRad.setText(tem);
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+    }
+
     //创建布局参数
     private MapViewLayoutParams createLayoutParams(LatLng position){
         MapViewLayoutParams.Builder builder =  new MapViewLayoutParams.Builder();
