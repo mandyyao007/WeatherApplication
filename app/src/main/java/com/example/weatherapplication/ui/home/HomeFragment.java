@@ -1,5 +1,7 @@
 package com.example.weatherapplication.ui.home;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -72,7 +74,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     private String weatherStationId = null;
     private Button btOneDay,btSevenDay, btThirtyDay,btNintyDay,btMeteorology,btPlant,btSoil;
     private ScrollView scrollView;
-
+    List<DaysDataItemBean>  daysDataItemBean = null;
+    private int days = 0;//
 
     private Handler mHandler = new Handler(Looper.myLooper()){
         @Override
@@ -181,7 +184,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     }
 
     private void checkDayBtnAndDraw(String configType) {
-        int days = 0;
         if(!btOneDay.isEnabled()){
             days =1;
         }else if(!btSevenDay.isEnabled()){
@@ -192,7 +194,44 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
             days =90;
         }
         if(days != 0){
-            drawChart(configType,days);
+            //drawChart(configType,days);
+            try {
+                if(days == 1){
+                    drawChart(configType,days);
+                }else{
+                    final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                    progressDialog.setProgressStyle(ProgressDialog.BUTTON_NEUTRAL);
+                    progressDialog.setTitle("提示");
+                    progressDialog.setMessage("正在加载数据");
+                    progressDialog.setIndeterminate(false);
+                    progressDialog.setCancelable(true);
+                    progressDialog.setButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            progressDialog.cancel();
+                        }
+                    });
+                    progressDialog.show();
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            super.run();
+                            try{
+                                daysDataItemBean = getDaysData(configType,days);
+                                if(daysDataItemBean!=null && daysDataItemBean.size()>0){
+                                    progressDialog.cancel();
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                                progressDialog.cancel();
+                            }
+                        }
+                    }.start();
+                    drawChart(daysDataItemBean);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -218,7 +257,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     View.OnClickListener dayListener =  new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            int days = 0;
             switch(v.getId()){
                 case R.id.btn_one_day:
                     days = 1;
@@ -237,7 +275,44 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                     setBtnEnable(btNintyDay,"days");
                     break;
             }
-            drawChart(configType,days);
+            //drawChart(configType,days);
+            try {
+                if(days == 1){
+                    drawChart(configType,days);
+                }else{
+                    final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                    progressDialog.setProgressStyle(ProgressDialog.BUTTON_NEUTRAL);
+                    progressDialog.setTitle("提示");
+                    progressDialog.setMessage("正在加载数据");
+                    progressDialog.setIndeterminate(false);
+                    progressDialog.setCancelable(true);
+                    progressDialog.setButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            progressDialog.cancel();
+                        }
+                    });
+                    progressDialog.show();
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            super.run();
+                            try{
+                                daysDataItemBean = getDaysData(configType,days);
+                                if(daysDataItemBean!=null && daysDataItemBean.size()>0){
+                                    progressDialog.cancel();
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                                progressDialog.cancel();
+                            }
+                        }
+                    }.start();
+                    drawChart(daysDataItemBean);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     };
     private void setBtnEnable(Button btn,String category) {
@@ -259,19 +334,109 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         }
         btn.setEnabled(false);
     }
-    private void drawChart(String configType,int days) {
+    private List<DaysDataItemBean> getDaysData(String configType,int days) throws IOException {
         StationFacade stationFacade = StationFacade.getInstance();
-        if(configType!= null){
-            Log.d("HomeFragment", "=========configType=:" + configType);
-            List<DaysDataItemBean>  daysDataItemBean = null;
+        if (configType != null) {
+            //Log.d("HomeFragment", "=========configType=:" + configType);
             String newestData = "";
             try {
-                Log.d("HomeFragment", "=============days==:" + days);
-                daysDataItemBean= NetUtil.getDaysData(collectorId,configType,days);
-                //Log.d("HomeFragment", "===daysDataItemBean==:" + daysDataItemBean.size());
-                //Log.d("HomeFragment", "===daysDataItemBean==:" + daysDataItemBean);
-                int i = 0;
-                if(daysDataItemBean != null) {
+                //Log.d("HomeFragment", "===####======days==:" + days);
+                daysDataItemBean = NetUtil.getDaysData(collectorId, configType, days);
+                Log.d("HomeFragment", "===####======daysDataItemBean==:" + daysDataItemBean);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else{
+            String message = "请先选择类别";
+            Toast toastCenter = Toast.makeText(getActivity().getApplicationContext(), message,Toast.LENGTH_SHORT);
+            toastCenter.setGravity(Gravity.CENTER,0,0);
+            toastCenter.show();
+            setDaysButtonEnable(true);
+        }
+        return daysDataItemBean;
+    }
+    private void drawChart(List<DaysDataItemBean> daysDataItemBean) {
+        StationFacade stationFacade = StationFacade.getInstance();
+        int i = 0;
+        String newestData = "";
+        try {
+            if(daysDataItemBean != null && daysDataItemBean.size()>0) {
+                Iterator it = daysDataItemBean.iterator();
+                while(it.hasNext()){
+                    DaysDataItemBean item = (DaysDataItemBean) it.next();
+                    newestData = stationFacade.getNewestData((String) item.getDescription(),collectorId,1);
+                    Log.d("HomeFragment", "===newestData==:" + newestData);
+                    if(i==0){
+                        scrollView.scrollTo(0,0);
+                        tvChartname1.setText(item.getDescription());
+                        tvChartname1.setVisibility(View.VISIBLE);
+                        tvNewestData1.setText(newestData);
+                        tvNewestData1.setVisibility(View.VISIBLE);
+                        lineChart1.setVisibility(View.VISIBLE);
+                        lineChart1.zoom(0f,1f,0,0);
+                        lineChart1.zoom(0.25f,1f,0,0);
+                        setLineChart(days,item,lineChart1,entries1,item.getDescription(),item.getUnit());
+                        lineChart1.notifyDataSetChanged();
+                        lineChart1.getData().notifyDataChanged();
+                        lineChart1.invalidate();
+                    }
+                    if(i==1){
+                        tvChartname2.setText(item.getDescription());
+                        tvChartname2.setVisibility(View.VISIBLE);
+                        tvNewestData2.setText(newestData);
+                        tvNewestData2.setVisibility(View.VISIBLE);
+                        lineChart2.setVisibility(View.VISIBLE);
+                        lineChart2.zoom(0f,1f,0,0);
+                        lineChart2.zoom(0.25f,1f,0,0);
+                        setLineChart(days,item,lineChart2,entries2,item.getDescription(),item.getUnit());
+                        lineChart2.notifyDataSetChanged();
+                        lineChart2.getData().notifyDataChanged();
+                        lineChart2.invalidate();
+                    }
+                    if(i==2){
+                        tvChartname3.setText(item.getDescription());
+                        tvChartname3.setVisibility(View.VISIBLE);
+                        tvNewestData3.setText(newestData);
+                        tvNewestData3.setVisibility(View.VISIBLE);
+                        lineChart3.setVisibility(View.VISIBLE);
+                        lineChart3.zoom(0f,1f,0,0);
+                        lineChart3.zoom(0.25f,1f,0,0);
+                        setLineChart(days,item,lineChart3,entries3,item.getDescription(),item.getUnit());
+                        lineChart3.notifyDataSetChanged();
+                        lineChart3.getData().notifyDataChanged();
+                        lineChart3.invalidate();
+                    }
+                    i++;
+                }
+            }else{
+                if(i==0){
+                    tvChartname1.setVisibility(View.INVISIBLE);
+                    tvNewestData1.setVisibility(View.INVISIBLE);
+                    lineChart1.setVisibility(View.INVISIBLE);
+                }
+                if(i==1){
+                    tvChartname2.setVisibility(View.INVISIBLE);
+                    tvNewestData2.setVisibility(View.INVISIBLE);
+                    lineChart2.setVisibility(View.INVISIBLE);
+                }
+                if(i==2){
+                    tvChartname3.setVisibility(View.INVISIBLE);
+                    tvNewestData3.setVisibility(View.INVISIBLE);
+                    lineChart3.setVisibility(View.INVISIBLE);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private void drawChart(String configType,int days) {
+        StationFacade stationFacade = StationFacade.getInstance();
+        //if(configType!= null){
+            int i = 0;
+            String newestData = "";
+            try {
+                daysDataItemBean = getDaysData(configType,days);
+                if(daysDataItemBean != null && daysDataItemBean.size()>0) {
                     Iterator it = daysDataItemBean.iterator();
                     while(it.hasNext()){
                           DaysDataItemBean item = (DaysDataItemBean) it.next();
@@ -339,13 +504,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
             } catch (Exception e) {
                     e.printStackTrace();
             }
-        }else{
+        /*}else{
             String message = "请先选择类别";
             Toast toastCenter = Toast.makeText(getActivity().getApplicationContext(), message,Toast.LENGTH_SHORT);
             toastCenter.setGravity(Gravity.CENTER,0,0);
             toastCenter.show();
             setDaysButtonEnable(true);
-        }
+        }*/
     }
 
     @Override

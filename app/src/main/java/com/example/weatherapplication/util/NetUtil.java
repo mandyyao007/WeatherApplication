@@ -263,14 +263,14 @@ public class NetUtil {
         String dataResult ="";
         //拼接出URL
         String daysDataUrl = URL_DAYS_DATA+"?collectorId="+stationId+"&configType="+configType+"&day="+day;;
-        //Log.d("fan","-----daysDataUrl======"+daysDataUrl);
+        Log.d("fan","-----daysDataUrl======"+daysDataUrl);
         List<DaysDataItemBean> daysDataItemBeans = null;
         try{
             dataResult = service(daysDataUrl,"POST");
             //Log.d("fan","-----getDaysData  result======"+dataResult);
             Gson gson = new Gson();
             DaysDataBean daysDataBean = gson.fromJson(dataResult, DaysDataBean.class);
-            //Log.d("fan","====getDaysData====DaysDataBean==:"+daysDataBean.toString());
+            Log.d("fan","====getDaysData====DaysDataBean==:"+daysDataBean.toString());
             if(daysDataBean!= null && daysDataBean.getmItemBeans()!= null){
                 daysDataItemBeans =  daysDataBean.getmItemBeans();
 
@@ -280,6 +280,7 @@ public class NetUtil {
         }catch (IOException e) {
             e.printStackTrace();
         }
+        Log.d("fan","====getDaysData====daysDataItemBeans==:"+daysDataItemBeans);
         return daysDataItemBeans;
     }
 }

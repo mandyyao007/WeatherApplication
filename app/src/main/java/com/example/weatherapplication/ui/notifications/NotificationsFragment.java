@@ -209,40 +209,45 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                  */
                 //Log.d("NotificationsFragment", "===mTask1====:" );
                 //mTask1.execute();
-                final ProgressDialog progressDialog = new ProgressDialog(getActivity());
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                progressDialog.setTitle("提示");
-                progressDialog.setMessage("正在加载数据");
-                progressDialog.setIndeterminate(false);
-                progressDialog.setCancelable(true);
-                progressDialog.setButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        progressDialog.cancel();
-                    }
-                });
-                progressDialog.show();
-                new Thread(){
-                    @Override
-                    public void run() {
-                        super.run();
-                        try{
+                if(days == 1){
+                    drawChart(type,days);
+                }else{
+                    final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                    progressDialog.setProgressStyle(ProgressDialog.BUTTON_NEUTRAL);
+                    progressDialog.setTitle("提示");
+                    progressDialog.setMessage("正在加载数据");
+                    progressDialog.setIndeterminate(false);
+                    progressDialog.setCancelable(true);
+                    progressDialog.setButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            progressDialog.cancel();
+                        }
+                    });
+                    progressDialog.show();
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            super.run();
+                            try{
                            /* while(count<=100){
                                 progressDialog.setProgress(count++);
                                 treeDataItemBeans = getReportData(type,days);
                             }
                             progressDialog.cancel();*/
-                            treeDataItemBeans = getReportData(type,days);
-                            if(treeDataItemBeans!=null && treeDataItemBeans.size()>0){
+                                treeDataItemBeans = getReportData(type,days);
+                                if(treeDataItemBeans!=null && treeDataItemBeans.size()>0){
+                                    progressDialog.cancel();
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
                                 progressDialog.cancel();
                             }
-                        }catch (Exception e){
-                            e.printStackTrace();
-                            progressDialog.cancel();
                         }
-                    }
-                }.start();
-                drawBarChart(treeDataItemBeans);
+                    }.start();
+                    drawBarChart(treeDataItemBeans);
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -272,39 +277,44 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                      */
                     //Log.d("NotificationsFragment", "===mTask2====:" );
                     //mTask2.execute();
-                    final ProgressDialog progressDialog = new ProgressDialog(getActivity());
-                    progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                    progressDialog.setTitle("提示");
-                    progressDialog.setMessage("正在加载数据");
-                    progressDialog.setIndeterminate(false);
-                    progressDialog.setCancelable(true);
-                    progressDialog.setButton("取消", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            progressDialog.cancel();
-                        }
-                    });
-                    progressDialog.show();
-                    new Thread(){
-                        @Override
-                        public void run() {
-                            super.run();
-                            try{
-                               // while(count<=100){
-                                  //  progressDialog.setProgress(count++);
-                                   // treeDataItemBeans = getReportData(type,days);
-                               // }
-                                treeDataItemBeans = getReportData(type,days);
-                                if(treeDataItemBeans!=null && treeDataItemBeans.size()>0){
-                                    progressDialog.cancel();
-                                }
-                            }catch (Exception e){
-                                e.printStackTrace();
+                    if(days == 1){
+                        drawChart(type,days);
+                    }else{
+                        final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                        progressDialog.setProgressStyle(ProgressDialog.BUTTON_NEUTRAL);
+                        progressDialog.setTitle("提示");
+                        progressDialog.setMessage("正在加载数据");
+                        progressDialog.setIndeterminate(false);
+                        progressDialog.setCancelable(true);
+                        progressDialog.setButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
                                 progressDialog.cancel();
                             }
-                        }
-                    }.start();
-                    drawBarChart(treeDataItemBeans);
+                        });
+                        progressDialog.show();
+                        new Thread(){
+                            @Override
+                            public void run() {
+                                super.run();
+                                try{
+                           /* while(count<=100){
+                                progressDialog.setProgress(count++);
+                                treeDataItemBeans = getReportData(type,days);
+                            }
+                            progressDialog.cancel();*/
+                                    treeDataItemBeans = getReportData(type,days);
+                                    if(treeDataItemBeans!=null && treeDataItemBeans.size()>0){
+                                        progressDialog.cancel();
+                                    }
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                    progressDialog.cancel();
+                                }
+                            }
+                        }.start();
+                        drawBarChart(treeDataItemBeans);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
