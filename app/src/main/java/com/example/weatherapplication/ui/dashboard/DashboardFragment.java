@@ -77,7 +77,6 @@ public class DashboardFragment extends Fragment {
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
         View fragmentDashboardView = binding.getRoot();
         userName = getActivity().getIntent().getStringExtra("userName");
-        Log.d("DashboardFragment","-----userName======"+userName);
 //        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 //            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 //        }else {
@@ -107,7 +106,6 @@ public class DashboardFragment extends Fragment {
         mMapView.removeViewAt(1); // 不显示百度地图Logo
         float maxZoomLevel = mBaiduMap.getMaxZoomLevel();//获取地图最大缩放级别
         float minZoomLevel = mBaiduMap.getMinZoomLevel();//获取地图最小缩放级别
-        Log.d("DashboardFragment","-----maxZoomLevel======"+maxZoomLevel+"-----minZoomLevel======"+minZoomLevel);
         LocationClientOption option = new LocationClientOption();
 
         //设置地图中心点，默认是上海园林，百度地图的默认中心是天安门
@@ -150,8 +148,6 @@ public class DashboardFragment extends Fragment {
     private void initLatLngData(WeatherStationItemBean weatherStationItemBean) {
         mLatLnglist = new ArrayList<>();
         int position = 0;
-        Log.d("DashboardFragment", "---四边形顶点===="+weatherStationItemBean.getLatLng1().split(",")[1] );
-        Log.d("DashboardFragment", "---四边形顶点===="+weatherStationItemBean.getLatLng1().split(",")[0] );
         mLatLnglist.add(position++, new LatLng(Float.parseFloat(weatherStationItemBean.getLatLng1().split(",")[1]),Float.parseFloat(weatherStationItemBean.getLatLng1().split(",")[0])));
         mLatLnglist.add(position++, new LatLng(Float.parseFloat(weatherStationItemBean.getLatLng2().split(",")[1]),Float.parseFloat(weatherStationItemBean.getLatLng2().split(",")[0])));
         mLatLnglist.add(position++, new LatLng(Float.parseFloat(weatherStationItemBean.getLatLng3().split(",")[1]),Float.parseFloat(weatherStationItemBean.getLatLng3().split(",")[0])));
@@ -178,16 +174,13 @@ public class DashboardFragment extends Fragment {
     BaiduMap.OnMapClickListener mapClickListener = new BaiduMap.OnMapClickListener() {
         @Override
         public void onMapClick(LatLng latLng) {
-            Log.d("DashboardFragment", "---地图被点击了==1111===" +pop.isShown()+"---地图被点击了====2222="+ infoWindowShown);
-            if(pop.isShown() && !infoWindowShown){
-                Log.d("DashboardFragment", "---地图被点击了=11111111111111111111====" );
+            if(pop.isShown() && !infoWindowShown && pop!=null){
                 infoWindowShown = true;
                 pop.setVisibility(View.INVISIBLE);
                 lastMarker.setIcon(icon);
                 return;
             }
             if(!pop.isShown() && !infoWindowShown){
-                Log.d("DashboardFragment", "---地图被点击了=1222222222222222222222222222222222222222222222222====" );
                 infoWindowShown = false;
             }
         }
@@ -212,12 +205,9 @@ public class DashboardFragment extends Fragment {
             lastMarker = marker ;
             lastMarker.setIcon(iconClick);
             infoWindowShown = false;
-            Log.d("DashboardFragment", "-----marker被点击了    infoWindowShown=====" +infoWindowShown);
             Bundle bundle = marker.getExtraInfo();
             String id = bundle.getString("id");
-            Log.d("DashboardFragment", "-----id======" + id);
             String collectorId = bundle.getString("collectorId");
-            Log.d("DashboardFragment", "-----collectorId======" + collectorId);
             if("1".equals(id) ||"2".equals(id)||"3".equals(id)||"4".equals(id)){
                 if (pop == null) {
                     try {
@@ -253,16 +243,15 @@ public class DashboardFragment extends Fragment {
                         intent.putExtra("fragment_flag", 2);
                         intent.putExtra("collectorId",collectorId);
                         intent.putExtra("collectorName", bundle.getString("collectorName"));
-                        Log.d("DashboardFragment", "-----weatherStationId======" + weatherStationId
+                        /*Log.d("DashboardFragment", "-----weatherStationId======" + weatherStationId
                                 +"-----userName======" + userName);
                         Log.d("DashboardFragment", "-----collectorId======" + collectorId
-                                + "-----collectorName======" + bundle.getString("collectorName"));
+                                + "-----collectorName======" + bundle.getString("collectorName"));*/
                         startActivity(intent);
                     }
                 });
             }else{
                 if(pop.isShown()){
-                    Log.d("DashboardFragment","1111111111111111111111111");
                     marker.setIcon(icon);
                     pop.setVisibility(View.INVISIBLE);
                 }
@@ -293,46 +282,42 @@ public class DashboardFragment extends Fragment {
         Map indexMap = stationFacade.initIndex(collectorId);
         for(Iterator it = indexMap.keySet().iterator();it.hasNext();){
             String index = (String) it.next();
-            Log.d("DashboardFragment","===================index==========:"+index);
-            Log.d("DashboardFragment", "########collectorId======" + collectorId);
+            //Log.d("DashboardFragment","===================index==========:"+index);
+            //Log.d("DashboardFragment", "########collectorId======" + collectorId);
             String tem = stationFacade.getNewestData(index,collectorId,1);
             try {
                 if("空气温度".equals(index) || "AirTC_Avg1".equals(index) ){
-                    Log.d("DashboardFragment", "-----airTem======" + tem);
+                    //Log.d("DashboardFragment", "-----airTem======" + tem);
                     tvAirTem.setText(index+":");
                     valAirTem.setText(tem);
                 }
                 if("空气湿度".equals(index)||"RH_Avg1".equals(index)){
-                    Log.d("DashboardFragment", "-----airHum======" + tem);
+                   // Log.d("DashboardFragment", "-----airHum======" + tem);
                     tvAirHum.setText(index+":");
                     valAirHum.setText(tem);
                 }
                 if("土壤温度".equals(index) || "SoilTemp_Avg1".equals(index)){
-                    Log.d("DashboardFragment","111111111111111111");
-                    Log.d("DashboardFragment", "-----soilTem======" + tem);
+                    //Log.d("DashboardFragment", "-----soilTem======" + tem);
                     tvSoilTem.setText(index+":");
                     valSoilTem.setText(tem);
                 }
                 if("土壤湿度".equals(index) || "SoilEC_Avg1".equals(index)){
-                    Log.d("DashboardFragment","222222222222222");
-                    Log.d("DashboardFragment", "-----soilHum======" + tem);
+                    //Log.d("DashboardFragment", "-----soilHum======" + tem);
                     tvSoilHum.setText(index+":");
                     valSoilHum.setText(tem);
                 }
                 if("土壤盐分".equals(index) || "SoilVWC_Avg1".equals(index)){
-                    Log.d("DashboardFragment", "-----soilsalt======" + tem);
+                    //Log.d("DashboardFragment", "-----soilsalt======" + tem);
                     tvSoilSalt.setText(index+":");
                     valSoilSalt.setText(tem);
                 }
 
                 if("树干液流".equals(index)|| "DD_Avg1".equals(index)){
-                    Log.d("DashboardFragment","33333333333333333");
-                    Log.d("DashboardFragment", "-----plantfluid======" + tem);
+                    //Log.d("DashboardFragment", "-----plantfluid======" + tem);
                      tvPlantFluid.setText(index+":");
                      valPlantFluid.setText(tem);
                 }
                 if("54".equals(collectorId)){
-                    Log.d("DashboardFragment","4444444444444444");
                     tvSoilTem.setText("");
                     valSoilTem.setText("");
                     tvSoilHum.setText("");
@@ -345,8 +330,7 @@ public class DashboardFragment extends Fragment {
                     valPlantDia.setText("");
                 }
                 if("树木胸径增长".equals(index)|| ("PAR_Avg1".equals(index) && !"54".equals(collectorId))){
-                    Log.d("DashboardFragment","55555555555555551");
-                    Log.d("DashboardFragment", "-----plantdia======" + tem);
+                    //Log.d("DashboardFragment", "-----plantdia======" + tem);
                     if("树木胸径增长".equals(index)){
                         tvPlantDia.setText(index.substring(0,4)+":");
                     }else{
@@ -359,8 +343,7 @@ public class DashboardFragment extends Fragment {
                 }
 
                 if("光合有效辐射".equals(index)|| "TDP_Avg1".equals(index)){
-                    Log.d("DashboardFragment","66666666666666666");
-                    Log.d("DashboardFragment", "-----plantrad======" + tem);
+                    //Log.d("DashboardFragment", "-----plantrad======" + tem);
                     tvPlantRad.setText(index+":");
                     valPlantRad.setText(tem);
                 }
@@ -394,9 +377,9 @@ public class DashboardFragment extends Fragment {
             mBaiduMap.clear();//先清除图层
             if(it.hasNext()){
                 WeatherStationItemBean item = (WeatherStationItemBean) it.next();
-                Log.d("DashboardFragment","############station=====Items==:"+item.toString());
+                //Log.d("DashboardFragment","############station=====Items==:"+item.toString());
                 String weatherStationId = item.getWeatherStationId();
-                Log.d("DashboardFragment","############weatherStationId==:"+weatherStationId);
+                //Log.d("DashboardFragment","############weatherStationId==:"+weatherStationId);
                 String reg = "^[0-9]+(.[0-9]+)?$";
                 initLatLngData(item);//初始化四边形的点
                 List<CollectorItemBean> collectorItems = NetUtil.getStationItemInfo(userName,weatherStationId);
@@ -404,18 +387,18 @@ public class DashboardFragment extends Fragment {
                 Iterator iter = collectorItems.iterator();
                 while(iter.hasNext()){
                     CollectorItemBean collectorItem =  (CollectorItemBean)iter.next();
-                    Log.d("DashboardFragment","============collectorItem==:"+collectorItem);
+                    //Log.d("DashboardFragment","============collectorItem==:"+collectorItem);
                     if((!"".equals(collectorItem.getLatitude()) && collectorItem.getLatitude().matches(reg))
                             && (!"".equals(collectorItem.getLongitude()) && collectorItem.getLongitude().matches(reg)) ){
                         float latitude =  Float.parseFloat(collectorItem.getLatitude()) ;
                         float longitude=  Float.parseFloat(collectorItem.getLongitude());
-                        Log.d("DashboardFragment","############latitude==:"+latitude+"############longitude==:"+longitude);
+                        //Log.d("DashboardFragment","############latitude==:"+latitude+"############longitude==:"+longitude);
                         LatLng point = new LatLng( latitude,longitude);
                         collectorId = collectorItem.getId();
                         collectorName = collectorItem.getCollectorName();
-                        Log.d("DashboardFragment","-------------collectorItem==:"+collectorItem);
-                        Log.d("DashboardFragment","############collectorName==:"+collectorName);
-                        Log.d("DashboardFragment","############collectorId==:"+collectorId);
+                        //Log.d("DashboardFragment","-------------collectorItem==:"+collectorItem);
+                        //Log.d("DashboardFragment","############collectorName==:"+collectorName);
+                        //Log.d("DashboardFragment","############collectorId==:"+collectorId);
                         if( point!= null){
                             /////Bundle用来传值 也可以识别点击的是哪一个marker
                             Bundle mBundle = new Bundle();

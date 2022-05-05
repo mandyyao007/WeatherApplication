@@ -71,7 +71,7 @@ public class StationFacade {
                 i++;
             }
             for(int j=0; j<count;j++){
-                Log.d("StationFacade","======indexs =====:"+indexs[j] +"("+indexsUint[j]+")");
+                //Log.d("StationFacade","======indexs =====:"+indexs[j] +"("+indexsUint[j]+")");
             }
         }
         return indexs;
@@ -79,9 +79,9 @@ public class StationFacade {
     public String getNewestData(String selectConfigName, String collectorId, int count) throws IOException {
         Map indexMap = initIndex(collectorId);
         String newestData = "";
-        Log.d("StationFacade","======indexMap =====:"+indexMap);
+        //Log.d("StationFacade","======indexMap =====:"+indexMap);
         String selectConfigId = (String) indexMap.get(selectConfigName);
-        Log.d("StationFacade","======selectConfigId =====:"+selectConfigId);
+        //Log.d("StationFacade","======selectConfigId =====:"+selectConfigId);
         ReportBean newestRrpotData = NetUtil.getNewestData(selectConfigId, collectorId,1);
         if(newestRrpotData != null  && newestRrpotData.getmDayReportBeans() != null) {
             List<DayReportBean> dayReports = newestRrpotData.getmDayReportBeans();
@@ -91,9 +91,9 @@ public class StationFacade {
             Iterator iter = dayReports.iterator();
             while(iter.hasNext()){
                 DayReportBean dayReportBean = (DayReportBean)iter.next();
-                Log.d("StationFacade", "===dayReportBean.getCol1()==:" + dayReportBean.getCol1());
+                //Log.d("StationFacade", "===dayReportBean.getCol1()==:" + dayReportBean.getCol1());
                 newestData = dayReportBean.getCol1();
-                Log.d("StationFacade", "===newestData==:" + newestData);
+                //Log.d("StationFacade", "===newestData==:" + newestData);
             }
         }
         return newestData;

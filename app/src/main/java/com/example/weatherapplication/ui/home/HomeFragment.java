@@ -64,7 +64,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     private FragmentHomeBinding binding;
     private TextView tvStation,tvChartname1,tvChartname2,tvChartname3,tvNewestData1,tvNewestData2,tvNewestData3;
     private ImageView ivAdd;
-    private String  userName,collectorId,collectorName,configType,selectConfigId;//监测指标类型
+    private String  userName,collectorId,collectorName,configType;//监测指标类型
     private Map indexMap;
     private LinkedHashMap dataMap = new LinkedHashMap();
     private LineChart lineChart1,lineChart2,lineChart3;
@@ -82,7 +82,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 String report = (String) msg.obj;
                 Gson gson = new Gson();
                 ReportBean reportBean = gson.fromJson(report, ReportBean.class);
-                Log.d("HomeFragment","====解析后的reportBean==:"+reportBean.toString());
+                //Log.d("HomeFragment","====解析后的reportBean==:"+reportBean.toString());
             }
         }
     };
@@ -96,7 +96,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         try{
             if(collectorId!= null) {
                 indexMap = stationFacade.initIndex(collectorId);
-                Log.d("HomeFragment","=&&&&&&&&onCreateView==indexMap==:"+ indexMap);
+                //Log.d("HomeFragment","=&&&&&&&&onCreateView==indexMap==:"+ indexMap);
                 btMeteorology.setOnClickListener(this);
                 btPlant.setOnClickListener(this);
                 btSoil.setOnClickListener(this);
@@ -278,7 +278,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                           newestData = stationFacade.getNewestData((String) item.getDescription(),collectorId,1);
                           Log.d("HomeFragment", "===newestData==:" + newestData);
                           if(i==0){
-                               Log.d("HomeFragment", "======0000000000000000000000=="+ item);
                                scrollView.scrollTo(0,0);
                                tvChartname1.setText(item.getDescription());
                                tvChartname1.setVisibility(View.VISIBLE);
@@ -293,7 +292,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                                lineChart1.invalidate();
                           }
                           if(i==1){
-                               Log.d("HomeFragment", "======111111111111111111=="+ item);
                                tvChartname2.setText(item.getDescription());
                                tvChartname2.setVisibility(View.VISIBLE);
                                tvNewestData2.setText(newestData);
@@ -307,7 +305,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                                lineChart2.invalidate();
                           }
                           if(i==2){
-                               Log.d("HomeFragment", "======22222222222222222=="+ item);
                                tvChartname3.setText(item.getDescription());
                                tvChartname3.setVisibility(View.VISIBLE);
                                tvNewestData3.setText(newestData);
@@ -391,7 +388,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 value = Float.parseFloat(dayDataDetailReportBean.getValue());
                 entries.add(new Entry(time,value));
             }
-            Log.d("HomeFragment", count+"==============time==:" +time+"==============value==:" +value);
+            //Log.d("HomeFragment", count+"==============time==:" +time+"==============value==:" +value);
             count++;
         }
         return entries;

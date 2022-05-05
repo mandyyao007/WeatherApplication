@@ -1,8 +1,13 @@
 package com.example.weatherapplication.ui.notifications;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -10,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +49,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 
 public class NotificationsFragment extends Fragment implements View.OnClickListener{
 
@@ -54,8 +62,17 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
     private BarChart barChart1,barChart2,barChart3,barChart4,barChart5;
     private Button btnTree,btnCommunity,btOneDay,btSevenDay, btThirtyDay,btNintyDay;
     private ScrollView scrollView;
-    String type = "";//tree or commnuity
+    private String type = "";//tree or commnuity
+    private LinkedHashMap tempMap = new LinkedHashMap();
     private LinkedHashMap dataMap = new LinkedHashMap();
+    private ProgressBar progressBar;
+    private int maxProgress;
+    private int currentProgress = 0;
+    private int days = 0;
+    // 线程变量
+    private  MyTask mTask1,mTask2;
+    private int count;
+    List<TreeDataItemBean> treeDataItemBeans = null;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -98,10 +115,8 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         collectorId = getActivity().getIntent().getStringExtra("collectorId");
         collectorName = getActivity().getIntent().getStringExtra("collectorName");
         weatherStationId = getActivity().getIntent().getStringExtra("weatherStationId");
-        Log.d("NotificationsFragment","=***************==userName==:"+ userName);
-        Log.d("NotificationsFragment","=***************==collectorId==:"+ collectorId);
-        Log.d("NotificationsFragment","=***************==stationName==:"+ collectorName);
-        Log.d("NotificationsFragment","=***************==weatherStationId==:"+ weatherStationId);
+        //Log.d("NotificationsFragment","=***************==userName==:"+ userName+"=***************==collectorId==:"+ collectorId);
+        //Log.d("NotificationsFragment","=***************==stationName==:"+ collectorName+"=***************==weatherStationId==:"+ weatherStationId);
         tvStation = notificationFragmentView.findViewById(R.id.tv_station);
         tvStation.setText(collectorName);
         ivAdd = (ImageView) notificationFragmentView.findViewById(R.id.iv_station);
@@ -122,6 +137,14 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         btSevenDay = notificationFragmentView.findViewById(R.id.btn_seven_day);
         btThirtyDay = notificationFragmentView.findViewById(R.id.btn_thirty_day);
         btNintyDay = notificationFragmentView.findViewById(R.id.btn_ninty_day);
+        progressBar = notificationFragmentView.findViewById(R.id.pb_chart);
+        maxProgress = progressBar.getMax();
+        /**
+         * 步骤2：创建AsyncTask子类的实例对象（即 任务实例）
+         * 注：AsyncTask子类的实例必须在UI线程中创建
+         */
+        mTask1 = new MyTask();
+        mTask2 = new MyTask();
     }
     @Override
     public void onClick(View v) {
@@ -137,17 +160,17 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
             case R.id.btn_tree:
                 setBtnEnable(btnTree,"type");
                 type = "tree" ;
-                Log.d("NotificationsFragment","=***************=tree=========");
+                //Log.d("NotificationsFragment","=***************=tree=========");
                 break;
             case R.id.btn_community:
                 setBtnEnable(btnCommunity,"type");
                 type = "community" ;
-                Log.d("NotificationsFragment","=***************=community=========");
+                //Log.d("NotificationsFragment","=***************=community=========");
                 break;
         }
         setScrollInvisiable();
         try {
-            Log.d("NotificationsFragment", "======checkDayBtnAndDraw===========:");
+            //Log.d("NotificationsFragment", "======checkDayBtnAndDraw===========:");
             checkDayBtnAndDraw(type);
         } catch (IOException e) {
             e.printStackTrace();
@@ -156,7 +179,6 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
     View.OnClickListener dayListener =  new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            int days = 0;
             switch(v.getId()){
                 case R.id.btn_one_day:
                     days = 1;
@@ -176,14 +198,57 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                     break;
             }
             try {
-                drawChart(type,days);
-            } catch (IOException e) {
+                //drawChart(type,days);
+                /**
+                 * 步骤3：手动调用execute(Params... params) 从而执行异步线程任务
+                 * 注：
+                 *    a. 必须在UI线程中调用
+                 *    b. 同一个AsyncTask实例对象只能执行1次，若执行第2次将会抛出异常
+                 *    c. 执行任务中，系统会自动调用AsyncTask的一系列方法：onPreExecute() 、doInBackground()、onProgressUpdate() 、onPostExecute()
+                 *    d. 不能手动调用上述方法
+                 */
+                //Log.d("NotificationsFragment", "===mTask1====:" );
+                //mTask1.execute();
+                final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                progressDialog.setTitle("提示");
+                progressDialog.setMessage("正在加载数据");
+                progressDialog.setIndeterminate(false);
+                progressDialog.setCancelable(true);
+                progressDialog.setButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialog.cancel();
+                    }
+                });
+                progressDialog.show();
+                new Thread(){
+                    @Override
+                    public void run() {
+                        super.run();
+                        try{
+                           /* while(count<=100){
+                                progressDialog.setProgress(count++);
+                                treeDataItemBeans = getReportData(type,days);
+                            }
+                            progressDialog.cancel();*/
+                            treeDataItemBeans = getReportData(type,days);
+                            if(treeDataItemBeans!=null && treeDataItemBeans.size()>0){
+                                progressDialog.cancel();
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            progressDialog.cancel();
+                        }
+                    }
+                }.start();
+                drawBarChart(treeDataItemBeans);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     };
     private void checkDayBtnAndDraw(String type) throws IOException {
-            int days = 0;
             if(!btOneDay.isEnabled()){
                 days =1;
             }else if(!btSevenDay.isEnabled()){
@@ -193,10 +258,197 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
             }else if(!btNintyDay.isEnabled()){
                 days =90;
             }
-        Log.d("NotificationsFragment", "====checkDayBtnAndDraw=====days===========:"+days);
+            //Log.d("NotificationsFragment", "====checkDayBtnAndDraw=====days===========:"+days);
             if(days != 0){
-                drawChart(type,days);
+                try {
+                    //drawChart(type,days);
+                    /**
+                     * 步骤3：手动调用execute(Params... params) 从而执行异步线程任务
+                     * 注：
+                     *    a. 必须在UI线程中调用
+                     *    b. 同一个AsyncTask实例对象只能执行1次，若执行第2次将会抛出异常
+                     *    c. 执行任务中，系统会自动调用AsyncTask的一系列方法：onPreExecute() 、doInBackground()、onProgressUpdate() 、onPostExecute()
+                     *    d. 不能手动调用上述方法
+                     */
+                    //Log.d("NotificationsFragment", "===mTask2====:" );
+                    //mTask2.execute();
+                    final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                    progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                    progressDialog.setTitle("提示");
+                    progressDialog.setMessage("正在加载数据");
+                    progressDialog.setIndeterminate(false);
+                    progressDialog.setCancelable(true);
+                    progressDialog.setButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            progressDialog.cancel();
+                        }
+                    });
+                    progressDialog.show();
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            super.run();
+                            try{
+                               // while(count<=100){
+                                  //  progressDialog.setProgress(count++);
+                                   // treeDataItemBeans = getReportData(type,days);
+                               // }
+                                treeDataItemBeans = getReportData(type,days);
+                                if(treeDataItemBeans!=null && treeDataItemBeans.size()>0){
+                                    progressDialog.cancel();
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                                progressDialog.cancel();
+                            }
+                        }
+                    }.start();
+                    drawBarChart(treeDataItemBeans);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
+    }
+
+    private List<TreeDataItemBean> getReportData(String type, int days) {
+        List<TreeDataItemBean> treeDataItemBeans = null;
+        if(type!= null && "tree".equals(type)){
+            Log.d("NotificationsFragment", "===type=============:" + type);
+            try {
+                TreeBean treeBean = NetUtil.getTreeBean(collectorId);
+                Log.d("NotificationsFragment", "===treeBean=============:" + treeBean);
+                if(treeBean != null  && treeBean.getmTreeItemBeans()!= null){
+                    List<TreeItemBean> treeItemBeans = treeBean.getmTreeItemBeans();
+                    if(treeItemBeans == null){
+                        return null;
+                    }
+                    Iterator it = treeItemBeans.iterator();
+                    while(it.hasNext()) {
+                        TreeItemBean treeItemBean = (TreeItemBean) it.next();
+                        //Log.d("NotificationsFragment", "===treeItemBean" + treeItemBean);
+                        Log.d("NotificationsFragment", "===treeItemBean  getTreeId====:" + treeItemBean.getTreeId() + "getCollectorId====:" + treeItemBean.getCollectorId()
+                                + " getTreeName====:" + treeItemBean.getTreeName());
+                        if (treeItemBean.getTreeId() != null) {
+                            CollectorItemBean.TreeDataBean treeDataBean = null;
+                            try {
+                                treeDataBean = NetUtil.getTreeDataBean(treeItemBean.getTreeId(), days);
+                            }catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            Log.d("NotificationsFragment", "===treeDataBean====:" + treeDataBean);
+                            if (treeDataBean != null && treeDataBean.getmTreeDataItemBeans() != null) {
+                                treeDataItemBeans = treeDataBean.getmTreeDataItemBeans();
+                                if (treeDataItemBeans == null) {
+                                    return null;
+                                }
+                            }
+                        }
+                    }
+                }
+            }catch (IOException e) {
+                e.printStackTrace();
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else if(type!= null && "community".equals(type)){
+            Log.d("NotificationsFragment", "&&&&&&&&&&&&&7type=============:" + type);
+        }else{
+           //errorMessage = "请先选择类别";
+        }
+        return treeDataItemBeans;
+    }
+    private void drawBarChart(List<TreeDataItemBean> treeDataItemBeans) throws IOException {
+        Iterator its = treeDataItemBeans.iterator();
+        int i  = 1;
+        while(its.hasNext()) {
+            try {
+                TreeDataItemBean treeDataItemBean = (TreeDataItemBean) its.next();
+                if (!"test".equals(treeDataItemBean.getConfigName())) {
+                    //Log.d("NotificationsFragment", "===name====:" + treeDataItemBean.getConfigName());
+                    List<TreeDataItemDetailBean> treeDataItemDetailBeans = treeDataItemBean.getmTreeDataItemDetailBean();
+                    Log.d("NotificationsFragment", "===treeDataItemDetailBeans====:" + treeDataItemDetailBeans);
+                    if (treeDataItemDetailBeans != null) {
+                        float ratio = 4.0f;
+                        if (i == 1) {
+                            tvChartname1.setText(treeDataItemBean.getConfigName());
+                            tvChartname1.setVisibility(View.VISIBLE);
+                            barChart1.zoom(0, 1f, 0, 0);//显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
+                            barChart1.zoom(1 / ratio, 1f, 0, 0);
+                            try {
+                                setChart(ratio, barChart1, treeDataItemDetailBeans, days);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            barChart1.setVisibility(View.VISIBLE);
+                            barChart1.setExtraBottomOffset(10);
+                            barChart1.notifyDataSetChanged();
+                            barChart1.getBarData().notifyDataChanged();
+                            barChart1.invalidate();
+                        }
+                        if (i == 2) {
+                            tvChartname2.setText(treeDataItemBean.getConfigName());
+                            tvChartname2.setVisibility(View.VISIBLE);
+                            barChart2.zoom(0, 1f, 0, 0); //显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
+                            barChart2.zoom(0.25f, 1f, 0, 0);
+                            setChart(ratio, barChart2, treeDataItemDetailBeans, days);
+                            barChart2.setVisibility(View.VISIBLE);
+                            barChart2.setExtraBottomOffset(10);
+                            barChart2.notifyDataSetChanged();
+                            barChart2.getBarData().notifyDataChanged();
+                            barChart2.invalidate();
+                        }
+                        if (i == 3) {
+                            tvChartname3.setText(treeDataItemBean.getConfigName());
+                            tvChartname3.setVisibility(View.VISIBLE);
+                            barChart3.zoom(0, 1f, 0, 0);//显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
+                            barChart3.zoom(0.25f, 1f, 0, 0);
+                            setChart(ratio, barChart3, treeDataItemDetailBeans, days);
+                            barChart3.setVisibility(View.VISIBLE);
+                            barChart3.setExtraBottomOffset(10);
+                            barChart3.notifyDataSetChanged();
+                            barChart3.getBarData().notifyDataChanged();
+                            barChart3.invalidate();
+                        }
+                        if (i == 4) {
+                            tvChartname4.setText(treeDataItemBean.getConfigName());
+                            tvChartname4.setVisibility(View.VISIBLE);
+                            barChart4.zoom(0, 1f, 0, 0);//显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
+                            barChart4.zoom(0.25f, 1f, 0, 0);
+                            setChart(ratio, barChart4, treeDataItemDetailBeans, days);
+                            barChart4.setVisibility(View.VISIBLE);
+                            barChart4.setExtraBottomOffset(10);
+                            barChart4.notifyDataSetChanged();
+                            barChart4.getBarData().notifyDataChanged();
+                            barChart4.invalidate();
+                        }
+                        if (i == 5) {
+                            tvChartname5.setText(treeDataItemBean.getConfigName());
+                            tvChartname5.setVisibility(View.VISIBLE);
+                            barChart5.zoom(0, 1f, 0, 0);//显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
+                            barChart5.zoom(0.25f, 1f, 0, 0);
+                            setChart(ratio, barChart5, treeDataItemDetailBeans, days);
+                            barChart5.setVisibility(View.VISIBLE);
+                            barChart5.setExtraBottomOffset(10);
+                            barChart5.notifyDataSetChanged();
+                            barChart5.getBarData().notifyDataChanged();
+                            barChart5.invalidate();
+                        }
+                    }
+                    i++;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        /*}else if(type!= null && "community".equals(type)){
+            Log.d("NotificationsFragment", "&&&&&&&&&&&&&7type=============:" + type);
+        }else{
+            String message = "请先选择类别";
+            Toast toastCenter = Toast.makeText(getActivity().getApplicationContext(), message,Toast.LENGTH_SHORT);
+            toastCenter.setGravity(Gravity.CENTER,0,0);
+            toastCenter.show();
+        }*/
     }
     private void drawChart(String type,int days) throws IOException {
         if(type!= null && "tree".equals(type)){
@@ -212,131 +464,101 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                     Iterator it = treeItemBeans.iterator();
                     while(it.hasNext()){
                         TreeItemBean treeItemBean = (TreeItemBean)it.next();
-                        Log.d("NotificationsFragment", "===treeItemBean" + treeItemBean);
-                        Log.d("NotificationsFragment", "===treeItemBean  getTreeId====:" + treeItemBean.getTreeId());
-                        Log.d("NotificationsFragment", "===treeItemBean  getCollectorId====:" + treeItemBean.getCollectorId());
-                        Log.d("NotificationsFragment", "===treeItemBean  getTreeName====:" + treeItemBean.getTreeName());
+                        //Log.d("NotificationsFragment", "===treeItemBean" + treeItemBean);
+                        Log.d("NotificationsFragment", "===treeItemBean  getTreeId====:" + treeItemBean.getTreeId()+"getCollectorId====:" + treeItemBean.getCollectorId()
+                        +" getTreeName====:" + treeItemBean.getTreeName());
                         if(treeItemBean.getTreeId()!= null){
                             CollectorItemBean.TreeDataBean treeDataBean = NetUtil.getTreeDataBean(treeItemBean.getTreeId(),days);
-                            Log.d("NotificationsFragment", "===treeDataBean====:" + treeDataBean);
+                            //Log.d("NotificationsFragment", "===treeDataBean====:" + treeDataBean);
                             if(treeDataBean!= null && treeDataBean.getmTreeDataItemBeans()!=null){
                                 List<TreeDataItemBean> treeDataItemBeans = treeDataBean.getmTreeDataItemBeans();
                                 if(treeDataItemBeans == null){
                                     return ;
                                 }
-                                Log.d("NotificationsFragment", "===treeDataItemBeans====:" + treeDataItemBeans);
+                                //Log.d("NotificationsFragment", "===treeDataItemBeans====:" + treeDataItemBeans);
                                 Iterator its = treeDataItemBeans.iterator();
                                 int i  = 1;
                                 while(its.hasNext()){
-                                    int count = 0;
                                     TreeDataItemBean treeDataItemBean = (TreeDataItemBean) its.next();
                                     if(!"test".equals(treeDataItemBean.getConfigName())){
-                                        Log.d("NotificationsFragment", "===name====:" + treeDataItemBean.getConfigName().toString());
+                                        //Log.d("NotificationsFragment", "===name====:" + treeDataItemBean.getConfigName());
                                         List<TreeDataItemDetailBean>  treeDataItemDetailBeans = treeDataItemBean.getmTreeDataItemDetailBean();
-                                        List<BarEntry>list = new ArrayList<>();//实例化一个List用来存储数据
+                                        Log.d("NotificationsFragment", "===treeDataItemDetailBeans====:" + treeDataItemDetailBeans);
                                         if(treeDataItemDetailBeans != null){
-                                            Iterator iter = treeDataItemDetailBeans.iterator();
-                                            while (iter.hasNext()){
-                                                TreeDataItemDetailBean treeDataItemDetailBean = (TreeDataItemDetailBean) iter.next();
-                                                Log.d("NotificationsFragment", "===treeDataItemDetailBean====:" + treeDataItemDetailBean);
-                                                if(treeDataItemDetailBean!=null ){
-                                                    float time = 0.0f;
-                                                    if(days ==1){
-                                                        time = Float.parseFloat(treeDataItemDetailBean.getAcquisitionTime().substring(11,13));
-                                                    }else if(days==7){
-                                                        dataMap.put(count,treeDataItemDetailBean.getAcquisitionTime().substring(0,16));
-                                                        time = count;
-                                                    }else{
-                                                        dataMap.put(count,treeDataItemDetailBean.getAcquisitionTime().substring(0,10));
-                                                        time = count;
-                                                    }
-                                                    float value = 0.0f;
-                                                    if(!"".equals(treeDataItemDetailBean.getValue())){
-                                                        if(!"-".equals(treeDataItemDetailBean.getValue())) {
-                                                            value = Float.parseFloat(treeDataItemDetailBean.getValue());
-                                                            Log.d("NotificationsFragment", "===time====:" + time);
-                                                            Log.d("NotificationsFragment", "===dataMap.get(count)====:" + dataMap.get(count));
-                                                            Log.d("NotificationsFragment", "===value====:" + value);
-                                                            Log.d("NotificationsFragment", "===count====:" + count);
-                                                            list.add(new BarEntry(time,value));
-                                                        }
-
-                                                    }
-                                                }
-                                                count++;
-                                            }
-                                        }
-                                        Log.d("NotificationsFragment", "===list====:" + list);
-                                        Collections.reverse(list);
-                                        Log.d("NotificationsFragment", "===list 倒序====:" + list);
-                                        Log.d("NotificationsFragment", "===list是否为空====:" + (list!= null));
-                                        Log.d("NotificationsFragment", "===list.size()====:" + (list.size()));
-                                        //手机屏幕上显示6剩下的滑动直方图然后显示
-                                        if(list!= null && list.size()>0){
-                                            float ratio = (float) list.size()/(float) 6;
-                                            BarDataSet barDataSet=new BarDataSet(list,treeDataItemBean.getConfigName());
-                                            barDataSet.setValueTextColor(Color.parseColor("#FFFFFFFF"));//设置显示值的文字颜色
-                                            barDataSet.setValueTextSize(13f);//设置显示值的文字大小
-                                            BarData barData=new BarData(barDataSet);
+                                            float ratio = 4.0f;
                                             if(i==1){
-                                                Log.d("NotificationsFragment", "1111111===============:" + i);
                                                 tvChartname1.setText(treeDataItemBean.getConfigName());
                                                 tvChartname1.setVisibility(View.VISIBLE);
-                                                barChart1.setData(barData);
                                                 barChart1.zoom(0,1f,0,0);
                                                 //显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
                                                 barChart1.zoom(1/ratio,1f,0,0);
-                                                setChart(ratio,barChart1,list,days);
+                                                //setChart(ratio,barChart1,list,days);
+                                                try{
+                                                    setChart(ratio,barChart1,treeDataItemDetailBeans,days);
+                                                }catch (Exception e){
+                                                    e.printStackTrace();
+                                                }
                                                 barChart1.setVisibility(View.VISIBLE);
                                                 barChart1.setExtraBottomOffset(10);
+                                                barChart1.notifyDataSetChanged();
+                                                barChart1.getBarData().notifyDataChanged();
+                                                barChart1.invalidate();
                                             }
                                             if(i==2){
-                                                Log.d("NotificationsFragment", "2222222222===============:" + i);
                                                 tvChartname2.setText(treeDataItemBean.getConfigName());
                                                 tvChartname2.setVisibility(View.VISIBLE);
-                                                barChart2.setData(barData);
+                                                //barChart2.setData(barData);
                                                 barChart2.zoom(0,1f,0,0);
                                                 //显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
                                                 barChart2.zoom(0.25f,1f,0,0);
-                                                setChart(ratio,barChart2,list,days);
+                                                setChart(ratio,barChart2,treeDataItemDetailBeans,days);
                                                 barChart2.setVisibility(View.VISIBLE);
                                                 barChart2.setExtraBottomOffset(10);
+                                                barChart2.notifyDataSetChanged();
+                                                barChart2.getBarData().notifyDataChanged();
+                                                barChart2.invalidate();
                                             }
                                             if(i==3){
-                                                Log.d("NotificationsFragment", "33333333333333===============:" + i);
                                                 tvChartname3.setText(treeDataItemBean.getConfigName());
                                                 tvChartname3.setVisibility(View.VISIBLE);
-                                                barChart3.setData(barData);
+                                                //barChart3.setData(barData);
                                                 barChart3.zoom(0,1f,0,0);
                                                 //显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
                                                 barChart3.zoom(0.25f,1f,0,0);
-                                                setChart(ratio,barChart3,list,days);
+                                                setChart(ratio,barChart3,treeDataItemDetailBeans,days);
                                                 barChart3.setVisibility(View.VISIBLE);
                                                 barChart3.setExtraBottomOffset(10);
+                                                barChart3.notifyDataSetChanged();
+                                                barChart3.getBarData().notifyDataChanged();
+                                                barChart3.invalidate();
                                             }
                                             if(i==4){
-                                                Log.d("NotificationsFragment", "444444444444===============:" + i);
                                                 tvChartname4.setText(treeDataItemBean.getConfigName());
                                                 tvChartname4.setVisibility(View.VISIBLE);
-                                                barChart4.setData(barData);
+                                                //barChart4.setData(barData);
                                                 barChart4.zoom(0,1f,0,0);
                                                 //显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
                                                 barChart4.zoom(0.25f,1f,0,0);
-                                                setChart(ratio,barChart4,list,days);
+                                                setChart(ratio,barChart4,treeDataItemDetailBeans,days);
                                                 barChart4.setVisibility(View.VISIBLE);
                                                 barChart4.setExtraBottomOffset(10);
+                                                barChart4.notifyDataSetChanged();
+                                                barChart4.getBarData().notifyDataChanged();
+                                                barChart4.invalidate();
                                             }
                                             if(i==5){
-                                                Log.d("NotificationsFragment", "5555555555===============:" + i);
                                                 tvChartname5.setText(treeDataItemBean.getConfigName());
                                                 tvChartname5.setVisibility(View.VISIBLE);
-                                                barChart5.setData(barData);
+                                                //barChart5.setData(barData);
                                                 barChart5.zoom(0,1f,0,0);
                                                 //显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
                                                 barChart5.zoom(0.25f,1f,0,0);
-                                                setChart(ratio,barChart5,list,days);
+                                                setChart(ratio,barChart5,treeDataItemDetailBeans,days);
                                                 barChart5.setVisibility(View.VISIBLE);
                                                 barChart5.setExtraBottomOffset(10);
+                                                barChart5.notifyDataSetChanged();
+                                                barChart5.getBarData().notifyDataChanged();
+                                                barChart5.invalidate();
                                             }
                                         }
                                         i++;
@@ -359,26 +581,83 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
             toastCenter.setGravity(Gravity.CENTER,0,0);
             toastCenter.show();
         }
-
     }
     /*
      * 设置BarChart的数据
      * */
-    private void setChart(float ratio,BarChart barChart,List<BarEntry> list,int days) {
-        Log.d("NotificationsFragment", "days===============:" + days);
+    private  List<BarEntry> setChartData(List<TreeDataItemDetailBean> treeDataItemDetailBeans, int days) {
+        int count = 0;
+        List<BarEntry> list = new ArrayList<>();//实例化一个List用来存储数据
+        if(treeDataItemDetailBeans != null){
+            Iterator iter = treeDataItemDetailBeans.iterator();
+            while (iter.hasNext() && count <24){
+                TreeDataItemDetailBean treeDataItemDetailBean = (TreeDataItemDetailBean) iter.next();
+                //Log.d("NotificationsFragment", "===treeDataItemDetailBean====:" + treeDataItemDetailBean);
+                if(treeDataItemDetailBean!=null ){
+                    float time = 0.0f;
+                    if(days ==1){
+                        time = Float.parseFloat(treeDataItemDetailBean.getAcquisitionTime().substring(11,13));
+                    }else if(days==7){
+                        tempMap.put(count,treeDataItemDetailBean.getAcquisitionTime().substring(0,16));
+                        time = count;
+                    }else{
+                        tempMap.put(count,treeDataItemDetailBean.getAcquisitionTime().substring(0,10));
+                        time = count;
+                    }
+                    float value = 0.0f;
+                    if(!"".equals(treeDataItemDetailBean.getValue())){
+                        if(!"-".equals(treeDataItemDetailBean.getValue())) {
+                            value = Float.parseFloat(treeDataItemDetailBean.getValue());
+                        }
+                        list.add(new BarEntry(time,value));
+                    }
+                }
+                count++;
+            }
+        }
+        if(days == 1){
+            Collections.reverse(list);
+            Log.d("NotificationsFragment", "===list 倒序====:" + list);
+        }else{
+            int j = 0;
+            ListIterator<Map.Entry<Float,String>> i = new ArrayList<Map.Entry<Float,String>>(tempMap.entrySet()).listIterator(tempMap.size());
+             while(i.hasPrevious()) {
+                Map.Entry<Float, String> entry=i.previous();
+                //Log.d("NotificationsFragment", j+":"+entry.getValue());
+                dataMap.put(j,entry.getValue());
+                j++;
+            }
+        }
+        Log.d("NotificationsFragment", "===list不为空====:" + (list!= null)+"===list.size()====:" + (list.size()));
+        return list ;
+    }
+    /*
+    画柱形图
+     */
+    private void setChart(float ratio,BarChart barChart,List<TreeDataItemDetailBean> treeDataItemDetailBeans,int days) {
+        List<BarEntry> list = setChartData(treeDataItemDetailBeans,days);
+        Log.d("NotificationsFragment", "===setChart====:" +list);
+        Log.d("NotificationsFragment", "===dataMap====:" +dataMap);
         barChart.setDescription(null);                             //设置描述文字为null
         barChart.setBackgroundColor(Color.parseColor("#00000000"));  //设置背景颜色
         barChart.setDrawBarShadow(false);                          //绘制当前展示的内容顶部阴影
         barChart.setPinchZoom(false);                              //设置x轴和y轴能否同时缩放。默认否
         barChart.setMaxVisibleValueCount(10);                       //设置图表能显示的最大值，仅当setDrawValues()属性值为true时有用
         barChart.setFitBars(true);                                 //设置X轴范围两侧柱形条是否显示一半
+        BarDataSet barDataSet=new BarDataSet(list,"");   //list是你这条线的数据  "语文" 是你对这条线的描述
+        BarData barData=new BarData(barDataSet);
+        barChart.setData(barData);
+        barData.setBarWidth(0.5f);   //设置柱子的宽度
+        barData.setValueTextSize(13f);
+        barData.setValueTextColor(Color.parseColor("#FFFFFFFF"));
         XAxis xAxis = barChart.getXAxis();                         //x轴
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);             //设置label在底下
         xAxis.setDrawGridLines(false);                             //不设置竖型网格线
         xAxis.setTextColor(Color.parseColor("#ffffff"));
         xAxis.setDrawLabels(true);                                 //是否显示X坐标轴上的刻度，默认是true
         xAxis.setLabelCount(6,false);                //第一个参数是轴坐标的个数，第二个参数是 是否不均匀分布，true是不均匀分布
-        xAxis.setAxisMinimum(-0.4f);   //X轴最小数值
+        //xAxis.setAxisMinimum(-0.4f);   //X轴最小数值
+        xAxis.setGranularity(1);
 
         YAxis leftAxis = barChart.getAxisLeft();              //获取到y轴，分左右
         leftAxis.setLabelCount(3, true);         //第一个参数是轴坐标的个数，第二个参数是 是否不均匀分布，true是不均匀分布
@@ -407,20 +686,20 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 }
             });
         }else{
-            Log.d("NotificationsFragment", "=====%%%%%%%%%%%%%%=days===============:" + days);
+            Log.d("NotificationsFragment", "=====%%%%%%%%%%%%%%days===============:" + days);
             xAxis.setTextSize(10f);//设置X轴刻度字体大小
-            xAxis.setLabelRotationAngle(45f);//旋转45度
+            xAxis.setLabelRotationAngle(-60f);//旋转45度
+
             xAxis.setValueFormatter(new IAxisValueFormatter() {
                 @Override
                 public String getFormattedValue(float v, AxisBase axis) {
-                    Log.d("NotificationsFragment", "33dataMap.get((int) v)3===============:" + dataMap.get((int) v));
                     return String.valueOf(dataMap.get((int) v));
                 }
             });
         }
 
         //从Y轴弹出的动画时间
-       // barChart.animateY(1500);
+        barChart.animateY(1500);
     }
 
     private void setScrollInvisiable() {
@@ -459,5 +738,78 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         super.onDestroyView();
         binding = null;
     }
+    /**
+     * 步骤1：创建AsyncTask子类
+     * 注：
+     *   a. 继承AsyncTask类
+     *   b. 为3个泛型参数指定类型；若不使用，可用java.lang.Void类型代替
+     *      此处指定为：输入参数 = String类型、执行进度 = Integer类型、执行结果 = String类型
+     *   c. 根据需求，在AsyncTask子类内实现核心方法
+     */
+    private class MyTask extends AsyncTask<String, Integer, String> {
 
+        // 方法1：onPreExecute（）
+        // 作用：执行线程任务前的操作
+        @Override
+        protected void onPreExecute() {
+            Log.d("NotificationsFragment", "===加载中====:" );
+            //text.setText("加载中");
+            // 执行前显示提示
+        }
+
+
+        // 方法2：doInBackground（）
+        // 作用：接收输入参数、执行任务中的耗时操作、返回 线程任务执行的结果
+        // 此处通过计算从而模拟“加载进度”的情况
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                int count = 0;
+                int length = 10;
+                while (count<99) {
+
+                    count += length;
+                    // 可调用publishProgress（）显示进度, 之后将执行onProgressUpdate（）
+                    publishProgress(count);
+                    // 模拟耗时任务
+                    getReportData(type,days);
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        // 方法3：onProgressUpdate（）
+        // 作用：在主线程 显示线程任务执行的进度
+        @Override
+        protected void onProgressUpdate(Integer... progresses) {
+
+            progressBar.setProgress(progresses[0]);
+            Log.d("NotificationsFragment", "loading..." + progresses[0] + "%" );
+            //text.setText("loading..." + progresses[0] + "%");
+
+        }
+
+        // 方法4：onPostExecute（）
+        // 作用：接收线程任务执行结果、将执行结果显示到UI组件
+        @Override
+        protected void onPostExecute(String result) {
+            // 执行完毕后，则更新UI
+            Log.d("NotificationsFragment", "加载完毕" );
+            //text.setText("加载完毕");
+        }
+
+        // 方法5：onCancelled()
+        // 作用：将异步任务设置为：取消状态
+        @Override
+        protected void onCancelled() {
+
+            //text.setText("已取消");
+            progressBar.setProgress(0);
+
+        }
+    }
 }
