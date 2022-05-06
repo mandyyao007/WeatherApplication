@@ -65,12 +65,9 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
     private String type = "";//tree or commnuity
     private LinkedHashMap tempMap = new LinkedHashMap();
     private LinkedHashMap dataMap = new LinkedHashMap();
-    private ProgressBar progressBar;
-    private int maxProgress;
     private int currentProgress = 0;
     private int days = 0;
     // 线程变量
-    private  MyTask mTask1,mTask2;
     private int count;
     List<TreeDataItemBean> treeDataItemBeans = null;
 
@@ -137,14 +134,6 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         btSevenDay = notificationFragmentView.findViewById(R.id.btn_seven_day);
         btThirtyDay = notificationFragmentView.findViewById(R.id.btn_thirty_day);
         btNintyDay = notificationFragmentView.findViewById(R.id.btn_ninty_day);
-        progressBar = notificationFragmentView.findViewById(R.id.pb_chart);
-        maxProgress = progressBar.getMax();
-        /**
-         * 步骤2：创建AsyncTask子类的实例对象（即 任务实例）
-         * 注：AsyncTask子类的实例必须在UI线程中创建
-         */
-        mTask1 = new MyTask();
-        mTask2 = new MyTask();
     }
     @Override
     public void onClick(View v) {
@@ -177,6 +166,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         }
     }
     View.OnClickListener dayListener =  new View.OnClickListener() {
+      //  int days = 0;
         @Override
         public void onClick(View v) {
             switch(v.getId()){
@@ -197,18 +187,9 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                     setBtnEnable(btNintyDay,"days");
                     break;
             }
+            Log.d("NotificationsFragment", "====dayListener=====days===========:"+days);
             try {
                 //drawChart(type,days);
-                /**
-                 * 步骤3：手动调用execute(Params... params) 从而执行异步线程任务
-                 * 注：
-                 *    a. 必须在UI线程中调用
-                 *    b. 同一个AsyncTask实例对象只能执行1次，若执行第2次将会抛出异常
-                 *    c. 执行任务中，系统会自动调用AsyncTask的一系列方法：onPreExecute() 、doInBackground()、onProgressUpdate() 、onPostExecute()
-                 *    d. 不能手动调用上述方法
-                 */
-                //Log.d("NotificationsFragment", "===mTask1====:" );
-                //mTask1.execute();
                 if(days == 1){
                     drawChart(type,days);
                 }else{
@@ -218,12 +199,14 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                     progressDialog.setMessage("正在加载数据");
                     progressDialog.setIndeterminate(false);
                     progressDialog.setCancelable(true);
-                    progressDialog.setButton("取消", new DialogInterface.OnClickListener() {
+                    progressDialog.incrementProgressBy(10);
+                    progressDialog.setMax(100);
+                    /*progressDialog.setButton("取消", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             progressDialog.cancel();
                         }
-                    });
+                    });*/
                     progressDialog.show();
                     new Thread(){
                         @Override
@@ -254,75 +237,69 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         }
     };
     private void checkDayBtnAndDraw(String type) throws IOException {
-            if(!btOneDay.isEnabled()){
-                days =1;
-            }else if(!btSevenDay.isEnabled()){
-                days =7;
-            }else if(!btThirtyDay.isEnabled()){
-                days =30;
-            }else if(!btNintyDay.isEnabled()){
-                days =90;
-            }
-            //Log.d("NotificationsFragment", "====checkDayBtnAndDraw=====days===========:"+days);
-            if(days != 0){
-                try {
-                    //drawChart(type,days);
-                    /**
-                     * 步骤3：手动调用execute(Params... params) 从而执行异步线程任务
-                     * 注：
-                     *    a. 必须在UI线程中调用
-                     *    b. 同一个AsyncTask实例对象只能执行1次，若执行第2次将会抛出异常
-                     *    c. 执行任务中，系统会自动调用AsyncTask的一系列方法：onPreExecute() 、doInBackground()、onProgressUpdate() 、onPostExecute()
-                     *    d. 不能手动调用上述方法
-                     */
-                    //Log.d("NotificationsFragment", "===mTask2====:" );
-                    //mTask2.execute();
-                    if(days == 1){
-                        drawChart(type,days);
-                    }else{
-                        final ProgressDialog progressDialog = new ProgressDialog(getActivity());
-                        progressDialog.setProgressStyle(ProgressDialog.BUTTON_NEUTRAL);
-                        progressDialog.setTitle("提示");
-                        progressDialog.setMessage("正在加载数据");
-                        progressDialog.setIndeterminate(false);
-                        progressDialog.setCancelable(true);
-                        progressDialog.setButton("取消", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                progressDialog.cancel();
-                            }
-                        });
-                        progressDialog.show();
-                        new Thread(){
-                            @Override
-                            public void run() {
-                                super.run();
-                                try{
+       //int days =0;
+        if(!btOneDay.isEnabled()){
+            days =1;
+        }else if(!btSevenDay.isEnabled()){
+            days =7;
+        }else if(!btThirtyDay.isEnabled()){
+            days =30;
+        }else if(!btNintyDay.isEnabled()){
+            days =90;
+        }
+        Log.d("NotificationsFragment", "====checkDayBtnAndDraw=====days===========:"+days);
+        if(days != 0){
+            try {
+                //drawChart(type,days);
+                if(days == 1){
+                    drawChart(type,days);
+                }else{
+                    final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                    progressDialog.setProgressStyle(ProgressDialog.BUTTON_NEUTRAL);
+                    progressDialog.setTitle("提示");
+                    progressDialog.setMessage("正在加载数据");
+                    progressDialog.setIndeterminate(false);
+                    progressDialog.setCancelable(true);
+                    progressDialog.incrementProgressBy(10);
+                    progressDialog.setMax(100);
+                    /*progressDialog.setButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            progressDialog.cancel();
+                        }
+                    });*/
+                    progressDialog.show();
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            super.run();
+                            try{
                            /* while(count<=100){
                                 progressDialog.setProgress(count++);
                                 treeDataItemBeans = getReportData(type,days);
                             }
                             progressDialog.cancel();*/
-                                    treeDataItemBeans = getReportData(type,days);
-                                    if(treeDataItemBeans!=null && treeDataItemBeans.size()>0){
-                                        progressDialog.cancel();
-                                    }
-                                }catch (Exception e){
-                                    e.printStackTrace();
+                                treeDataItemBeans = getReportData(type,days);
+                                if(treeDataItemBeans!=null && treeDataItemBeans.size()>0){
                                     progressDialog.cancel();
                                 }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                                progressDialog.cancel();
                             }
-                        }.start();
-                        drawBarChart(treeDataItemBeans);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                        }
+                    }.start();
+                    drawBarChart(treeDataItemBeans);
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+        }
     }
+    
 
     private List<TreeDataItemBean> getReportData(String type, int days) {
-        List<TreeDataItemBean> treeDataItemBeans = null;
+        //List<TreeDataItemBean> treeDataItemBeans = null;
         if(type!= null && "tree".equals(type)){
             Log.d("NotificationsFragment", "===type=============:" + type);
             try {
@@ -747,79 +724,5 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-    }
-    /**
-     * 步骤1：创建AsyncTask子类
-     * 注：
-     *   a. 继承AsyncTask类
-     *   b. 为3个泛型参数指定类型；若不使用，可用java.lang.Void类型代替
-     *      此处指定为：输入参数 = String类型、执行进度 = Integer类型、执行结果 = String类型
-     *   c. 根据需求，在AsyncTask子类内实现核心方法
-     */
-    private class MyTask extends AsyncTask<String, Integer, String> {
-
-        // 方法1：onPreExecute（）
-        // 作用：执行线程任务前的操作
-        @Override
-        protected void onPreExecute() {
-            Log.d("NotificationsFragment", "===加载中====:" );
-            //text.setText("加载中");
-            // 执行前显示提示
-        }
-
-
-        // 方法2：doInBackground（）
-        // 作用：接收输入参数、执行任务中的耗时操作、返回 线程任务执行的结果
-        // 此处通过计算从而模拟“加载进度”的情况
-        @Override
-        protected String doInBackground(String... params) {
-
-            try {
-                int count = 0;
-                int length = 10;
-                while (count<99) {
-
-                    count += length;
-                    // 可调用publishProgress（）显示进度, 之后将执行onProgressUpdate（）
-                    publishProgress(count);
-                    // 模拟耗时任务
-                    getReportData(type,days);
-                }
-            }catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        // 方法3：onProgressUpdate（）
-        // 作用：在主线程 显示线程任务执行的进度
-        @Override
-        protected void onProgressUpdate(Integer... progresses) {
-
-            progressBar.setProgress(progresses[0]);
-            Log.d("NotificationsFragment", "loading..." + progresses[0] + "%" );
-            //text.setText("loading..." + progresses[0] + "%");
-
-        }
-
-        // 方法4：onPostExecute（）
-        // 作用：接收线程任务执行结果、将执行结果显示到UI组件
-        @Override
-        protected void onPostExecute(String result) {
-            // 执行完毕后，则更新UI
-            Log.d("NotificationsFragment", "加载完毕" );
-            //text.setText("加载完毕");
-        }
-
-        // 方法5：onCancelled()
-        // 作用：将异步任务设置为：取消状态
-        @Override
-        protected void onCancelled() {
-
-            //text.setText("已取消");
-            progressBar.setProgress(0);
-
-        }
     }
 }
