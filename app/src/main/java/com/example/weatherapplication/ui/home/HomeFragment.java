@@ -227,7 +227,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                             }
                         }
                     }.start();
-                    drawChart(daysDataItemBean);
+                    if(daysDataItemBean!=null && daysDataItemBean.size()>0){
+                        drawChart(daysDataItemBean);
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -308,7 +310,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                             }
                         }
                     }.start();
-                    drawChart(daysDataItemBean);
+                    if(daysDataItemBean!=null && daysDataItemBean.size()>0){
+                        drawChart(daysDataItemBean);
+                    }
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();

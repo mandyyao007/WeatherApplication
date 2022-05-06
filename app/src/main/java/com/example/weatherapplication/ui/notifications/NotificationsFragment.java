@@ -228,7 +228,10 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                             }
                         }
                     }.start();
-                    drawBarChart(treeDataItemBeans);
+                    if(treeDataItemBeans!=null && treeDataItemBeans.size()>0){
+                        drawBarChart(treeDataItemBeans);
+                    }
+
                 }
 
             } catch (Exception e) {
@@ -289,7 +292,9 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                             }
                         }
                     }.start();
-                    drawBarChart(treeDataItemBeans);
+                    if(treeDataItemBeans!=null && treeDataItemBeans.size()>0){
+                        drawBarChart(treeDataItemBeans);
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
