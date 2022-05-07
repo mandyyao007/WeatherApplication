@@ -76,19 +76,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     private ScrollView scrollView;
     List<DaysDataItemBean>  daysDataItemBean = null;
     private int days = 0;//
-
-    private Handler mHandler = new Handler(Looper.myLooper()){
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            if(msg.what == 0){
-                String report = (String) msg.obj;
-                Gson gson = new Gson();
-                ReportBean reportBean = gson.fromJson(report, ReportBean.class);
-                //Log.d("HomeFragment","====解析后的reportBean==:"+reportBean.toString());
-            }
-        }
-    };
+    private ProgressDialog progressDialog = null;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
@@ -182,7 +170,19 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         }
         checkDayBtnAndDraw(configType);
     }
-
+    Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            Log.d("HomeFragment", "============daysDataItemBean===========:"+daysDataItemBean);
+            if(daysDataItemBean!=null && daysDataItemBean.size()>0){
+                try {
+                    drawChart(daysDataItemBean);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            progressDialog.dismiss();
+        }
+    };
     private void checkDayBtnAndDraw(String configType) {
         if(!btOneDay.isEnabled()){
             days =1;
@@ -199,7 +199,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 if(days == 1){
                     drawChart(configType,days);
                 }else{
-                    final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                    progressDialog = new ProgressDialog(getActivity());
                     progressDialog.setProgressStyle(ProgressDialog.BUTTON_NEUTRAL);
                     progressDialog.setTitle("提示");
                     progressDialog.setMessage("正在加载数据");
@@ -219,7 +219,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                             try{
                                 daysDataItemBean = getDaysData(configType,days);
                                 if(daysDataItemBean!=null && daysDataItemBean.size()>0){
-                                    progressDialog.cancel();
+                                    Message msg = new Message();
+                                    handler.sendMessage(msg);
                                 }
                             }catch (Exception e){
                                 e.printStackTrace();
@@ -227,9 +228,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                             }
                         }
                     }.start();
-                    if(daysDataItemBean!=null && daysDataItemBean.size()>0){
-                        drawChart(daysDataItemBean);
-                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -282,7 +280,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 if(days == 1){
                     drawChart(configType,days);
                 }else{
-                    final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                    progressDialog = new ProgressDialog(getActivity());
                     progressDialog.setProgressStyle(ProgressDialog.BUTTON_NEUTRAL);
                     progressDialog.setTitle("提示");
                     progressDialog.setMessage("正在加载数据");
@@ -302,7 +300,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                             try{
                                 daysDataItemBean = getDaysData(configType,days);
                                 if(daysDataItemBean!=null && daysDataItemBean.size()>0){
-                                    progressDialog.cancel();
+                                    Message msg = new Message();
+                                    handler.sendMessage(msg);
                                 }
                             }catch (Exception e){
                                 e.printStackTrace();
@@ -310,10 +309,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                             }
                         }
                     }.start();
-                    if(daysDataItemBean!=null && daysDataItemBean.size()>0){
-                        drawChart(daysDataItemBean);
-                    }
-
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -360,7 +355,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         }
         return daysDataItemBean;
     }
-    private void drawChart(List<DaysDataItemBean> daysDataItemBean) {
+    private void drawChart(List<DaysDataItemBean> daysDataItemBean) throws Exception{
         StationFacade stationFacade = StationFacade.getInstance();
         int i = 0;
         String newestData = "";
@@ -650,26 +645,4 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 toastCenter.show();
             }
         }
-
-    private void getReportOfIndex(String selectConfigId, String collectorId, String startDateStr, String endDateStr) {
-        //开启子线程，请求网络
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //请求网络
-                try {
-                    String reportOfIndex =  NetUtil.getReportOfIndex(selectConfigId,collectorId,startDateStr,endDateStr);
-                    //使用Handler将数据传送给主线程
-                    Message message = new Message();
-                    message.what = 0;
-                    message.obj = reportOfIndex;
-                    mHandler.sendMessage(message);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
-
-
 }

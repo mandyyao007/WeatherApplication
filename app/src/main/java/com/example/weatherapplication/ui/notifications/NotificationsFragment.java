@@ -70,6 +70,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
     // 线程变量
     private int count;
     List<TreeDataItemBean> treeDataItemBeans = null;
+    private ProgressDialog progressDialog =  null;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -165,6 +166,19 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
             e.printStackTrace();
         }
     }
+    Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            Log.d("NotificationsFragment", "====dayListener=====treeDataItemBeans===========:"+treeDataItemBeans);
+            if(treeDataItemBeans!=null && treeDataItemBeans.size()>0){
+                try {
+                    drawBarChart(treeDataItemBeans);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            progressDialog.dismiss();
+        }
+    };
     View.OnClickListener dayListener =  new View.OnClickListener() {
       //  int days = 0;
         @Override
@@ -193,7 +207,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 if(days == 1){
                     drawChart(type,days);
                 }else{
-                    final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                    progressDialog = new ProgressDialog(getActivity());
                     progressDialog.setProgressStyle(ProgressDialog.BUTTON_NEUTRAL);
                     progressDialog.setTitle("提示");
                     progressDialog.setMessage("正在加载数据");
@@ -220,7 +234,9 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                             progressDialog.cancel();*/
                                 treeDataItemBeans = getReportData(type,days);
                                 if(treeDataItemBeans!=null && treeDataItemBeans.size()>0){
-                                    progressDialog.cancel();
+                                   // progressDialog.cancel();
+                                    Message msg = new Message();
+                                    handler.sendMessage(msg);
                                 }
                             }catch (Exception e){
                                 e.printStackTrace();
@@ -228,9 +244,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                             }
                         }
                     }.start();
-                    if(treeDataItemBeans!=null && treeDataItemBeans.size()>0){
-                        drawBarChart(treeDataItemBeans);
-                    }
+
 
                 }
 
@@ -257,7 +271,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 if(days == 1){
                     drawChart(type,days);
                 }else{
-                    final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                    progressDialog = new ProgressDialog(getActivity());
                     progressDialog.setProgressStyle(ProgressDialog.BUTTON_NEUTRAL);
                     progressDialog.setTitle("提示");
                     progressDialog.setMessage("正在加载数据");
@@ -284,7 +298,8 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                             progressDialog.cancel();*/
                                 treeDataItemBeans = getReportData(type,days);
                                 if(treeDataItemBeans!=null && treeDataItemBeans.size()>0){
-                                    progressDialog.cancel();
+                                    Message msg = new Message();
+                                    handler.sendMessage(msg);
                                 }
                             }catch (Exception e){
                                 e.printStackTrace();
@@ -292,9 +307,6 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                             }
                         }
                     }.start();
-                    if(treeDataItemBeans!=null && treeDataItemBeans.size()>0){
-                        drawBarChart(treeDataItemBeans);
-                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -328,7 +340,6 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                             }catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            Log.d("NotificationsFragment", "===treeDataBean====:" + treeDataBean);
                             if (treeDataBean != null && treeDataBean.getmTreeDataItemBeans() != null) {
                                 treeDataItemBeans = treeDataBean.getmTreeDataItemBeans();
                                 if (treeDataItemBeans == null) {
@@ -348,6 +359,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         }else{
            //errorMessage = "请先选择类别";
         }
+        Log.d("NotificationsFragment", "===treeDataItemBeans====:" + treeDataItemBeans);
         return treeDataItemBeans;
     }
     private void drawBarChart(List<TreeDataItemBean> treeDataItemBeans) throws IOException {
