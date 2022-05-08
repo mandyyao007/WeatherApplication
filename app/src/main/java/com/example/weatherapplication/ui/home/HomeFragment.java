@@ -366,45 +366,47 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                     DaysDataItemBean item = (DaysDataItemBean) it.next();
                     newestData = stationFacade.getNewestData((String) item.getDescription(),collectorId,1);
                     Log.d("HomeFragment", "===newestData==:" + newestData);
-                    if(i==0){
-                        scrollView.scrollTo(0,0);
-                        tvChartname1.setText(item.getDescription());
-                        tvChartname1.setVisibility(View.VISIBLE);
-                        tvNewestData1.setText(newestData);
-                        tvNewestData1.setVisibility(View.VISIBLE);
-                        lineChart1.setVisibility(View.VISIBLE);
-                        lineChart1.zoom(0f,1f,0,0);
-                        lineChart1.zoom(0.25f,1f,0,0);
-                        setLineChart(days,item,lineChart1,entries1,item.getDescription(),item.getUnit());
-                        lineChart1.notifyDataSetChanged();
-                        lineChart1.getData().notifyDataChanged();
-                        lineChart1.invalidate();
-                    }
-                    if(i==1){
-                        tvChartname2.setText(item.getDescription());
-                        tvChartname2.setVisibility(View.VISIBLE);
-                        tvNewestData2.setText(newestData);
-                        tvNewestData2.setVisibility(View.VISIBLE);
-                        lineChart2.setVisibility(View.VISIBLE);
-                        lineChart2.zoom(0f,1f,0,0);
-                        lineChart2.zoom(0.25f,1f,0,0);
-                        setLineChart(days,item,lineChart2,entries2,item.getDescription(),item.getUnit());
-                        lineChart2.notifyDataSetChanged();
-                        lineChart2.getData().notifyDataChanged();
-                        lineChart2.invalidate();
-                    }
-                    if(i==2){
-                        tvChartname3.setText(item.getDescription());
-                        tvChartname3.setVisibility(View.VISIBLE);
-                        tvNewestData3.setText(newestData);
-                        tvNewestData3.setVisibility(View.VISIBLE);
-                        lineChart3.setVisibility(View.VISIBLE);
-                        lineChart3.zoom(0f,1f,0,0);
-                        lineChart3.zoom(0.25f,1f,0,0);
-                        setLineChart(days,item,lineChart3,entries3,item.getDescription(),item.getUnit());
-                        lineChart3.notifyDataSetChanged();
-                        lineChart3.getData().notifyDataChanged();
-                        lineChart3.invalidate();
+                    if(item!=null){
+                        if(i==0){
+                            scrollView.scrollTo(0,0);
+                            tvChartname1.setText(item.getDescription());
+                            tvChartname1.setVisibility(View.VISIBLE);
+                            tvNewestData1.setText(newestData);
+                            tvNewestData1.setVisibility(View.VISIBLE);
+                            lineChart1.setVisibility(View.VISIBLE);
+                            lineChart1.zoom(0f,1f,0,0);
+                            lineChart1.zoom(0.25f,1f,0,0);
+                            setLineChart(days,item,lineChart1,entries1,item.getDescription(),item.getUnit());
+                            lineChart1.notifyDataSetChanged();
+                            lineChart1.getData().notifyDataChanged();
+                            lineChart1.invalidate();
+                        }
+                        if(i==1){
+                            tvChartname2.setText(item.getDescription());
+                            tvChartname2.setVisibility(View.VISIBLE);
+                            tvNewestData2.setText(newestData);
+                            tvNewestData2.setVisibility(View.VISIBLE);
+                            lineChart2.setVisibility(View.VISIBLE);
+                            lineChart2.zoom(0f,1f,0,0);
+                            lineChart2.zoom(0.25f,1f,0,0);
+                            setLineChart(days,item,lineChart2,entries2,item.getDescription(),item.getUnit());
+                            lineChart2.notifyDataSetChanged();
+                            lineChart2.getData().notifyDataChanged();
+                            lineChart2.invalidate();
+                        }
+                        if(i==2){
+                            tvChartname3.setText(item.getDescription());
+                            tvChartname3.setVisibility(View.VISIBLE);
+                            tvNewestData3.setText(newestData);
+                            tvNewestData3.setVisibility(View.VISIBLE);
+                            lineChart3.setVisibility(View.VISIBLE);
+                            lineChart3.zoom(0f,1f,0,0);
+                            lineChart3.zoom(0.25f,1f,0,0);
+                            setLineChart(days,item,lineChart3,entries3,item.getDescription(),item.getUnit());
+                            lineChart3.notifyDataSetChanged();
+                            lineChart3.getData().notifyDataChanged();
+                            lineChart3.invalidate();
+                        }
                     }
                     i++;
                 }
@@ -639,10 +641,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                     e.printStackTrace();
                 }
             }else{
-                String message = "没有数据";
-                Toast toastCenter = Toast.makeText(getActivity().getApplicationContext(), message,Toast.LENGTH_SHORT);
-                toastCenter.setGravity(Gravity.CENTER,0,0);
-                toastCenter.show();
+                //String message = "没有数据";
+                //lineChart.setVisibility(View.INVISIBLE);
+                //Toast toastCenter = Toast.makeText(getActivity().getApplicationContext(), message,Toast.LENGTH_SHORT);
+                //toastCenter.setGravity(Gravity.CENTER,0,0);
+                //toastCenter.show();
             }
         }
 }
