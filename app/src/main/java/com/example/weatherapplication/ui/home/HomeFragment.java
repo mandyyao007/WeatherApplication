@@ -364,6 +364,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 Iterator it = daysDataItemBean.iterator();
                 while(it.hasNext()){
                     DaysDataItemBean item = (DaysDataItemBean) it.next();
+                    Log.d("HomeFragment", "===newestData= ======item=:" + item);
                     newestData = stationFacade.getNewestData((String) item.getDescription(),collectorId,1);
                     Log.d("HomeFragment", "===newestData==:" + newestData);
                     if(item!=null){
@@ -442,13 +443,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                     Iterator it = daysDataItemBean.iterator();
                     while(it.hasNext()){
                           DaysDataItemBean item = (DaysDataItemBean) it.next();
+                          Log.d("HomeFragment", "===newestData======itemitem=:" + item);
                           newestData = stationFacade.getNewestData((String) item.getDescription(),collectorId,1);
                           Log.d("HomeFragment", "===newestData==:" + newestData);
                           if(i==0){
                                scrollView.scrollTo(0,0);
                                tvChartname1.setText(item.getDescription());
                                tvChartname1.setVisibility(View.VISIBLE);
-                               tvNewestData1.setText(newestData);
+                               tvNewestData1.setText(newestData+" "+item.getUnit());
                                tvNewestData1.setVisibility(View.VISIBLE);
                                lineChart1.setVisibility(View.VISIBLE);
                                lineChart1.zoom(0f,1f,0,0);
@@ -461,7 +463,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                           if(i==1){
                                tvChartname2.setText(item.getDescription());
                                tvChartname2.setVisibility(View.VISIBLE);
-                               tvNewestData2.setText(newestData);
+                               tvNewestData2.setText(newestData+" "+item.getUnit());
                                tvNewestData2.setVisibility(View.VISIBLE);
                                lineChart2.setVisibility(View.VISIBLE);
                                lineChart2.zoom(0f,1f,0,0);
@@ -474,7 +476,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                           if(i==2){
                                tvChartname3.setText(item.getDescription());
                                tvChartname3.setVisibility(View.VISIBLE);
-                               tvNewestData3.setText(newestData);
+                               tvNewestData3.setText(newestData+" "+item.getUnit());
                                tvNewestData3.setVisibility(View.VISIBLE);
                                lineChart3.setVisibility(View.VISIBLE);
                                lineChart3.zoom(0f,1f,0,0);

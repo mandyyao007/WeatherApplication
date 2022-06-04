@@ -24,9 +24,9 @@ import java.net.URL;
 import java.util.List;
 
 public class NetUtil {
-    public static final String HTTPHOST = "10.68.201.78:9000";
+    //public static final String HTTPHOST = "10.68.201.78:9000";
     // public static final String HTTPHOST = "47.98.106.23:9000";
-    //public static final String HTTPHOST = "106.15.5.62:9000";
+    public static final String HTTPHOST = "106.15.5.62:9000";
     public static final String URL_LOGIN =  "http://"+HTTPHOST+"/user/check_login";
     public static final String URL_STATION = "http://"+HTTPHOST+"/basic/show_collector_list";
     public static final String URL_INDEX = "http://"+HTTPHOST+"/basic/show_collector_config_list";
@@ -82,13 +82,13 @@ public class NetUtil {
         String result ="";
         String status = "";
         String loginUrl = URL_LOGIN+"?password="+password+"&userName="+userName;  //拼接出URL
-        //Log.d("fan","-----loginUrl======"+loginUrl);
+        //Log.d("NetUtil","-----loginUrl======"+loginUrl);
         try{
             result = service(loginUrl,"POST");
-            //Log.d("fan","-----result======"+result);
+            //Log.d("NetUtil","-----result======"+result);
             Gson gson = new Gson();
             LoginBean loginBean = gson.fromJson(result, LoginBean.class);
-            //Log.d("fan","====解析后的loginBean==:"+loginBean.toString());
+            //Log.d("NetUtil","====解析后的loginBean==:"+loginBean.toString());
             status =  loginBean.getStatus();
         }catch (IOException e) {
             e.printStackTrace();
@@ -100,7 +100,7 @@ public class NetUtil {
         try{
             WeatherStationBean weatherStationBean = getWearherStationInfo(userName);
             weatherStationItem = weatherStationBean.getmItemBeans();
-           // Log.d("fan","-----weatherStationItem======"+weatherStationItem);
+           // Log.d("NetUtil","-----weatherStationItem======"+weatherStationItem);
         }catch (IOException e) {
             e.printStackTrace();
         }
@@ -110,14 +110,14 @@ public class NetUtil {
         String result ="";
         //拼接出URL
         String weatherStationUrl = URL_WEATHER_STATION+"?userName="+userName;
-       // Log.d("fan","-----weatherStationUrl======"+weatherStationUrl);
+       // Log.d("NetUtil","-----weatherStationUrl======"+weatherStationUrl);
         WeatherStationBean weatherStationBean = null;
         try{
             result = service(weatherStationUrl,"POST");
-           // Log.d("fan","-----result======"+result);
+           // Log.d("NetUtil","-----result======"+result);
             Gson gson = new Gson();
             weatherStationBean = gson.fromJson(result, WeatherStationBean.class);
-           // Log.d("fan","====weatherStationBean==:"+weatherStationBean.toString());
+           // Log.d("NetUtil","====weatherStationBean==:"+weatherStationBean.toString());
         }catch (IOException e) {
             e.printStackTrace();
         }
@@ -127,7 +127,7 @@ public class NetUtil {
         String result ="";
         //拼接出URL
         String stationUrl = URL_STATION+"?userName="+userName+"&weatherStationId=" +weatherStationId;
-       // Log.d("fan","-----stationUrl======"+stationUrl);
+       // Log.d("NetUtil","-----stationUrl======"+stationUrl);
         CollectorBean collectorBean = null;
         try{
             result = service(stationUrl,"POST");
@@ -143,7 +143,7 @@ public class NetUtil {
         try{
             CollectorBean collectorBean = getStationInfo(userName,weatherStationId);
             stationItems = collectorBean.getmItemBeans();
-            //Log.d("fan","-----stationItems======"+stationItems);
+            //Log.d("NetUtil","-----stationItems======"+stationItems);
         }catch (IOException e) {
             e.printStackTrace();
         }
@@ -155,9 +155,10 @@ public class NetUtil {
         IndexBean indexBean = null;
         //拼接出URL
         String indexUrl = URL_INDEX+"?collectorId="+collectorId;
-       // Log.d("fan","-----indexUrl======"+indexUrl);
+        //Log.d("NetUtil","-----indexUrl======"+indexUrl);
         try{
             result = service(indexUrl,"POST");
+            //Log.d("NetUtil","-----indexUrl===result==="+result);
             Gson gson = new Gson();
             indexBean = gson.fromJson(result, IndexBean.class);
         }catch (IOException e) {
@@ -170,12 +171,12 @@ public class NetUtil {
         ReportBean reportBean = null;
         //拼接出URL
         String reportUrl = URL_REPORT_DATA+"?collectorConfigId="+collectorConfigId+"&collectorId="+collectorId+"&endDate="+endDateStr+"&startDate="+startDateStr;
-        //Log.d("fan","-----reportUrl======"+reportUrl);
+        //Log.d("NetUtil","-----reportUrl======"+reportUrl);
         try{
             result = service(reportUrl,"POST");
             Gson gson = new Gson();
             reportBean = gson.fromJson(result, ReportBean.class);
-           // Log.d("fan","====解析后的reportBean==:"+reportBean.toString());
+           // Log.d("NetUtil","====解析后的reportBean==:"+reportBean.toString());
         }catch (IOException e) {
             e.printStackTrace();
         }
@@ -186,7 +187,7 @@ public class NetUtil {
         String reportResult ="";
         //拼接出URL
         String reportUrl = URL_REPORT_DATA+"?collectorConfigId="+selectConfigId+"&collectorId="+stationId+"&endDate="+endDateStr+"&startDate="+startDateStr;
-       // Log.d("fan","-----reportUrl======"+reportUrl);
+       // Log.d("NetUtil","-----reportUrl======"+reportUrl);
         try{
             reportResult = service(reportUrl,"POST");
         }catch (IOException e) {
@@ -198,10 +199,10 @@ public class NetUtil {
         ReportBean reportBean = null;
         try{
             String reportResult = getReportOfIndex(selectConfigId,stationId,startDateStr,endDateStr);
-            Log.d("fan","-----reportResult======"+reportResult);
+            //Log.d("NetUtil","-----reportResult======"+reportResult);
             Gson gson = new Gson();
             reportBean = gson.fromJson(reportResult, ReportBean.class);
-            Log.d("fan","====解析后的reportBean==:"+reportBean.toString());
+            //Log.d("NetUtil","====解析后的reportBean==:"+reportBean.toString());
         }catch (IOException e) {
             e.printStackTrace();
         }
@@ -212,14 +213,13 @@ public class NetUtil {
         String dataResult ="";
         ReportBean reportBean = null;
         //拼接出URL
-        String newestDataUrl = URL_TODAY_DATA+"?collectorConfigId="+selectConfigId+"&collectorId="+stationId+"&count="+count;
-        //Log.d("fan","-----newestDataUrl======"+newestDataUrl);
+        String newestDataUrl = URL_TODAY_DATA+"?collectorConfigId="+selectConfigId+"&collectorId="+stationId+"&count="+count;Log.d("fan","-----newestDataUrl======"+newestDataUrl);
         try{
             dataResult = service(newestDataUrl,"POST");
-            //Log.d("fan","-----getNewestData  result======"+dataResult);
+            //Log.d("NetUtil","-----getNewestData  result======"+dataResult);
             Gson gson = new Gson();
             reportBean = gson.fromJson(dataResult, ReportBean.class);
-           // Log.d("fan","====getNewestData====解析后的reportBean==:"+reportBean.toString());
+           // Log.d("NetUtil","====getNewestData====解析后的reportBean==:"+reportBean.toString());
         }catch (IOException e) {
             e.printStackTrace();
         }
@@ -229,14 +229,14 @@ public class NetUtil {
         String dataResult ="";
         //拼接出URL
         String treeUrl = URL_TREE+"?collectorId="+collectorId;
-        //Log.d("fan","-----getTreeBean======"+treeUrl);
+        //Log.d("NetUtil","-----getTreeBean======"+treeUrl);
         TreeBean treeBean = null;
         try{
             dataResult = service(treeUrl,"POST");
-            //Log.d("fan","-----getTreeBean  result======"+dataResult);
+            //Log.d("NetUtil","-----getTreeBean  result======"+dataResult);
             Gson gson = new Gson();
             treeBean = gson.fromJson(dataResult, TreeBean.class);
-            //Log.d("fan","====getTreeBean====解析后的treeBean==:"+ treeBean.toString());
+            //Log.d("NetUtil","====getTreeBean====解析后的treeBean==:"+ treeBean.toString());
         }catch (IOException e) {
             e.printStackTrace();
         }
@@ -246,14 +246,14 @@ public class NetUtil {
         String dataResult ="";
         //拼接出URL
         String treeDataUrl = URL_TREE_DATA+"?day="+days+"&treeId="+treeId;
-        //Log.d("fan","-----getTreeDataBean====="+treeDataUrl);
+        //Log.d("NetUtil","-----getTreeDataBean====="+treeDataUrl);
         CollectorItemBean.TreeDataBean treeDataBean = null;
         try{
             dataResult = service(treeDataUrl,"POST");
-            //Log.d("fan","-----getTreeDataBean  result======"+dataResult);
+            //Log.d("NetUtil","-----getTreeDataBean  result======"+dataResult);
             Gson gson = new Gson();
             treeDataBean = gson.fromJson(dataResult, CollectorItemBean.TreeDataBean.class);
-            //Log.d("fan","====getTreeDataBean====解析后的treeDataBean==:"+ treeDataBean.toString());
+            //Log.d("NetUtil","====getTreeDataBean====解析后的treeDataBean==:"+ treeDataBean.toString());
         }catch (IOException e) {
             e.printStackTrace();
         }
@@ -263,14 +263,14 @@ public class NetUtil {
         String dataResult ="";
         //拼接出URL
         String daysDataUrl = URL_DAYS_DATA+"?collectorId="+stationId+"&configType="+configType+"&day="+day;;
-        Log.d("fan","-----daysDataUrl======"+daysDataUrl);
+        //Log.d("NetUtil","-----daysDataUrl======"+daysDataUrl);
         List<DaysDataItemBean> daysDataItemBeans = null;
         try{
             dataResult = service(daysDataUrl,"POST");
-            //Log.d("fan","-----getDaysData  result======"+dataResult);
+            //Log.d("NetUtil","-----getDaysData  result======"+dataResult);
             Gson gson = new Gson();
             DaysDataBean daysDataBean = gson.fromJson(dataResult, DaysDataBean.class);
-            Log.d("fan","====getDaysData====DaysDataBean==:"+daysDataBean.toString());
+            //Log.d("NetUtil","====getDaysData====DaysDataBean==:"+daysDataBean.toString());
             if(daysDataBean!= null && daysDataBean.getmItemBeans()!= null){
                 daysDataItemBeans =  daysDataBean.getmItemBeans();
 
@@ -280,7 +280,7 @@ public class NetUtil {
         }catch (IOException e) {
             e.printStackTrace();
         }
-        Log.d("fan","====getDaysData====daysDataItemBeans==:"+daysDataItemBeans);
+       // Log.d("NetUtil","====getDaysData====daysDataItemBeans==:"+daysDataItemBeans);
         return daysDataItemBeans;
     }
 }

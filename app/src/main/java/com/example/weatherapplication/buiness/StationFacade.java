@@ -29,7 +29,7 @@ public class StationFacade {
                 IndexBean indexbean = NetUtil.getIndexInfo(collectorId);
                 //String[] mIndexs  =  getIndexOfStation(indexbean);
                 indexMap =  getIndexOfStationMap(indexbean);
-                Log.d("StationFacade","===indexMap==:"+ indexMap.toString());
+                //Log.d("StationFacade","===indexMap==:"+ indexMap.toString());
                 return  indexMap;
             }
         } catch (IOException e) {
@@ -47,7 +47,7 @@ public class StationFacade {
             while(it.hasNext()){
                 IndexItemsBean item = (IndexItemsBean) it.next();
                 //Log.d("StationFacade","*********index=====Items==:"+item.toString());
-                indexMap.put(item.getDescription().split("-")[0],item.getCollectorConfigId());
+                indexMap.put(item.getDescription().split("-")[0]+","+item.getUnit(),item.getCollectorConfigId());
             }
         }
         //Log.d("StationFacade","*********indexMap==:"+indexMap);
@@ -79,7 +79,8 @@ public class StationFacade {
     public String getNewestData(String selectConfigName, String collectorId, int count) throws IOException {
         Map indexMap = initIndex(collectorId);
         String newestData = "";
-        //Log.d("StationFacade","======indexMap =====:"+indexMap);
+        Log.d("StationFacade","======indexMap =====:"+indexMap);
+        Log.d("StationFacade","======selectConfigName =====:"+selectConfigName);
         String selectConfigId = (String) indexMap.get(selectConfigName);
         //Log.d("StationFacade","======selectConfigId =====:"+selectConfigId);
         ReportBean newestRrpotData = NetUtil.getNewestData(selectConfigId, collectorId,1);

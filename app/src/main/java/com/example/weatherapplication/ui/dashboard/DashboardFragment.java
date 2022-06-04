@@ -280,40 +280,37 @@ public class DashboardFragment extends Fragment {
         valPlantDia = (TextView) pop.findViewById(R.id.val_plant_dia);
         valPlantRad = (TextView) pop.findViewById(R.id.val_plant_rad);
         Map indexMap = stationFacade.initIndex(collectorId);
+        Log.d("DashboardFragment","==================indexMap=====" + indexMap);
         for(Iterator it = indexMap.keySet().iterator();it.hasNext();){
-            String index = (String) it.next();
-            //Log.d("DashboardFragment","===================index==========:"+index);
-            //Log.d("DashboardFragment", "########collectorId======" + collectorId);
-            String tem = stationFacade.getNewestData(index,collectorId,1);
+            String indexAndUnit = (String) it.next();
+            Log.d("DashboardFragment","==================indexAndUnit=====" + indexAndUnit);
+            String index = indexAndUnit.split(",")[0];
+            String unit = indexAndUnit.split(",")[1];
+            Log.d("DashboardFragment","======index==========:"+index+"======unit==========:"+unit+"########collectorId======" + collectorId);
+            String tem = stationFacade.getNewestData(indexAndUnit,collectorId,1)+" "+unit;
             try {
                 if("空气温度".equals(index) || "AirTC_Avg1".equals(index) ){
-                    //Log.d("DashboardFragment", "-----airTem======" + tem);
                     tvAirTem.setText(index+":");
                     valAirTem.setText(tem);
                 }
                 if("空气湿度".equals(index)||"RH_Avg1".equals(index)){
-                   // Log.d("DashboardFragment", "-----airHum======" + tem);
                     tvAirHum.setText(index+":");
                     valAirHum.setText(tem);
                 }
                 if("土壤温度".equals(index) || "SoilTemp_Avg1".equals(index)){
-                    //Log.d("DashboardFragment", "-----soilTem======" + tem);
                     tvSoilTem.setText(index+":");
                     valSoilTem.setText(tem);
                 }
                 if("土壤湿度".equals(index) || "SoilEC_Avg1".equals(index)){
-                    //Log.d("DashboardFragment", "-----soilHum======" + tem);
                     tvSoilHum.setText(index+":");
                     valSoilHum.setText(tem);
                 }
                 if("土壤盐分".equals(index) || "SoilVWC_Avg1".equals(index)){
-                    //Log.d("DashboardFragment", "-----soilsalt======" + tem);
                     tvSoilSalt.setText(index+":");
                     valSoilSalt.setText(tem);
                 }
 
                 if("树干液流".equals(index)|| "DD_Avg1".equals(index)){
-                    //Log.d("DashboardFragment", "-----plantfluid======" + tem);
                      tvPlantFluid.setText(index+":");
                      valPlantFluid.setText(tem);
                 }
@@ -330,7 +327,6 @@ public class DashboardFragment extends Fragment {
                     valPlantDia.setText("");
                 }
                 if("树木胸径增长".equals(index)|| ("PAR_Avg1".equals(index) && !"54".equals(collectorId))){
-                    //Log.d("DashboardFragment", "-----plantdia======" + tem);
                     if("树木胸径增长".equals(index)){
                         tvPlantDia.setText(index.substring(0,4)+":");
                     }else{
@@ -343,7 +339,6 @@ public class DashboardFragment extends Fragment {
                 }
 
                 if("光合有效辐射".equals(index)|| "TDP_Avg1".equals(index)){
-                    //Log.d("DashboardFragment", "-----plantrad======" + tem);
                     tvPlantRad.setText(index+":");
                     valPlantRad.setText(tem);
                 }

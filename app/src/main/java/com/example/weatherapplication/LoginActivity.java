@@ -5,12 +5,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.weatherapplication.util.APKVersionCodeUtils;
 import com.example.weatherapplication.util.NetUtil;
 import com.example.weatherapplication.util.StatusBarUtils;
 import com.example.weatherapplication.util.ToastUtil;
@@ -23,6 +26,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Button mBtnLogin;
     private EditText mEtUser;
     private EditText mEtPassword;
+    private TextView mVersion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +38,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mEtUser = findViewById(R.id.et_username);//用户名
         mEtPassword = findViewById(R.id.et_password);//密码
         mBtnLogin.setOnClickListener((View.OnClickListener) this);
+        mVersion = findViewById(R.id.tx_version_name);
+        Log.d("LoginActivity","====mVersion==:"+APKVersionCodeUtils.getVerName(this));
+        Log.d("LoginActivity","====APK mVersion==:"+APKVersionCodeUtils.getVersionCode(this));
+        mVersion.setText("Version:"+APKVersionCodeUtils.getVerName(this));
         //  在Android4.0以后，会发现，只要是写在主线程（就是Activity）中的HTTP请求，运行时都会报错，这是因为Android在4.0以后为了防止应用的ANR（Aplication Not Response）异常，
         //  Android这个设计是为了防止网络请求时间过长而导致界面假死的情况发生。
         //以下适用于数据量很小的情况
