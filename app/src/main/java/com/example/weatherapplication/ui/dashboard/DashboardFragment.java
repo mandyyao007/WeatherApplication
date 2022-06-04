@@ -51,6 +51,7 @@ import java.util.Map;
 
 public class DashboardFragment extends Fragment {
 
+    private static final String TAG = "DashboardFragment";
     private DashboardViewModel dashboardViewModel;
     private FragmentDashboardBinding binding;
     private MapView mMapView = null;
@@ -243,9 +244,9 @@ public class DashboardFragment extends Fragment {
                         intent.putExtra("fragment_flag", 2);
                         intent.putExtra("collectorId",collectorId);
                         intent.putExtra("collectorName", bundle.getString("collectorName"));
-                        /*Log.d("DashboardFragment", "-----weatherStationId======" + weatherStationId
+                        /*Log.d(TAG, "-----weatherStationId======" + weatherStationId
                                 +"-----userName======" + userName);
-                        Log.d("DashboardFragment", "-----collectorId======" + collectorId
+                        Log.d(TAG, "-----collectorId======" + collectorId
                                 + "-----collectorName======" + bundle.getString("collectorName"));*/
                         startActivity(intent);
                     }
@@ -280,13 +281,13 @@ public class DashboardFragment extends Fragment {
         valPlantDia = (TextView) pop.findViewById(R.id.val_plant_dia);
         valPlantRad = (TextView) pop.findViewById(R.id.val_plant_rad);
         Map indexMap = stationFacade.initIndex(collectorId);
-        Log.d("DashboardFragment","==================indexMap=====" + indexMap);
+        Log.d(TAG,"==================indexMap=====" + indexMap);
         for(Iterator it = indexMap.keySet().iterator();it.hasNext();){
             String indexAndUnit = (String) it.next();
-            Log.d("DashboardFragment","==================indexAndUnit=====" + indexAndUnit);
+            Log.d(TAG,"==================indexAndUnit=====" + indexAndUnit);
             String index = indexAndUnit.split(",")[0];
             String unit = indexAndUnit.split(",")[1];
-            Log.d("DashboardFragment","======index==========:"+index+"======unit==========:"+unit+"########collectorId======" + collectorId);
+            Log.d(TAG,"======index==========:"+index+"======unit==========:"+unit+"########collectorId======" + collectorId);
             String tem = stationFacade.getNewestData(indexAndUnit,collectorId,1)+" "+unit;
             try {
                 if("空气温度".equals(index) || "AirTC_Avg1".equals(index) ){
@@ -372,28 +373,28 @@ public class DashboardFragment extends Fragment {
             mBaiduMap.clear();//先清除图层
             if(it.hasNext()){
                 WeatherStationItemBean item = (WeatherStationItemBean) it.next();
-                //Log.d("DashboardFragment","############station=====Items==:"+item.toString());
+                //Log.d(TAG,"############station=====Items==:"+item.toString());
                 String weatherStationId = item.getWeatherStationId();
-                //Log.d("DashboardFragment","############weatherStationId==:"+weatherStationId);
+                //Log.d(TAG,"############weatherStationId==:"+weatherStationId);
                 String reg = "^[0-9]+(.[0-9]+)?$";
                 initLatLngData(item);//初始化四边形的点
                 List<CollectorItemBean> collectorItems = NetUtil.getStationItemInfo(userName,weatherStationId);
-                //Log.d("DashboardFragment","############collectorItems==:"+collectorItems);
+                //Log.d(TAG,"############collectorItems==:"+collectorItems);
                 Iterator iter = collectorItems.iterator();
                 while(iter.hasNext()){
                     CollectorItemBean collectorItem =  (CollectorItemBean)iter.next();
-                    //Log.d("DashboardFragment","============collectorItem==:"+collectorItem);
+                    //Log.d(TAG,"============collectorItem==:"+collectorItem);
                     if((!"".equals(collectorItem.getLatitude()) && collectorItem.getLatitude().matches(reg))
                             && (!"".equals(collectorItem.getLongitude()) && collectorItem.getLongitude().matches(reg)) ){
                         float latitude =  Float.parseFloat(collectorItem.getLatitude()) ;
                         float longitude=  Float.parseFloat(collectorItem.getLongitude());
-                        //Log.d("DashboardFragment","############latitude==:"+latitude+"############longitude==:"+longitude);
+                        //Log.d(TAG,"############latitude==:"+latitude+"############longitude==:"+longitude);
                         LatLng point = new LatLng( latitude,longitude);
                         collectorId = collectorItem.getId();
                         collectorName = collectorItem.getCollectorName();
-                        //Log.d("DashboardFragment","-------------collectorItem==:"+collectorItem);
-                        //Log.d("DashboardFragment","############collectorName==:"+collectorName);
-                        //Log.d("DashboardFragment","############collectorId==:"+collectorId);
+                        //Log.d(TAG,"-------------collectorItem==:"+collectorItem);
+                        //Log.d(TAG,"############collectorName==:"+collectorName);
+                        //Log.d(TAG,"############collectorId==:"+collectorId);
                         if( point!= null){
                             /////Bundle用来传值 也可以识别点击的是哪一个marker
                             Bundle mBundle = new Bundle();

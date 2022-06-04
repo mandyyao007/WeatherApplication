@@ -71,6 +71,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
     private int count;
     List<TreeDataItemBean> treeDataItemBeans = null;
     private ProgressDialog progressDialog =  null;
+    private static final String TAG = "NotificationsFragment";
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -113,8 +114,8 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         collectorId = getActivity().getIntent().getStringExtra("collectorId");
         collectorName = getActivity().getIntent().getStringExtra("collectorName");
         weatherStationId = getActivity().getIntent().getStringExtra("weatherStationId");
-        //Log.d("NotificationsFragment","=***************==userName==:"+ userName+"=***************==collectorId==:"+ collectorId);
-        //Log.d("NotificationsFragment","=***************==stationName==:"+ collectorName+"=***************==weatherStationId==:"+ weatherStationId);
+        //Log.d(TAG,"=***************==userName==:"+ userName+"=***************==collectorId==:"+ collectorId);
+        //Log.d(TAG,"=***************==stationName==:"+ collectorName+"=***************==weatherStationId==:"+ weatherStationId);
         tvStation = notificationFragmentView.findViewById(R.id.tv_station);
         tvStation.setText(collectorName);
         ivAdd = (ImageView) notificationFragmentView.findViewById(R.id.iv_station);
@@ -150,17 +151,17 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
             case R.id.btn_tree:
                 setBtnEnable(btnTree,"type");
                 type = "tree" ;
-                //Log.d("NotificationsFragment","=***************=tree=========");
+                //Log.d(TAG,"=***************=tree=========");
                 break;
             case R.id.btn_community:
                 setBtnEnable(btnCommunity,"type");
                 type = "community" ;
-                //Log.d("NotificationsFragment","=***************=community=========");
+                //Log.d(TAG,"=***************=community=========");
                 break;
         }
         setScrollInvisiable();
         try {
-            //Log.d("NotificationsFragment", "======checkDayBtnAndDraw===========:");
+            //Log.d(TAG, "======checkDayBtnAndDraw===========:");
             checkDayBtnAndDraw(type);
         } catch (IOException e) {
             e.printStackTrace();
@@ -168,7 +169,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
     }
     Handler handler = new Handler() {
         public void handleMessage(Message msg) {
-            Log.d("NotificationsFragment", "====dayListener=====treeDataItemBeans===========:"+treeDataItemBeans);
+            Log.d(TAG, "====dayListener=====treeDataItemBeans===========:"+treeDataItemBeans);
             if(treeDataItemBeans!=null && treeDataItemBeans.size()>0){
                 try {
                     drawBarChart(treeDataItemBeans);
@@ -201,7 +202,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                     setBtnEnable(btNintyDay,"days");
                     break;
             }
-            Log.d("NotificationsFragment", "====dayListener=====days===========:"+days);
+            Log.d(TAG, "====dayListener=====days===========:"+days);
             try {
                 //drawChart(type,days);
                 if(days == 1){
@@ -264,7 +265,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         }else if(!btNintyDay.isEnabled()){
             days =90;
         }
-        Log.d("NotificationsFragment", "====checkDayBtnAndDraw=====days===========:"+days);
+        Log.d(TAG, "====checkDayBtnAndDraw=====days===========:"+days);
         if(days != 0){
             try {
                 //drawChart(type,days);
@@ -318,10 +319,10 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
     private List<TreeDataItemBean> getReportData(String type, int days) {
         //List<TreeDataItemBean> treeDataItemBeans = null;
         if(type!= null && "tree".equals(type)){
-            Log.d("NotificationsFragment", "===type=============:" + type);
+            Log.d(TAG, "===type=============:" + type);
             try {
                 TreeBean treeBean = NetUtil.getTreeBean(collectorId);
-                Log.d("NotificationsFragment", "===treeBean=============:" + treeBean);
+                Log.d(TAG, "===treeBean=============:" + treeBean);
                 if(treeBean != null  && treeBean.getmTreeItemBeans()!= null){
                     List<TreeItemBean> treeItemBeans = treeBean.getmTreeItemBeans();
                     if(treeItemBeans == null){
@@ -331,7 +332,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                     while(it.hasNext()) {
                         TreeItemBean treeItemBean = (TreeItemBean) it.next();
                         //Log.d("NotificationsFragment", "===treeItemBean" + treeItemBean);
-                        Log.d("NotificationsFragment", "===treeItemBean  getTreeId====:" + treeItemBean.getTreeId() + "getCollectorId====:" + treeItemBean.getCollectorId()
+                        Log.d(TAG, "===treeItemBean  getTreeId====:" + treeItemBean.getTreeId() + "getCollectorId====:" + treeItemBean.getCollectorId()
                                 + " getTreeName====:" + treeItemBean.getTreeName());
                         if (treeItemBean.getTreeId() != null) {
                             CollectorItemBean.TreeDataBean treeDataBean = null;
@@ -355,11 +356,11 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 e.printStackTrace();
             }
         }else if(type!= null && "community".equals(type)){
-            Log.d("NotificationsFragment", "&&&&&&&&&&&&&7type=============:" + type);
+            Log.d(TAG, "&&&&&&&&&&&&&7type=============:" + type);
         }else{
            //errorMessage = "请先选择类别";
         }
-        Log.d("NotificationsFragment", "===treeDataItemBeans====:" + treeDataItemBeans);
+        Log.d(TAG, "===treeDataItemBeans====:" + treeDataItemBeans);
         return treeDataItemBeans;
     }
     private void drawBarChart(List<TreeDataItemBean> treeDataItemBeans) throws IOException {
@@ -369,9 +370,9 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
             try {
                 TreeDataItemBean treeDataItemBean = (TreeDataItemBean) its.next();
                 if (!"test".equals(treeDataItemBean.getConfigName())) {
-                    //Log.d("NotificationsFragment", "===name====:" + treeDataItemBean.getConfigName());
+                    //Log.d(TAG, "===name====:" + treeDataItemBean.getConfigName());
                     List<TreeDataItemDetailBean> treeDataItemDetailBeans = treeDataItemBean.getmTreeDataItemDetailBean();
-                    Log.d("NotificationsFragment", "===treeDataItemDetailBeans====:" + treeDataItemDetailBeans);
+                    Log.d(TAG, "===treeDataItemDetailBeans====:" + treeDataItemDetailBeans);
                     if (treeDataItemDetailBeans != null) {
                         float ratio = 4.0f;
                         if (i == 1) {
@@ -446,7 +447,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
             }
         }
         /*}else if(type!= null && "community".equals(type)){
-            Log.d("NotificationsFragment", "&&&&&&&&&&&&&7type=============:" + type);
+            Log.d(TAG, "&&&&&&&&&&&&&7type=============:" + type);
         }else{
             String message = "请先选择类别";
             Toast toastCenter = Toast.makeText(getActivity().getApplicationContext(), message,Toast.LENGTH_SHORT);
@@ -456,10 +457,10 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
     }
     private void drawChart(String type,int days) throws IOException {
         if(type!= null && "tree".equals(type)){
-            Log.d("NotificationsFragment", "===type=============:" + type);
+            Log.d(TAG, "===type=============:" + type);
             try {
                 TreeBean treeBean =  NetUtil.getTreeBean(collectorId);
-                Log.d("NotificationsFragment", "===treeBean=============:" + treeBean);
+                Log.d(TAG, "===treeBean=============:" + treeBean);
                 if(treeBean != null  && treeBean.getmTreeItemBeans()!= null){
                     List<TreeItemBean> treeItemBeans = treeBean.getmTreeItemBeans();
                     if(treeItemBeans == null){
@@ -468,26 +469,26 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                     Iterator it = treeItemBeans.iterator();
                     while(it.hasNext()){
                         TreeItemBean treeItemBean = (TreeItemBean)it.next();
-                        //Log.d("NotificationsFragment", "===treeItemBean" + treeItemBean);
-                        Log.d("NotificationsFragment", "===treeItemBean  getTreeId====:" + treeItemBean.getTreeId()+"getCollectorId====:" + treeItemBean.getCollectorId()
+                        //Log.d(TAG, "===treeItemBean" + treeItemBean);
+                        Log.d(TAG, "===treeItemBean  getTreeId====:" + treeItemBean.getTreeId()+"getCollectorId====:" + treeItemBean.getCollectorId()
                         +" getTreeName====:" + treeItemBean.getTreeName());
                         if(treeItemBean.getTreeId()!= null){
                             CollectorItemBean.TreeDataBean treeDataBean = NetUtil.getTreeDataBean(treeItemBean.getTreeId(),days);
-                            //Log.d("NotificationsFragment", "===treeDataBean====:" + treeDataBean);
+                            //Log.d(TAG, "===treeDataBean====:" + treeDataBean);
                             if(treeDataBean!= null && treeDataBean.getmTreeDataItemBeans()!=null){
                                 List<TreeDataItemBean> treeDataItemBeans = treeDataBean.getmTreeDataItemBeans();
                                 if(treeDataItemBeans == null){
                                     return ;
                                 }
-                                //Log.d("NotificationsFragment", "===treeDataItemBeans====:" + treeDataItemBeans);
+                                //Log.d(TAG, "===treeDataItemBeans====:" + treeDataItemBeans);
                                 Iterator its = treeDataItemBeans.iterator();
                                 int i  = 1;
                                 while(its.hasNext()){
                                     TreeDataItemBean treeDataItemBean = (TreeDataItemBean) its.next();
                                     if(!"test".equals(treeDataItemBean.getConfigName())){
-                                        //Log.d("NotificationsFragment", "===name====:" + treeDataItemBean.getConfigName());
+                                        //Log.d(TAG, "===name====:" + treeDataItemBean.getConfigName());
                                         List<TreeDataItemDetailBean>  treeDataItemDetailBeans = treeDataItemBean.getmTreeDataItemDetailBean();
-                                        Log.d("NotificationsFragment", "===treeDataItemDetailBeans====:" + treeDataItemDetailBeans);
+                                        Log.d(TAG, "===treeDataItemDetailBeans====:" + treeDataItemDetailBeans);
                                         if(treeDataItemDetailBeans != null){
                                             float ratio = 4.0f;
                                             if(i==1){
@@ -578,7 +579,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                     e.printStackTrace();
             }
         }else if(type!= null && "community".equals(type)){
-            Log.d("NotificationsFragment", "&&&&&&&&&&&&&7type=============:" + type);
+            Log.d(TAG, "&&&&&&&&&&&&&7type=============:" + type);
         }else{
             String message = "请先选择类别";
             Toast toastCenter = Toast.makeText(getActivity().getApplicationContext(), message,Toast.LENGTH_SHORT);
@@ -596,7 +597,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
             Iterator iter = treeDataItemDetailBeans.iterator();
             while (iter.hasNext() && count <24){
                 TreeDataItemDetailBean treeDataItemDetailBean = (TreeDataItemDetailBean) iter.next();
-                //Log.d("NotificationsFragment", "===treeDataItemDetailBean====:" + treeDataItemDetailBean);
+                //Log.d(TAG, "===treeDataItemDetailBean====:" + treeDataItemDetailBean);
                 if(treeDataItemDetailBean!=null ){
                     float time = 0.0f;
                     if(days ==1){
@@ -621,18 +622,18 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         }
         if(days == 1){
             Collections.reverse(list);
-            Log.d("NotificationsFragment", "===list 倒序====:" + list);
+            Log.d(TAG, "===list 倒序====:" + list);
         }else{
             int j = 0;
             ListIterator<Map.Entry<Float,String>> i = new ArrayList<Map.Entry<Float,String>>(tempMap.entrySet()).listIterator(tempMap.size());
              while(i.hasPrevious()) {
                 Map.Entry<Float, String> entry=i.previous();
-                //Log.d("NotificationsFragment", j+":"+entry.getValue());
+                //Log.d(TAG, j+":"+entry.getValue());
                 dataMap.put(j,entry.getValue());
                 j++;
             }
         }
-        Log.d("NotificationsFragment", "===list不为空====:" + (list!= null)+"===list.size()====:" + (list.size()));
+        Log.d(TAG, "===list不为空====:" + (list!= null)+"===list.size()====:" + (list.size()));
         return list ;
     }
     /*
@@ -640,8 +641,8 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
      */
     private void setChart(float ratio,BarChart barChart,List<TreeDataItemDetailBean> treeDataItemDetailBeans,int days) {
         List<BarEntry> list = setChartData(treeDataItemDetailBeans,days);
-        Log.d("NotificationsFragment", "===setChart====:" +list);
-        Log.d("NotificationsFragment", "===dataMap====:" +dataMap);
+        Log.d(TAG, "===setChart====:" +list);
+        Log.d(TAG, "===dataMap====:" +dataMap);
         barChart.setDescription(null);                             //设置描述文字为null
         barChart.setBackgroundColor(Color.parseColor("#00000000"));  //设置背景颜色
         barChart.setDrawBarShadow(false);                          //绘制当前展示的内容顶部阴影
@@ -680,7 +681,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         //显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
         barChart.zoom(4,1f,0,0);
         if(days==1){
-            Log.d("NotificationsFragment", "======@@@@@@@@@@@=days===============:" + days);
+            Log.d(TAG, "======@@@@@@@@@@@=days===============:" + days);
             xAxis.setTextSize(13f);//设置X轴刻度字体大小
             xAxis.setLabelRotationAngle(0f);//不旋转
             xAxis.setValueFormatter(new IAxisValueFormatter() {
@@ -690,7 +691,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 }
             });
         }else{
-            Log.d("NotificationsFragment", "=====%%%%%%%%%%%%%%days===============:" + days);
+            Log.d(TAG, "=====%%%%%%%%%%%%%%days===============:" + days);
             xAxis.setTextSize(10f);//设置X轴刻度字体大小
             xAxis.setLabelRotationAngle(-60f);//旋转45度
 

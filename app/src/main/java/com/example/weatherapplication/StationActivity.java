@@ -26,6 +26,7 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
     private List<CollectorItemBean> mDatas; //列表数据源
     private StationAdapter adapter;
     private String userName,weatherStationId,page;
+    private static final String TAG = "StationActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,9 +43,9 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
         userName = getIntent().getStringExtra("userName");
         weatherStationId = getIntent().getStringExtra("weatherStationId");
         page = getIntent().getStringExtra("page");
-        Log.d("StationActivity","========userName==:"+ userName);
-        Log.d("StationActivity","======weatherStationId==:"+ weatherStationId);
-        Log.d("StationActivity","======page==:"+ page);
+        Log.d(TAG,"========userName==:"+ userName);
+        Log.d(TAG,"======weatherStationId==:"+ weatherStationId);
+        Log.d(TAG,"======page==:"+ page);
         initView();
         initAdapter();
         stationLv.setOnItemClickListener(listener);
@@ -68,10 +69,10 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long arg3) {
 				Intent intent = new Intent();
 				CollectorItemBean selectedCollector = mDatas.get(arg2);
-                Log.d("StationActivity","=$$$$$$$$$$$$=selectedCollector==:"+ selectedCollector);
-                Log.d("StationActivity","=$$$$$$$$$$$$=collectorId==:"+ selectedCollector.getId());
-                Log.d("StationActivity","=$$$$$$$$$$$$=CollectorName==:"+  selectedCollector.getCollectorName());
-                Log.d("StationActivity","=$$$$$$$$$$$$=weatherStationId==:"+ weatherStationId);
+                Log.d(TAG,"=$$$$$$$$$$$$=selectedCollector==:"+ selectedCollector);
+                Log.d(TAG,"=$$$$$$$$$$$$=collectorId==:"+ selectedCollector.getId());
+                Log.d(TAG,"=$$$$$$$$$$$$=CollectorName==:"+  selectedCollector.getCollectorName());
+                Log.d(TAG,"=$$$$$$$$$$$$=weatherStationId==:"+ weatherStationId);
                 intent.putExtra("collectorId", selectedCollector.getId());
                 intent.putExtra("userName", userName);
                 intent.putExtra("collectorName", selectedCollector.getCollectorName());

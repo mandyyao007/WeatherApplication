@@ -62,6 +62,7 @@ import java.util.Map;
 
 public class HomeFragment extends Fragment implements View.OnClickListener{
 //git config --global http.sslVerify "false"
+    private static final String TAG = "HomeFragment";
     private HomeViewModel homeViewModel;
     private FragmentHomeBinding binding;
     private TextView tvStation,tvChartname1,tvChartname2,tvChartname3,tvNewestData1,tvNewestData2,tvNewestData3;
@@ -118,8 +119,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         collectorId = getActivity().getIntent().getStringExtra("collectorId");
         collectorName = getActivity().getIntent().getStringExtra("collectorName");
         weatherStationId = getActivity().getIntent().getStringExtra("weatherStationId");
-        Log.d("HomeFragment","=&&&&&&&&initView==userName==:"+ userName+"=&&&&&&&&initView==collectorId==:"+ collectorId);
-        Log.d("HomeFragment","=&&&&&&&&initView==collectorName==:"+ collectorName+"=&&&&&&&&initView==weatherStationId==:"+ weatherStationId);
+        Log.d(TAG,"=&&&&&&&&initView==userName==:"+ userName+"=&&&&&&&&initView==collectorId==:"+ collectorId);
+        Log.d(TAG,"=&&&&&&&&initView==collectorName==:"+ collectorName+"=&&&&&&&&initView==weatherStationId==:"+ weatherStationId);
         tvStation = fragmentHomeView.findViewById(R.id.tv_station);
         tvStation.setText(collectorName);
         ivAdd = (ImageView) fragmentHomeView.findViewById(R.id.iv_add);
@@ -172,7 +173,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     }
     Handler handler = new Handler() {
         public void handleMessage(Message msg) {
-            Log.d("HomeFragment", "============daysDataItemBean===========:"+daysDataItemBean);
+            Log.d(TAG, "============daysDataItemBean===========:"+daysDataItemBean);
             if(daysDataItemBean!=null && daysDataItemBean.size()>0){
                 try {
                     drawChart(daysDataItemBean);
@@ -337,12 +338,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     private List<DaysDataItemBean> getDaysData(String configType,int days) throws IOException {
         StationFacade stationFacade = StationFacade.getInstance();
         if (configType != null) {
-            //Log.d("HomeFragment", "=========configType=:" + configType);
+            //Log.d(TAG "=========configType=:" + configType);
             String newestData = "";
             try {
-                //Log.d("HomeFragment", "===####======days==:" + days);
+                //Log.dTAG, "===####======days==:" + days);
                 daysDataItemBean = NetUtil.getDaysData(collectorId, configType, days);
-                Log.d("HomeFragment", "===####======daysDataItemBean==:" + daysDataItemBean);
+                Log.d(TAG, "===####======daysDataItemBean==:" + daysDataItemBean);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -364,9 +365,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 Iterator it = daysDataItemBean.iterator();
                 while(it.hasNext()){
                     DaysDataItemBean item = (DaysDataItemBean) it.next();
-                    Log.d("HomeFragment", "===newestData= ======item=:" + item);
+                    Log.d(TAG, "===newestData= ======item=:" + item);
                     newestData = stationFacade.getNewestData((String) item.getDescription(),collectorId,1);
-                    Log.d("HomeFragment", "===newestData==:" + newestData);
+                    Log.d(TAG, "===newestData==:" + newestData);
                     if(item!=null){
                         if(i==0){
                             scrollView.scrollTo(0,0);
@@ -443,9 +444,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                     Iterator it = daysDataItemBean.iterator();
                     while(it.hasNext()){
                           DaysDataItemBean item = (DaysDataItemBean) it.next();
-                          Log.d("HomeFragment", "===newestData======itemitem=:" + item);
+                          Log.d(TAG, "===newestData======itemitem=:" + item);
                           newestData = stationFacade.getNewestData((String) item.getDescription(),collectorId,1);
-                          Log.d("HomeFragment", "===newestData==:" + newestData);
+                          Log.d(TAG, "===newestData==:" + newestData);
                           if(i==0){
                                scrollView.scrollTo(0,0);
                                tvChartname1.setText(item.getDescription());
@@ -530,9 +531,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         if(dayDataDetailReports == null){
             return null;
         }
-        //Log.d("HomeFragment", "==============dayDataDetailReports==:" +dayDataDetailReports);
+        //Log.d(TAG, "==============dayDataDetailReports==:" +dayDataDetailReports);
         Collections.reverse(dayDataDetailReports);
-        //Log.d("HomeFragment", "==========reverse====dayDataDetailReports==:" + dayDataDetailReports);
+        //Log.d(TAG, "==========reverse====dayDataDetailReports==:" + dayDataDetailReports);
         Iterator it = dayDataDetailReports.iterator();
         int count = 0;
         if(entries != null){
@@ -541,7 +542,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         entries = new ArrayList<>();
         while(it.hasNext() && count < 24){
             DaysDataItemDetailBean dayDataDetailReportBean = (DaysDataItemDetailBean)it.next();
-            //Log.d("HomeFragment", "==========dayDataDetailReportBean==:" + dayDataDetailReportBean);
+            //Log.d(TAG, "==========dayDataDetailReportBean==:" + dayDataDetailReportBean);
             float time = 0.0f;
             if(days==1){
                 time = Float.parseFloat(dayDataDetailReportBean.getAcquisitionTime().substring(11,13));
@@ -557,7 +558,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 value = Float.parseFloat(dayDataDetailReportBean.getValue());
                 entries.add(new Entry(time,value));
             }
-            //Log.d("HomeFragment", count+"==============time==:" +time+"==============value==:" +value);
+            //Log.d(TAG, count+"==============time==:" +time+"==============value==:" +value);
             count++;
         }
         return entries;
@@ -565,17 +566,17 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     private ReportBean getData(String reportResult) {
         Gson gson = new Gson();
         ReportBean reportBean = gson.fromJson(reportResult, ReportBean.class);
-        Log.d("HomeFragment", "=========getData=====reportBean==:" + reportBean);
+        Log.d(TAG, "=========getData=====reportBean==:" + reportBean);
         return reportBean;
     }
     private void setLineChart(int days,DaysDataItemBean reportBean,LineChart lineChart,List<Entry> entries,String index,String indexUint){
             entries = setData(reportBean,entries,days);
-            Log.d("HomeFragment", "=&&&&&&&&&&&entries==:" + entries);
-            Log.d("HomeFragment", "=&&&&&&&&&&&entries.size()==:" + entries.size());
+            Log.d(TAG, "=&&&&&&&&&&&entries==:" + entries);
+            Log.d(TAG, "=&&&&&&&&&&&entries.size()==:" + entries.size());
             if (entries != null && entries.size()>0) {
                 try {
                 LineDataSet dataSet = new LineDataSet(entries, index);
-                //Log.d("HomeFragment", "=&&&&&&&&&&&dataSet==:" + dataSet);
+                //Log.d(TAG, "=&&&&&&&&&&&dataSet==:" + dataSet);
                 dataSet.setColor(Color.parseColor("#FFFFFFFF"));//线条颜色
                 dataSet.setCircleColor(Color.parseColor("#FFFFFFFF"));//圆点颜色
                 dataSet.setCircleRadius(2f);//设置焦点圆心的大小

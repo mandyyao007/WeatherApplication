@@ -27,6 +27,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText mEtUser;
     private EditText mEtPassword;
     private TextView mVersion;
+    private static final String TAG = "LoginActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +40,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mEtPassword = findViewById(R.id.et_password);//密码
         mBtnLogin.setOnClickListener((View.OnClickListener) this);
         mVersion = findViewById(R.id.tx_version_name);
-        Log.d("LoginActivity","====mVersion==:"+APKVersionCodeUtils.getVerName(this));
-        Log.d("LoginActivity","====APK mVersion==:"+APKVersionCodeUtils.getVersionCode(this));
+        Log.d(TAG,"====mVersion==:"+APKVersionCodeUtils.getVerName(this));
+        Log.d(TAG,"====APK mVersion==:"+APKVersionCodeUtils.getVersionCode(this));
         mVersion.setText("Version:"+APKVersionCodeUtils.getVerName(this));
         //  在Android4.0以后，会发现，只要是写在主线程（就是Activity）中的HTTP请求，运行时都会报错，这是因为Android在4.0以后为了防止应用的ANR（Aplication Not Response）异常，
         //  Android这个设计是为了防止网络请求时间过长而导致界面假死的情况发生。
