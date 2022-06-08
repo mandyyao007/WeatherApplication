@@ -17,4 +17,8 @@
     <color name="light_gray">#DEE3E4</color>
     <color name="half_transparent">#80FFFFFF</color>
     <color name="stationTop">#F5F5F5</color>
+
+    <color name="popup_main_background">#b0000000</color>
+    <color name="no_color">#00000000</color>
+    <color name="choose_area_item_press_color">#f4f4f4</color>
 </resources>

@@ -247,7 +247,7 @@ public class NetUtil {
         String dataResult ="";
         //拼接出URL
         String treeDataUrl = URL_TREE_DATA+"?day="+days+"&treeId="+treeId;
-        //Log.d(TAG,"-----getTreeDataBean====="+treeDataUrl);
+        Log.d(TAG,"-----getTreeDataBean====="+treeDataUrl);
         CollectorItemBean.TreeDataBean treeDataBean = null;
         try{
             dataResult = service(treeDataUrl,"POST");

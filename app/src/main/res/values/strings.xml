@@ -9,6 +9,7 @@
     <string name="btn_soil">土壤</string>
     <string name="btn_tree">植株</string>
     <string name="btn_community">群落</string>
+    <string name="no_data">没有找到符合条件的房源</string>
 
     <string-array name="index_left">
         <item>空气温度:</item>

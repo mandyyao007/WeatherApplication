@@ -33,6 +33,10 @@ import com.example.weatherapplication.bean.TreeDataItemDetailBean;
 import com.example.weatherapplication.bean.TreeItemBean;
 import com.example.weatherapplication.databinding.FragmentNotificationsBinding;
 import com.example.weatherapplication.util.NetUtil;
+import com.example.weatherapplication.view.ExpandTabView;
+import com.example.weatherapplication.view.ViewLeft;
+import com.example.weatherapplication.view.ViewMiddle;
+import com.example.weatherapplication.view.ViewRight;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
@@ -60,7 +64,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
     private TextView tvStation,tvChartname1,tvChartname2,tvChartname3,tvChartname4,tvChartname5;
     String  userName,collectorId,collectorName,weatherStationId;
     private BarChart barChart1,barChart2,barChart3,barChart4,barChart5;
-    private Button btnTree,btnCommunity,btOneDay,btSevenDay, btThirtyDay,btNintyDay;
+    private Button btnTree,btnCommunity,btSevenDay,btFifDay, btThirtyDay,btNintyDay;
     private ScrollView scrollView;
     private String type = "";//tree or commnuity
     private LinkedHashMap tempMap = new LinkedHashMap();
@@ -73,27 +77,32 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
     private ProgressDialog progressDialog =  null;
     private static final String TAG = "NotificationsFragment";
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        notificationsViewModel =
-                new ViewModelProvider(this).get(NotificationsViewModel.class);
+    private ExpandTabView expandTabView;
+    private ArrayList<View> mViewArray = new ArrayList<View>();
+    private ViewLeft viewLeft;
+    private ViewRight viewRight;
+    private String selectedTreeId = "";
 
+    public View onCreateView(@NonNull LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
+        notificationsViewModel = new ViewModelProvider(this).get(NotificationsViewModel.class);
         binding = FragmentNotificationsBinding.inflate(inflater, container, false);
         View notificationFragmentView = binding.getRoot();
         initView(notificationFragmentView);
+        initVaule();
+        initListener();
         try{
             if(collectorId!= null) {
-                btnTree.setOnClickListener(this);
-                btnCommunity.setOnClickListener(this);
-                btOneDay.setOnClickListener(dayListener);
+                //btnTree.setOnClickListener(this);
+                //btnCommunity.setOnClickListener(this);
                 btSevenDay.setOnClickListener(dayListener);
+                btFifDay.setOnClickListener(dayListener);
                 btThirtyDay.setOnClickListener(dayListener);
                 btNintyDay.setOnClickListener(dayListener);
             }else{
-                btnTree.setVisibility(View.INVISIBLE);//如果没有选中station直接打开数据，就不显示按钮
-                btnCommunity.setVisibility(View.INVISIBLE);
-                btOneDay.setVisibility(View.INVISIBLE);
+                //btnTree.setVisibility(View.INVISIBLE);//如果没有选中station直接打开数据，就不显示按钮
+                //btnCommunity.setVisibility(View.INVISIBLE);
                 btThirtyDay.setVisibility(View.INVISIBLE);
+                btFifDay.setVisibility(View.INVISIBLE);
                 btSevenDay.setVisibility(View.INVISIBLE);
                 btNintyDay.setVisibility(View.INVISIBLE);
             }
@@ -124,18 +133,91 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         barChart3 = (BarChart) notificationFragmentView.findViewById(R.id.barchart_3);
         barChart4 = (BarChart) notificationFragmentView.findViewById(R.id.barchart_4);
         barChart5 = (BarChart) notificationFragmentView.findViewById(R.id.barchart_5);
-        btnTree = notificationFragmentView.findViewById(R.id.btn_tree);
-        btnCommunity = notificationFragmentView.findViewById(R.id.btn_community);
+        //btnTree = notificationFragmentView.findViewById(R.id.btn_tree);
+        //btnCommunity = notificationFragmentView.findViewById(R.id.btn_community);
         tvChartname1 = notificationFragmentView.findViewById(R.id.chartname_tv_1);
         tvChartname2 = notificationFragmentView.findViewById(R.id.chartname_tv_2);
         tvChartname3 = notificationFragmentView.findViewById(R.id.chartname_tv_3);
         tvChartname4 = notificationFragmentView.findViewById(R.id.chartname_tv_4);
         tvChartname5 = notificationFragmentView.findViewById(R.id.chartname_tv_5);
         scrollView = notificationFragmentView.findViewById(R.id.scrollview_eva);
-        btOneDay = notificationFragmentView.findViewById(R.id.btn_one_day);
         btSevenDay = notificationFragmentView.findViewById(R.id.btn_seven_day);
+        btFifDay = notificationFragmentView.findViewById(R.id.btn_fifteen_day);
         btThirtyDay = notificationFragmentView.findViewById(R.id.btn_thirty_day);
         btNintyDay = notificationFragmentView.findViewById(R.id.btn_ninty_day);
+        expandTabView = (ExpandTabView) notificationFragmentView.findViewById(R.id.expandtab_view);
+        viewLeft = new ViewLeft(getActivity(),"tree",collectorId);
+        viewRight = new ViewRight(getActivity());
+    }
+    private void initVaule() {
+        mViewArray.add(viewLeft);
+        mViewArray.add(viewRight);
+        ArrayList<String> mTextArray = new ArrayList<String>();
+        mTextArray.add("植株");
+        mTextArray.add("群落");
+        expandTabView.setValue(mTextArray, mViewArray);
+        Log.d(TAG,"=***************==viewLeft.getShowText()==:"+ viewLeft.getShowText());
+        Log.d(TAG,"=***************==viewRight.getShowText()==:"+ viewRight.getShowText());
+        expandTabView.setTitle(viewLeft.getShowText(), 2);
+        expandTabView.setTitle(viewRight.getShowText(), 2);
+    }
+    private void initListener() {
+        viewLeft.setOnSelectListener(new ViewLeft.OnSelectListener() {
+            @Override
+            public void getValue(String distance, String showText) throws IOException {
+                Log.d(TAG,"=***************=distance==:"+ distance+"=***************=showText==:"+ showText);
+                selectedTreeId = distance;
+                Log.d(TAG,"=***************=selectedTreeId==:"+ selectedTreeId+"=***************=days==:"+ days);
+                if(days!=0){
+                    drawChart(selectedTreeId,days);
+                }
+                onRefresh(viewLeft, showText);
+            }
+        });
+        viewRight.setOnSelectListener(new ViewRight.OnSelectListener() {
+            @Override
+            public void getValue(String distance, String showText) {
+                onRefresh(viewRight, showText);
+            }
+        });
+    }
+    /*private void initListener() {
+
+        viewLeft.setOnSelectListener(new ViewMiddle.OnSelectListener() {
+
+            @Override
+            public void getValue( String showText) {
+                Log.d(TAG,"=***************==111111111111111111==:"+ showText);
+                onRefresh(viewLeft, showText);
+            }
+        });
+
+        viewRight.setOnSelectListener(new ViewMiddle.OnSelectListener() {
+
+            @Override
+            public void getValue(String showText) {
+                Log.d(TAG,"=***************==22222222222222222222==:"+ showText);
+                onRefresh(viewRight, showText);
+            }
+        });
+
+    }*/
+    private void onRefresh(View view, String showText) {
+        expandTabView.onPressBack();
+        int position = getPositon(view);
+        if (position >= 0 && !expandTabView.getTitle(position).equals(showText)) {
+            expandTabView.setTitle(showText, position);
+        }
+        Toast.makeText(getActivity(), showText, Toast.LENGTH_SHORT).show();
+    }
+
+    private int getPositon(View tView) {
+        for (int i = 0; i < mViewArray.size(); i++) {
+            if (mViewArray.get(i) == tView) {
+                return i;
+            }
+        }
+        return -1;
     }
     @Override
     public void onClick(View v) {
@@ -148,7 +230,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 intent.putExtra("page","notification");
                 startActivity(intent);
                 break;
-            case R.id.btn_tree:
+           /* case R.id.btn_tree:
                 setBtnEnable(btnTree,"type");
                 type = "tree" ;
                 //Log.d(TAG,"=***************=tree=========");
@@ -157,15 +239,15 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 setBtnEnable(btnCommunity,"type");
                 type = "community" ;
                 //Log.d(TAG,"=***************=community=========");
-                break;
+                break;*/
         }
-        setScrollInvisiable();
+       /* setScrollInvisiable();
         try {
             //Log.d(TAG, "======checkDayBtnAndDraw===========:");
             checkDayBtnAndDraw(type);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
     }
     Handler handler = new Handler() {
         public void handleMessage(Message msg) {
@@ -185,13 +267,13 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         @Override
         public void onClick(View v) {
             switch(v.getId()){
-                case R.id.btn_one_day:
-                    days = 1;
-                    setBtnEnable(btOneDay,"days");
-                    break;
                 case R.id.btn_seven_day:
                     days = 7;
                     setBtnEnable(btSevenDay,"days");
+                    break;
+                case R.id.btn_fifteen_day:
+                    days = 15;
+                    setBtnEnable(btFifDay,"days");
                     break;
                 case R.id.btn_thirty_day:
                     days = 30;
@@ -203,63 +285,55 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                     break;
             }
             Log.d(TAG, "====dayListener=====days===========:"+days);
-            try {
-                //drawChart(type,days);
-                if(days == 1){
-                    drawChart(type,days);
-                }else{
-                    progressDialog = new ProgressDialog(getActivity());
-                    progressDialog.setProgressStyle(ProgressDialog.BUTTON_NEUTRAL);
-                    progressDialog.setTitle("提示");
-                    progressDialog.setMessage("正在加载数据");
-                    progressDialog.setIndeterminate(false);
-                    progressDialog.setCancelable(true);
-                    progressDialog.incrementProgressBy(10);
-                    progressDialog.setMax(100);
-                    /*progressDialog.setButton("取消", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            progressDialog.cancel();
-                        }
-                    });*/
-                    progressDialog.show();
-                    new Thread(){
-                        @Override
-                        public void run() {
-                            super.run();
-                            try{
-                           /* while(count<=100){
-                                progressDialog.setProgress(count++);
-                                treeDataItemBeans = getReportData(type,days);
-                            }
-                            progressDialog.cancel();*/
-                                treeDataItemBeans = getReportData(type,days);
-                                if(treeDataItemBeans!=null && treeDataItemBeans.size()>0){
-                                   // progressDialog.cancel();
-                                    Message msg = new Message();
-                                    handler.sendMessage(msg);
+            if("".equals(selectedTreeId)){
+                String message = "请选择植株";
+                Toast toastCenter = Toast.makeText(getActivity().getApplicationContext(), message,Toast.LENGTH_SHORT);
+                toastCenter.setGravity(Gravity.CENTER,0,0);
+                toastCenter.show();
+            }else{
+                try {
+                    if(days == 7){
+                        drawChart(selectedTreeId,days);
+                    }else{
+                        progressDialog = new ProgressDialog(getActivity());
+                        progressDialog.setProgressStyle(ProgressDialog.BUTTON_NEUTRAL);
+                        progressDialog.setTitle("提示");
+                        progressDialog.setMessage("正在加载数据");
+                        progressDialog.setIndeterminate(false);
+                        progressDialog.setCancelable(true);
+                        progressDialog.incrementProgressBy(10);
+                        progressDialog.setMax(100);
+                        progressDialog.show();
+                        new Thread(){
+                            @Override
+                            public void run() {
+                                super.run();
+                                try{
+                                    treeDataItemBeans = getReportData(selectedTreeId,days);
+                                    if(treeDataItemBeans!=null && treeDataItemBeans.size()>0){
+                                        Message msg = new Message();
+                                        handler.sendMessage(msg);
+                                    }
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                    progressDialog.cancel();
                                 }
-                            }catch (Exception e){
-                                e.printStackTrace();
-                                progressDialog.cancel();
                             }
-                        }
-                    }.start();
-
-
+                        }.start();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+
         }
     };
     private void checkDayBtnAndDraw(String type) throws IOException {
        //int days =0;
-        if(!btOneDay.isEnabled()){
-            days =1;
-        }else if(!btSevenDay.isEnabled()){
-            days =7;
+        if(!btSevenDay.isEnabled()){
+            days = 7;
+        }else if(!btFifDay.isEnabled()){
+            days = 15;
         }else if(!btThirtyDay.isEnabled()){
             days =30;
         }else if(!btNintyDay.isEnabled()){
@@ -268,9 +342,8 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         Log.d(TAG, "====checkDayBtnAndDraw=====days===========:"+days);
         if(days != 0){
             try {
-                //drawChart(type,days);
-                if(days == 1){
-                    drawChart(type,days);
+                if(days == 7){
+                    drawChart(selectedTreeId,days);
                 }else{
                     progressDialog = new ProgressDialog(getActivity());
                     progressDialog.setProgressStyle(ProgressDialog.BUTTON_NEUTRAL);
@@ -280,24 +353,13 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                     progressDialog.setCancelable(true);
                     progressDialog.incrementProgressBy(10);
                     progressDialog.setMax(100);
-                    /*progressDialog.setButton("取消", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            progressDialog.cancel();
-                        }
-                    });*/
                     progressDialog.show();
                     new Thread(){
                         @Override
                         public void run() {
                             super.run();
                             try{
-                           /* while(count<=100){
-                                progressDialog.setProgress(count++);
-                                treeDataItemBeans = getReportData(type,days);
-                            }
-                            progressDialog.cancel();*/
-                                treeDataItemBeans = getReportData(type,days);
+                                treeDataItemBeans = getReportData(selectedTreeId,days);
                                 if(treeDataItemBeans!=null && treeDataItemBeans.size()>0){
                                     Message msg = new Message();
                                     handler.sendMessage(msg);
@@ -314,9 +376,31 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
             }
         }
     }
-    
 
-    private List<TreeDataItemBean> getReportData(String type, int days) {
+    private List<TreeDataItemBean> getReportData(String selectedTreeId, int days) {
+            Log.d(TAG, "==getReportData======selectedTreeId=============:" + selectedTreeId);
+            try {
+                    CollectorItemBean.TreeDataBean treeDataBean = null;
+                    try {
+                        treeDataBean = NetUtil.getTreeDataBean(selectedTreeId, days);
+                    }catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if (treeDataBean != null && treeDataBean.getmTreeDataItemBeans() != null) {
+                        treeDataItemBeans = treeDataBean.getmTreeDataItemBeans();
+                        if (treeDataItemBeans == null) {
+                            return null;
+                        }
+                    }
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        Log.d(TAG, "===treeDataItemBeans====:" + treeDataItemBeans);
+        return treeDataItemBeans;
+    }
+
+
+    /*private List<TreeDataItemBean> getReportData(String type, int days) {
         //List<TreeDataItemBean> treeDataItemBeans = null;
         if(type!= null && "tree".equals(type)){
             Log.d(TAG, "===type=============:" + type);
@@ -362,7 +446,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         }
         Log.d(TAG, "===treeDataItemBeans====:" + treeDataItemBeans);
         return treeDataItemBeans;
-    }
+    }*/
     private void drawBarChart(List<TreeDataItemBean> treeDataItemBeans) throws IOException {
         Iterator its = treeDataItemBeans.iterator();
         int i  = 1;
@@ -374,7 +458,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                     List<TreeDataItemDetailBean> treeDataItemDetailBeans = treeDataItemBean.getmTreeDataItemDetailBean();
                     Log.d(TAG, "===treeDataItemDetailBeans====:" + treeDataItemDetailBeans);
                     if (treeDataItemDetailBeans != null) {
-                        float ratio = 4.0f;
+                        float ratio = 2.0f;
                         if (i == 1) {
                             tvChartname1.setText(treeDataItemBean.getConfigName());
                             tvChartname1.setVisibility(View.VISIBLE);
@@ -395,7 +479,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                             tvChartname2.setText(treeDataItemBean.getConfigName());
                             tvChartname2.setVisibility(View.VISIBLE);
                             barChart2.zoom(0, 1f, 0, 0); //显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
-                            barChart2.zoom(0.25f, 1f, 0, 0);
+                            barChart2.zoom(1 / ratio, 1f, 0, 0);
                             setChart(ratio, barChart2, treeDataItemDetailBeans, days);
                             barChart2.setVisibility(View.VISIBLE);
                             barChart2.setExtraBottomOffset(10);
@@ -407,7 +491,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                             tvChartname3.setText(treeDataItemBean.getConfigName());
                             tvChartname3.setVisibility(View.VISIBLE);
                             barChart3.zoom(0, 1f, 0, 0);//显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
-                            barChart3.zoom(0.25f, 1f, 0, 0);
+                            barChart3.zoom(1 / ratio, 1f, 0, 0);
                             setChart(ratio, barChart3, treeDataItemDetailBeans, days);
                             barChart3.setVisibility(View.VISIBLE);
                             barChart3.setExtraBottomOffset(10);
@@ -419,7 +503,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                             tvChartname4.setText(treeDataItemBean.getConfigName());
                             tvChartname4.setVisibility(View.VISIBLE);
                             barChart4.zoom(0, 1f, 0, 0);//显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
-                            barChart4.zoom(0.25f, 1f, 0, 0);
+                            barChart4.zoom(1 / ratio, 1f, 0, 0);
                             setChart(ratio, barChart4, treeDataItemDetailBeans, days);
                             barChart4.setVisibility(View.VISIBLE);
                             barChart4.setExtraBottomOffset(10);
@@ -431,7 +515,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                             tvChartname5.setText(treeDataItemBean.getConfigName());
                             tvChartname5.setVisibility(View.VISIBLE);
                             barChart5.zoom(0, 1f, 0, 0);//显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
-                            barChart5.zoom(0.25f, 1f, 0, 0);
+                            barChart5.zoom(1 / ratio, 1f, 0, 0);
                             setChart(ratio, barChart5, treeDataItemDetailBeans, days);
                             barChart5.setVisibility(View.VISIBLE);
                             barChart5.setExtraBottomOffset(10);
@@ -446,16 +530,105 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 e.printStackTrace();
             }
         }
-        /*}else if(type!= null && "community".equals(type)){
-            Log.d(TAG, "&&&&&&&&&&&&&7type=============:" + type);
-        }else{
-            String message = "请先选择类别";
-            Toast toastCenter = Toast.makeText(getActivity().getApplicationContext(), message,Toast.LENGTH_SHORT);
-            toastCenter.setGravity(Gravity.CENTER,0,0);
-            toastCenter.show();
-        }*/
     }
-    private void drawChart(String type,int days) throws IOException {
+    private void drawChart(String selectedTreeId,int days) throws IOException {
+         try {
+                Log.d(TAG, "==drawChart========selectedTreeId=============:" + selectedTreeId);
+                CollectorItemBean.TreeDataBean treeDataBean = NetUtil.getTreeDataBean(selectedTreeId,days);
+                Log.d(TAG, "==drawChart=========treeDataBean====:" + treeDataBean);
+                if(treeDataBean!= null && treeDataBean.getmTreeDataItemBeans()!=null){
+                    List<TreeDataItemBean> treeDataItemBeans = treeDataBean.getmTreeDataItemBeans();
+                    if(treeDataItemBeans == null){
+                        return ;
+                    }
+                    Log.d(TAG, "==drawChart=========treeDataItemBeans====:" + treeDataItemBeans);
+                    Iterator its = treeDataItemBeans.iterator();
+                    int i  = 1;
+                    while(its.hasNext()){
+                        TreeDataItemBean treeDataItemBean = (TreeDataItemBean) its.next();
+                        if(!"test".equals(treeDataItemBean.getConfigName())){
+                            //Log.d(TAG, "===name====:" + treeDataItemBean.getConfigName());
+                            List<TreeDataItemDetailBean>  treeDataItemDetailBeans = treeDataItemBean.getmTreeDataItemDetailBean();
+                            Log.d(TAG, "=====drawChart=========treeDataItemDetailBeans====:" + treeDataItemDetailBeans);
+                            if(treeDataItemDetailBeans != null){
+                                float ratio = 2.0f;
+                                if(i==1){
+                                    tvChartname1.setText(treeDataItemBean.getConfigName());
+                                    tvChartname1.setVisibility(View.VISIBLE);
+                                    barChart1.zoom(0,1f,0,0);
+                                    //显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
+                                    barChart1.zoom(1/ratio,1f,0,0);
+                                    try{
+                                        setChart(ratio,barChart1,treeDataItemDetailBeans,days);
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
+                                    barChart1.setVisibility(View.VISIBLE);
+                                    barChart1.setExtraBottomOffset(10);
+                                    barChart1.notifyDataSetChanged();
+                                    barChart1.getBarData().notifyDataChanged();
+                                    barChart1.invalidate();
+                                }
+                                if(i==2){
+                                    tvChartname2.setText(treeDataItemBean.getConfigName());
+                                    tvChartname2.setVisibility(View.VISIBLE);
+                                    barChart2.zoom(0,1f,0,0);
+                                    barChart2.zoom(1/ratio,1f,0,0);
+                                    setChart(ratio,barChart2,treeDataItemDetailBeans,days);
+                                    barChart2.setVisibility(View.VISIBLE);
+                                    barChart2.setExtraBottomOffset(10);
+                                    barChart2.notifyDataSetChanged();
+                                    barChart2.getBarData().notifyDataChanged();
+                                    barChart2.invalidate();
+                                }
+                                if(i==3){
+                                    tvChartname3.setText(treeDataItemBean.getConfigName());
+                                    tvChartname3.setVisibility(View.VISIBLE);
+                                    barChart3.zoom(0,1f,0,0);
+                                    barChart3.zoom(1/ratio,1f,0,0);
+                                    setChart(ratio,barChart3,treeDataItemDetailBeans,days);
+                                    barChart3.setVisibility(View.VISIBLE);
+                                    barChart3.setExtraBottomOffset(10);
+                                    barChart3.notifyDataSetChanged();
+                                    barChart3.getBarData().notifyDataChanged();
+                                    barChart3.invalidate();
+                                }
+                                if(i==4){
+                                    tvChartname4.setText(treeDataItemBean.getConfigName());
+                                    tvChartname4.setVisibility(View.VISIBLE);
+                                    barChart4.zoom(0,1f,0,0);
+                                    barChart4.zoom(1/ratio,1f,0,0);
+                                    setChart(ratio,barChart4,treeDataItemDetailBeans,days);
+                                    barChart4.setVisibility(View.VISIBLE);
+                                    barChart4.setExtraBottomOffset(10);
+                                    barChart4.notifyDataSetChanged();
+                                    barChart4.getBarData().notifyDataChanged();
+                                    barChart4.invalidate();
+                                }
+                                if(i==5){
+                                    tvChartname5.setText(treeDataItemBean.getConfigName());
+                                    tvChartname5.setVisibility(View.VISIBLE);
+                                    barChart5.zoom(0,1f,0,0);
+                                    barChart5.zoom(1/ratio,1f,0,0);
+                                    setChart(ratio,barChart5,treeDataItemDetailBeans,days);
+                                    barChart5.setVisibility(View.VISIBLE);
+                                    barChart5.setExtraBottomOffset(10);
+                                    barChart5.notifyDataSetChanged();
+                                    barChart5.getBarData().notifyDataChanged();
+                                    barChart5.invalidate();
+                                }
+                            }
+                            i++;
+                        }
+                    }
+                }
+         } catch (Exception e) {
+                e.printStackTrace();
+         }
+    }
+
+
+    /*private void drawChart(String type,int days) throws IOException {
         if(type!= null && "tree".equals(type)){
             Log.d(TAG, "===type=============:" + type);
             try {
@@ -586,26 +759,32 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
             toastCenter.setGravity(Gravity.CENTER,0,0);
             toastCenter.show();
         }
-    }
+    }*/
     /*
      * 设置BarChart的数据
      * */
     private  List<BarEntry> setChartData(List<TreeDataItemDetailBean> treeDataItemDetailBeans, int days) {
         int count = 0;
         List<BarEntry> list = new ArrayList<>();//实例化一个List用来存储数据
+        tempMap.clear();
+        dataMap.clear();
         if(treeDataItemDetailBeans != null){
             Iterator iter = treeDataItemDetailBeans.iterator();
-            while (iter.hasNext() && count <24){
+            while (iter.hasNext() ){
                 TreeDataItemDetailBean treeDataItemDetailBean = (TreeDataItemDetailBean) iter.next();
                 //Log.d(TAG, "===treeDataItemDetailBean====:" + treeDataItemDetailBean);
                 if(treeDataItemDetailBean!=null ){
                     float time = 0.0f;
-                    if(days ==1){
+                    /*if(days ==7){
                         time = Float.parseFloat(treeDataItemDetailBean.getAcquisitionTime().substring(11,13));
-                    }else if(days==7){
-                        tempMap.put(count,treeDataItemDetailBean.getAcquisitionTime().substring(0,16));
+                    }else*/ if(days==7 && count< 7){
+                        tempMap.put(count,treeDataItemDetailBean.getAcquisitionTime().substring(0,10));
                         time = count;
-                    }else{
+                    }else if(days == 15 && count < 15){
+                        tempMap.put(count,treeDataItemDetailBean.getAcquisitionTime().substring(0,10));
+                        time = count;
+                    }if((days == 30 ||days == 90)&& count < 15){
+                        treeDataItemDetailBean = (TreeDataItemDetailBean) iter.next();
                         tempMap.put(count,treeDataItemDetailBean.getAcquisitionTime().substring(0,10));
                         time = count;
                     }
@@ -620,10 +799,10 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 count++;
             }
         }
-        if(days == 1){
+        /*if(days == 7){
             Collections.reverse(list);
             Log.d(TAG, "===list 倒序====:" + list);
-        }else{
+        }else{*/
             int j = 0;
             ListIterator<Map.Entry<Float,String>> i = new ArrayList<Map.Entry<Float,String>>(tempMap.entrySet()).listIterator(tempMap.size());
              while(i.hasPrevious()) {
@@ -632,8 +811,10 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 dataMap.put(j,entry.getValue());
                 j++;
             }
-        }
+        //}
+        Collections.reverse(list);
         Log.d(TAG, "===list不为空====:" + (list!= null)+"===list.size()====:" + (list.size()));
+        Log.d(TAG, "===dataMap====:" + dataMap);
         return list ;
     }
     /*
@@ -679,8 +860,14 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         Legend legend = barChart.getLegend();
         legend.setEnabled(false);//不设置图例
         //显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
-        barChart.zoom(4,1f,0,0);
-        if(days==1){
+        //barChart.zoom(4,1f,0,0);
+        if(days== 7){
+            barChart.zoom(1,1f,0,0);
+        }else{
+            barChart.zoom(2,1f,0,0);
+        }
+
+        /*if(days== 7){
             Log.d(TAG, "======@@@@@@@@@@@=days===============:" + days);
             xAxis.setTextSize(13f);//设置X轴刻度字体大小
             xAxis.setLabelRotationAngle(0f);//不旋转
@@ -690,7 +877,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                     return String.valueOf((int) v+":00");
                 }
             });
-        }else{
+        }else{*/
             Log.d(TAG, "=====%%%%%%%%%%%%%%days===============:" + days);
             xAxis.setTextSize(10f);//设置X轴刻度字体大小
             xAxis.setLabelRotationAngle(-60f);//旋转45度
@@ -701,8 +888,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                     return String.valueOf(dataMap.get((int) v));
                 }
             });
-        }
-
+        //}
         //从Y轴弹出的动画时间
         barChart.animateY(1500);
     }
@@ -726,8 +912,8 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 buttonList.add(btnTree);
                 buttonList.add(btnCommunity);
             }else{
-                buttonList.add(btOneDay);
                 buttonList.add(btSevenDay);
+                buttonList.add(btFifDay);
                 buttonList.add(btThirtyDay);
                 buttonList.add(btNintyDay);
             }
