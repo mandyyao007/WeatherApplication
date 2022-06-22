@@ -67,7 +67,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     private FragmentHomeBinding binding;
     private TextView tvStation,tvChartname1,tvChartname2,tvChartname3,tvNewestData1,tvNewestData2,tvNewestData3;
     private ImageView ivAdd;
-    private String  userName,collectorId,collectorName,configType;//监测指标类型
+    private String  userName,collectorId,collectorName,configType,weatherStationName;//监测指标类型
     private Map indexMap;
     private LinkedHashMap dataMap = new LinkedHashMap();
     private LineChart lineChart1,lineChart2,lineChart3;
@@ -119,8 +119,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         collectorId = getActivity().getIntent().getStringExtra("collectorId");
         collectorName = getActivity().getIntent().getStringExtra("collectorName");
         weatherStationId = getActivity().getIntent().getStringExtra("weatherStationId");
+        weatherStationName = getActivity().getIntent().getStringExtra("weatherStationName");
         Log.d(TAG,"=&&&&&&&&initView==userName==:"+ userName+"=&&&&&&&&initView==collectorId==:"+ collectorId);
         Log.d(TAG,"=&&&&&&&&initView==collectorName==:"+ collectorName+"=&&&&&&&&initView==weatherStationId==:"+ weatherStationId);
+        Log.d(TAG,"=&&&&&&&&iweatherStationName==========:"+ weatherStationName);
         tvStation = fragmentHomeView.findViewById(R.id.tv_station);
         tvStation.setText(collectorName);
         ivAdd = (ImageView) fragmentHomeView.findViewById(R.id.iv_add);
@@ -150,6 +152,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 intent = new Intent(getActivity(), StationActivity.class);
                 intent.putExtra("userName",userName);
                 intent.putExtra("weatherStationId",weatherStationId);
+                intent.putExtra("weatherStationName",weatherStationName);
                 intent.putExtra("page","home");
                 startActivity(intent);
                 break;
@@ -445,7 +448,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                     while(it.hasNext()){
                           DaysDataItemBean item = (DaysDataItemBean) it.next();
                           Log.d(TAG, "===newestData======itemitem=:" + item);
-                          newestData = stationFacade.getNewestData((String) item.getDescription(),collectorId,1);
+                          newestData = stationFacade.getNewestData((String) item.getDescription()+","+item.getUnit(),collectorId,1);
                           Log.d(TAG, "===newestData==:" + newestData);
                           if(i==0){
                                scrollView.scrollTo(0,0);

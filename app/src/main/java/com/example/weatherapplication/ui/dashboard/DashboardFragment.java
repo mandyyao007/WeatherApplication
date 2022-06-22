@@ -239,7 +239,9 @@ public class DashboardFragment extends Fragment {
                         Intent intent = new Intent(getActivity(), MainActivity.class);
                         //从marker中获取info信息
                         String weatherStationId = bundle.getString("weatherStationId");
+                        String weatherStationName = bundle.getString("weatherStationName");
                         intent.putExtra("weatherStationId", weatherStationId);
+                        intent.putExtra("weatherStationName",weatherStationName);
                         intent.putExtra("userName", userName);
                         intent.putExtra("fragment_flag", 2);
                         intent.putExtra("collectorId",collectorId);

@@ -10,9 +10,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.weatherapplication.adapter.StationAdapter;
 import com.example.weatherapplication.bean.CollectorItemBean;
+import com.example.weatherapplication.bean.WeatherStationBean;
 import com.example.weatherapplication.util.NetUtil;
 import com.example.weatherapplication.util.StatusBarUtils;
 
@@ -25,7 +27,8 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
     private ListView stationLv;
     private List<CollectorItemBean> mDatas; //列表数据源
     private StationAdapter adapter;
-    private String userName,weatherStationId,page;
+    private String userName,weatherStationId,page,weatherStationName;
+    private TextView stationName ;
     private static final String TAG = "StationActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +45,19 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
         /////
         userName = getIntent().getStringExtra("userName");
         weatherStationId = getIntent().getStringExtra("weatherStationId");
+        weatherStationName = getIntent().getStringExtra("weatherStationName");
         page = getIntent().getStringExtra("page");
+        if (weatherStationId == null) {
+            weatherStationId = "22";
+            weatherStationName = "上海园林";
+        }
         Log.d(TAG,"========userName==:"+ userName);
         Log.d(TAG,"======weatherStationId==:"+ weatherStationId);
         Log.d(TAG,"======page==:"+ page);
+        Log.d(TAG,"======weatherStationName==:"+ weatherStationName);
         initView();
         initAdapter();
+        stationName.setText(weatherStationName);
         stationLv.setOnItemClickListener(listener);
         backIv.setOnClickListener(this);
     }
@@ -62,6 +72,7 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
     private void initView() {
         stationLv = (ListView) findViewById(R.id.station_lv);
         backIv = (ImageView)findViewById(R.id.station_iv_back);
+        stationName = (TextView)findViewById(R.id.tv_station_name);
     }
 
     AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {

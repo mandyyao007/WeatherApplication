@@ -13,11 +13,18 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/iv_item"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:paddingTop="6dp"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/icon_item_station"/>
             <TextView
                 android:id="@+id/item_station_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="40dp"
                 android:text="北京"
                 android:textSize="22sp"
                 android:textStyle="bold" />

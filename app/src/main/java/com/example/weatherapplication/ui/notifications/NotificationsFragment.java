@@ -82,6 +82,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
     private ViewLeft viewLeft;
     private ViewRight viewRight;
     private String selectedTreeId = "";
+    private String weatherStationName;
 
     public View onCreateView(@NonNull LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
         notificationsViewModel = new ViewModelProvider(this).get(NotificationsViewModel.class);
@@ -117,14 +118,15 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         }
         return notificationFragmentView;
     }
-
     private void initView(View notificationFragmentView) {
         userName = getActivity().getIntent().getStringExtra("userName");
         collectorId = getActivity().getIntent().getStringExtra("collectorId");
         collectorName = getActivity().getIntent().getStringExtra("collectorName");
         weatherStationId = getActivity().getIntent().getStringExtra("weatherStationId");
+        weatherStationName =  getActivity().getIntent().getStringExtra("weatherStationName");
         //Log.d(TAG,"=***************==userName==:"+ userName+"=***************==collectorId==:"+ collectorId);
         //Log.d(TAG,"=***************==stationName==:"+ collectorName+"=***************==weatherStationId==:"+ weatherStationId);
+        Log.d(TAG,"=***************==weatherStationName======:"+ weatherStationName);
         tvStation = notificationFragmentView.findViewById(R.id.tv_station);
         tvStation.setText(collectorName);
         ivAdd = (ImageView) notificationFragmentView.findViewById(R.id.iv_station);
@@ -147,7 +149,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         btNintyDay = notificationFragmentView.findViewById(R.id.btn_ninty_day);
         expandTabView = (ExpandTabView) notificationFragmentView.findViewById(R.id.expandtab_view);
         viewLeft = new ViewLeft(getActivity(),"tree",collectorId);
-        viewRight = new ViewRight(getActivity());
+        viewRight = new ViewRight(getActivity(),weatherStationId,weatherStationName);
     }
     private void initVaule() {
         mViewArray.add(viewLeft);
@@ -228,6 +230,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 intent.putExtra("userName",userName);
                 intent.putExtra("weatherStationId",weatherStationId);
                 intent.putExtra("page","notification");
+                intent.putExtra("weatherStationName",weatherStationName);
                 startActivity(intent);
                 break;
            /* case R.id.btn_tree:
