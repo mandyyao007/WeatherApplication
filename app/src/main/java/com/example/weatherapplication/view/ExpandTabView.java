@@ -48,6 +48,7 @@ public class ExpandTabView extends LinearLayout implements OnDismissListener {
      * 根据选择的位置设置tabitem显示的值
      */
     public void setTitle(String valueText, int position) {
+        Log.d(TAG,"=***************=1111111111=setTitle============");
         if (position < mToggleButton.size()) {
             mToggleButton.get(position).setText(valueText);
         }
@@ -70,6 +71,7 @@ public class ExpandTabView extends LinearLayout implements OnDismissListener {
         if (mContext == null) {
             return;
         }
+        Log.d(TAG,"=***************=1111111111====setValue=========");
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         mTextArray = textArray;
@@ -85,7 +87,8 @@ public class ExpandTabView extends LinearLayout implements OnDismissListener {
             ToggleButton tButton = (ToggleButton) inflater.inflate(R.layout.toggle_button, this, false);
             addView(tButton);
             View line = new TextView(mContext);
-            line.setBackgroundResource(R.drawable.choosebar_line);
+            //line.setBackgroundResource(R.drawable.choosebar_line);
+            line.setBackgroundResource(R.color.transparent);
             if (i < viewArray.size() - 1) {
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(2, LinearLayout.LayoutParams.FILL_PARENT);
                 addView(line, lp);

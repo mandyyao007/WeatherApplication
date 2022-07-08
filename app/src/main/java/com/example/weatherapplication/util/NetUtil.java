@@ -25,9 +25,9 @@ import java.util.List;
 
 public class NetUtil {
     private static final String TAG = "NetUtil";
-    public static final String HTTPHOST = "10.68.201.78:9000";
+    //public static final String HTTPHOST = "10.68.201.78:9000";
     // public static final String HTTPHOST = "47.98.106.23:9000";
-    //public static final String HTTPHOST = "106.15.5.62:9000";
+    public static final String HTTPHOST = "106.15.5.62:9000";
     public static final String URL_LOGIN =  "http://"+HTTPHOST+"/user/check_login";
     public static final String URL_STATION = "http://"+HTTPHOST+"/basic/show_collector_list";
     public static final String URL_INDEX = "http://"+HTTPHOST+"/basic/show_collector_config_list";

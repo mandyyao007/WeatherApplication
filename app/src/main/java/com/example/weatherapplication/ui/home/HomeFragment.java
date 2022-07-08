@@ -369,7 +369,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 while(it.hasNext()){
                     DaysDataItemBean item = (DaysDataItemBean) it.next();
                     Log.d(TAG, "===newestData= ======item=:" + item);
-                    newestData = stationFacade.getNewestData((String) item.getDescription(),collectorId,1);
+                    newestData = stationFacade.getNewestData((String) item.getDescription()+","+item.getUnit(),collectorId,1);
                     Log.d(TAG, "===newestData==:" + newestData);
                     if(item!=null){
                         if(i==0){

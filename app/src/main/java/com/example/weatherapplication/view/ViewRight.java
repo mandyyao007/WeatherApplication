@@ -75,7 +75,7 @@ public class ViewRight extends RelativeLayout implements ViewBaseAction{
         adapter.setOnItemClickListener(new TextAdapter.OnItemClickListener() {
 
             @Override
-            public void onItemClick(View view, int position) {
+            public void onItemClick(View view, int position) throws IOException {
 
                 if (mOnSelectListener != null) {
                     showText = items[position];
@@ -105,7 +105,7 @@ public class ViewRight extends RelativeLayout implements ViewBaseAction{
         adapter.setOnItemClickListener(new TextAdapter.OnItemClickListener() {
 
             @Override
-            public void onItemClick(View view, int position) {
+            public void onItemClick(View view, int position) throws IOException {
 
                 if (mOnSelectListener != null) {
                     showText = items[position];
@@ -120,7 +120,7 @@ public class ViewRight extends RelativeLayout implements ViewBaseAction{
     }
 
     public interface OnSelectListener {
-        public void getValue(String distance, String showText);
+        public void getValue(String distance, String showText) throws IOException;
     }
 
     @Override

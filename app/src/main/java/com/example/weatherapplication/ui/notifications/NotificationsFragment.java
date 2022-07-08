@@ -82,6 +82,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
     private ViewLeft viewLeft;
     private ViewRight viewRight;
     private String selectedTreeId = "";
+    private String selectedWeatherStationId = "";
     private String weatherStationName;
 
     public View onCreateView(@NonNull LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
@@ -147,7 +148,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         btFifDay = notificationFragmentView.findViewById(R.id.btn_fifteen_day);
         btThirtyDay = notificationFragmentView.findViewById(R.id.btn_thirty_day);
         btNintyDay = notificationFragmentView.findViewById(R.id.btn_ninty_day);
-        expandTabView = (ExpandTabView) notificationFragmentView.findViewById(R.id.expandtab_view);
+        expandTabView = notificationFragmentView.findViewById(R.id.expandtab_view);
         viewLeft = new ViewLeft(getActivity(),"tree",collectorId);
         viewRight = new ViewRight(getActivity(),weatherStationId,weatherStationName);
     }
@@ -167,18 +168,28 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         viewLeft.setOnSelectListener(new ViewLeft.OnSelectListener() {
             @Override
             public void getValue(String distance, String showText) throws IOException {
-                Log.d(TAG,"=***************=distance==:"+ distance+"=***************=showText==:"+ showText);
+                Log.d(TAG,"=********left*******=distance==:"+ distance+"=***********left****=showText==:"+ showText);
                 selectedTreeId = distance;
-                Log.d(TAG,"=***************=selectedTreeId==:"+ selectedTreeId+"=***************=days==:"+ days);
+                type = "tree";
+                Log.d(TAG,"=********left*******=selectedTreeId==:"+ selectedTreeId+"=******left*********=days==:"+ days);
+                Log.d(TAG,"=*********left******=type==:"+ type);
                 if(days!=0){
-                    drawChart(selectedTreeId,days);
+                    drawChart(selectedTreeId,days,type);
                 }
                 onRefresh(viewLeft, showText);
             }
         });
         viewRight.setOnSelectListener(new ViewRight.OnSelectListener() {
             @Override
-            public void getValue(String distance, String showText) {
+            public void getValue(String distance, String showText) throws IOException {
+                Log.d(TAG,"=======right==========distance==:"+ distance+"=******=right===*********=showText==:"+ showText);
+                selectedWeatherStationId = distance;
+                type = "commnuity";
+                Log.d(TAG,"=********=right===*******=selectedWeaherStationId==:"+ selectedWeatherStationId+"=*****=right===**********=days==:"+ days);
+                Log.d(TAG,"=********=right===*******=type==:"+ type);
+                if(days!=0){
+                    drawChart(selectedWeatherStationId,days,type);
+                }
                 onRefresh(viewRight, showText);
             }
         });
@@ -227,6 +238,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         switch (v.getId()) {
             case R.id.iv_station:
                 intent = new Intent(getActivity(), StationActivity.class);
+                Log.d(TAG,"=***************=iv_station=========");
                 intent.putExtra("userName",userName);
                 intent.putExtra("weatherStationId",weatherStationId);
                 intent.putExtra("page","notification");
@@ -296,7 +308,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
             }else{
                 try {
                     if(days == 7){
-                        drawChart(selectedTreeId,days);
+                        drawChart(selectedTreeId,days,type);
                     }else{
                         progressDialog = new ProgressDialog(getActivity());
                         progressDialog.setProgressStyle(ProgressDialog.BUTTON_NEUTRAL);
@@ -346,7 +358,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         if(days != 0){
             try {
                 if(days == 7){
-                    drawChart(selectedTreeId,days);
+                    drawChart(selectedTreeId,days,type);
                 }else{
                     progressDialog = new ProgressDialog(getActivity());
                     progressDialog.setProgressStyle(ProgressDialog.BUTTON_NEUTRAL);
@@ -534,36 +546,37 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
             }
         }
     }
-    private void drawChart(String selectedTreeId,int days) throws IOException {
-         try {
-                Log.d(TAG, "==drawChart========selectedTreeId=============:" + selectedTreeId);
-                CollectorItemBean.TreeDataBean treeDataBean = NetUtil.getTreeDataBean(selectedTreeId,days);
+    private void drawChart(String selectedId,int days,String type) throws IOException {
+        if (!"".equals(type) && "tree".equals(type)) {
+            try {
+                Log.d(TAG, "==drawChart======tree==selectedId=============:" + selectedId);
+                CollectorItemBean.TreeDataBean treeDataBean = NetUtil.getTreeDataBean(selectedId, days);
                 Log.d(TAG, "==drawChart=========treeDataBean====:" + treeDataBean);
-                if(treeDataBean!= null && treeDataBean.getmTreeDataItemBeans()!=null){
+                if (treeDataBean != null && treeDataBean.getmTreeDataItemBeans() != null) {
                     List<TreeDataItemBean> treeDataItemBeans = treeDataBean.getmTreeDataItemBeans();
-                    if(treeDataItemBeans == null){
-                        return ;
+                    if (treeDataItemBeans == null) {
+                        return;
                     }
                     Log.d(TAG, "==drawChart=========treeDataItemBeans====:" + treeDataItemBeans);
                     Iterator its = treeDataItemBeans.iterator();
-                    int i  = 1;
-                    while(its.hasNext()){
+                    int i = 1;
+                    while (its.hasNext()) {
                         TreeDataItemBean treeDataItemBean = (TreeDataItemBean) its.next();
-                        if(!"test".equals(treeDataItemBean.getConfigName())){
+                        if (!"test".equals(treeDataItemBean.getConfigName())) {
                             //Log.d(TAG, "===name====:" + treeDataItemBean.getConfigName());
-                            List<TreeDataItemDetailBean>  treeDataItemDetailBeans = treeDataItemBean.getmTreeDataItemDetailBean();
+                            List<TreeDataItemDetailBean> treeDataItemDetailBeans = treeDataItemBean.getmTreeDataItemDetailBean();
                             Log.d(TAG, "=====drawChart=========treeDataItemDetailBeans====:" + treeDataItemDetailBeans);
-                            if(treeDataItemDetailBeans != null){
+                            if (treeDataItemDetailBeans != null) {
                                 float ratio = 2.0f;
-                                if(i==1){
+                                if (i == 1) {
                                     tvChartname1.setText(treeDataItemBean.getConfigName());
                                     tvChartname1.setVisibility(View.VISIBLE);
-                                    barChart1.zoom(0,1f,0,0);
+                                    barChart1.zoom(0, 1f, 0, 0);
                                     //显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
-                                    barChart1.zoom(1/ratio,1f,0,0);
-                                    try{
-                                        setChart(ratio,barChart1,treeDataItemDetailBeans,days);
-                                    }catch (Exception e){
+                                    barChart1.zoom(1 / ratio, 1f, 0, 0);
+                                    try {
+                                        setChart(ratio, barChart1, treeDataItemDetailBeans, days);
+                                    } catch (Exception e) {
                                         e.printStackTrace();
                                     }
                                     barChart1.setVisibility(View.VISIBLE);
@@ -572,48 +585,48 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                                     barChart1.getBarData().notifyDataChanged();
                                     barChart1.invalidate();
                                 }
-                                if(i==2){
+                                if (i == 2) {
                                     tvChartname2.setText(treeDataItemBean.getConfigName());
                                     tvChartname2.setVisibility(View.VISIBLE);
-                                    barChart2.zoom(0,1f,0,0);
-                                    barChart2.zoom(1/ratio,1f,0,0);
-                                    setChart(ratio,barChart2,treeDataItemDetailBeans,days);
+                                    barChart2.zoom(0, 1f, 0, 0);
+                                    barChart2.zoom(1 / ratio, 1f, 0, 0);
+                                    setChart(ratio, barChart2, treeDataItemDetailBeans, days);
                                     barChart2.setVisibility(View.VISIBLE);
                                     barChart2.setExtraBottomOffset(10);
                                     barChart2.notifyDataSetChanged();
                                     barChart2.getBarData().notifyDataChanged();
                                     barChart2.invalidate();
                                 }
-                                if(i==3){
+                                if (i == 3) {
                                     tvChartname3.setText(treeDataItemBean.getConfigName());
                                     tvChartname3.setVisibility(View.VISIBLE);
-                                    barChart3.zoom(0,1f,0,0);
-                                    barChart3.zoom(1/ratio,1f,0,0);
-                                    setChart(ratio,barChart3,treeDataItemDetailBeans,days);
+                                    barChart3.zoom(0, 1f, 0, 0);
+                                    barChart3.zoom(1 / ratio, 1f, 0, 0);
+                                    setChart(ratio, barChart3, treeDataItemDetailBeans, days);
                                     barChart3.setVisibility(View.VISIBLE);
                                     barChart3.setExtraBottomOffset(10);
                                     barChart3.notifyDataSetChanged();
                                     barChart3.getBarData().notifyDataChanged();
                                     barChart3.invalidate();
                                 }
-                                if(i==4){
+                                if (i == 4) {
                                     tvChartname4.setText(treeDataItemBean.getConfigName());
                                     tvChartname4.setVisibility(View.VISIBLE);
-                                    barChart4.zoom(0,1f,0,0);
-                                    barChart4.zoom(1/ratio,1f,0,0);
-                                    setChart(ratio,barChart4,treeDataItemDetailBeans,days);
+                                    barChart4.zoom(0, 1f, 0, 0);
+                                    barChart4.zoom(1 / ratio, 1f, 0, 0);
+                                    setChart(ratio, barChart4, treeDataItemDetailBeans, days);
                                     barChart4.setVisibility(View.VISIBLE);
                                     barChart4.setExtraBottomOffset(10);
                                     barChart4.notifyDataSetChanged();
                                     barChart4.getBarData().notifyDataChanged();
                                     barChart4.invalidate();
                                 }
-                                if(i==5){
+                                if (i == 5) {
                                     tvChartname5.setText(treeDataItemBean.getConfigName());
                                     tvChartname5.setVisibility(View.VISIBLE);
-                                    barChart5.zoom(0,1f,0,0);
-                                    barChart5.zoom(1/ratio,1f,0,0);
-                                    setChart(ratio,barChart5,treeDataItemDetailBeans,days);
+                                    barChart5.zoom(0, 1f, 0, 0);
+                                    barChart5.zoom(1 / ratio, 1f, 0, 0);
+                                    setChart(ratio, barChart5, treeDataItemDetailBeans, days);
                                     barChart5.setVisibility(View.VISIBLE);
                                     barChart5.setExtraBottomOffset(10);
                                     barChart5.notifyDataSetChanged();
@@ -625,11 +638,13 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                         }
                     }
                 }
-         } catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
-         }
-    }
+            }
+        }else if(!"".equals(type) && "commnuity".equals(type)){
 
+        }
+    }
 
     /*private void drawChart(String type,int days) throws IOException {
         if(type!= null && "tree".equals(type)){
@@ -807,9 +822,9 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
             Log.d(TAG, "===list 倒序====:" + list);
         }else{*/
             int j = 0;
-            ListIterator<Map.Entry<Float,String>> i = new ArrayList<Map.Entry<Float,String>>(tempMap.entrySet()).listIterator(tempMap.size());
-             while(i.hasPrevious()) {
-                Map.Entry<Float, String> entry=i.previous();
+            ListIterator<Map.Entry<Float,String>> i = new ArrayList<Map.Entry<Float,String>>(tempMap.entrySet()).listIterator(0);
+             while(i.hasNext()) {
+                Map.Entry<Float, String> entry=i.next();
                 //Log.d(TAG, j+":"+entry.getValue());
                 dataMap.put(j,entry.getValue());
                 j++;

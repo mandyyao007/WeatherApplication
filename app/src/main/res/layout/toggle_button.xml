@@ -8,8 +8,8 @@
     android:textSize="20sp"
     android:textOff="@null"
     android:textOn="@null"
-    android:background="@drawable/expand_tab_selector"
+    android:background="@color/transparent"
     android:singleLine="true"
-    android:textColor="@color/black">
+    android:textColor="@color/white">
 
 </ToggleButton>

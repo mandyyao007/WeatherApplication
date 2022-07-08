@@ -84,10 +84,12 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
                 Log.d(TAG,"=$$$$$$$$$$$$=collectorId==:"+ selectedCollector.getId());
                 Log.d(TAG,"=$$$$$$$$$$$$=CollectorName==:"+  selectedCollector.getCollectorName());
                 Log.d(TAG,"=$$$$$$$$$$$$=weatherStationId==:"+ weatherStationId);
+                Log.d(TAG,"=$$$$$$$$$$$$=weatherStationName==:"+ weatherStationName);
                 intent.putExtra("collectorId", selectedCollector.getId());
                 intent.putExtra("userName", userName);
                 intent.putExtra("collectorName", selectedCollector.getCollectorName());
                 intent.putExtra("weatherStationId",weatherStationId);
+                intent.putExtra("weatherStationName",weatherStationName);
                 if("home".equals(page) || page ==null){
                     intent.putExtra("fragment_flag", 2);
                 }else{
