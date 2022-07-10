@@ -10,6 +10,8 @@ import android.widget.RelativeLayout;
 
 import com.example.weatherapplication.adapter.TextAdapter;
 import com.example.weatherapplication.R;
+import com.example.weatherapplication.bean.CommunityBean;
+import com.example.weatherapplication.bean.CommunityItemBean;
 import com.example.weatherapplication.bean.TreeBean;
 import com.example.weatherapplication.bean.TreeItemBean;
 import com.example.weatherapplication.util.NetUtil;
@@ -55,7 +57,7 @@ public class ViewLeft extends RelativeLayout implements ViewBaseAction{
         super(context, attrs);
         init(context);
     }
-    private void init(Context context ,String type, String collectorId) {
+    private void init(Context context ,String type, String id) {
         mContext = context;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.view_distance, this, true);
@@ -66,7 +68,7 @@ public class ViewLeft extends RelativeLayout implements ViewBaseAction{
         if(type!= null && "tree".equals(type)){
             Log.d(TAG, "===type=============:" + type);
             try {
-                TreeBean treeBean = NetUtil.getTreeBean(collectorId);
+                TreeBean treeBean = NetUtil.getTreeBean(id);
                 Log.d(TAG, "===treeBean=============:" + treeBean);
                 if(treeBean != null  && treeBean.getmTreeItemBeans()!= null){
                     List<TreeItemBean> treeItemBeans = treeBean.getmTreeItemBeans();
@@ -89,17 +91,12 @@ public class ViewLeft extends RelativeLayout implements ViewBaseAction{
         }
         Log.d(TAG, "===groups=============:" + groups);
         Log.d(TAG, "===itemsGroupVaule=============:" + itemsGroupVaule);
-       // if (mDistance != null) {
-            for (int i = 0; i < groups.size(); i++) {
-                //if (itemsVaule[i].equals(mDistance)) {
-                    Log.d(TAG, "===itemsGroupVaule.get(i)=============:" + itemsGroupVaule.get(i));
-                    Log.d(TAG, "===groups.get(i)=============:" +groups.get(i));
-                    adapter.setSelectedPositionNoNotify(i);
-                    showText = groups.get(i);
-                   // break;
-               // }
-            }
-        //}
+        for (int i = 0; i < groups.size(); i++) {
+            Log.d(TAG, "===itemsGroupVaule.get(i)=============:" + itemsGroupVaule.get(i));
+            Log.d(TAG, "===groups.get(i)=============:" +groups.get(i));
+            adapter.setSelectedPositionNoNotify(i);
+            showText = groups.get(i);
+        }
         mListView.setAdapter(adapter);
         adapter.setOnItemClickListener(new TextAdapter.OnItemClickListener() {
 

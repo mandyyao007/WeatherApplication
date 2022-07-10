@@ -1,11 +1,11 @@
 package com.example.weatherapplication.bean;
 /*
-{"acquisitionTime":"2022-07-07 00:00:00","val":"4"}
+{"acquisitionTime":"2022-01-26 02:00:00","val":"84"}
  */
 
 import com.google.gson.annotations.SerializedName;
 
-public class CommunityDataItemDetailBean {
+public class TreeAndCommunityDataItemDetailBean {
     @SerializedName("acquisitionTime")
     private String acquisitionTime;
     @SerializedName("val")

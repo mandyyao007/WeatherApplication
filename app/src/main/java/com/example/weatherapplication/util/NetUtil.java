@@ -3,12 +3,14 @@ package com.example.weatherapplication.util;
 import android.util.Log;
 
 import com.example.weatherapplication.bean.CollectorBean;
+import com.example.weatherapplication.bean.CommunityBean;
 import com.example.weatherapplication.bean.DaysDataItemBean;
 import com.example.weatherapplication.bean.IndexBean;
 import com.example.weatherapplication.bean.LoginBean;
 import com.example.weatherapplication.bean.ReportBean;
 import com.example.weatherapplication.bean.CollectorItemBean;
 import com.example.weatherapplication.bean.DaysDataBean;
+import com.example.weatherapplication.bean.TreeAndCommunityDataBean;
 import com.example.weatherapplication.bean.TreeBean;
 import com.example.weatherapplication.bean.WeatherStationBean;
 import com.example.weatherapplication.bean.WeatherStationItemBean;
@@ -37,6 +39,8 @@ public class NetUtil {
     public static final String URL_TREE = "http://"+HTTPHOST+"/basic/show_tree_list";
     public static final String URL_TREE_DATA = "http://"+HTTPHOST+"/basic/show_tree_data_list";
     public static final String URL_DAYS_DATA = "http://"+HTTPHOST+"/basic/show_CDV_data_by_type_list";
+    public static final String URL_COMMNUITY = "http://"+HTTPHOST+"/basic/show_community_list";
+    public static final String URL_COMMNUITY_DATA = "http://"+HTTPHOST+"/basic/show_community_data_list";
     public static String service(String urlStr,String method) throws IOException {
         String result = "";
         HttpURLConnection connection = null;
@@ -243,17 +247,17 @@ public class NetUtil {
         }
         return treeBean;
     }
-    public static CollectorItemBean.TreeDataBean getTreeDataBean(String treeId,int days) throws IOException {
+    public static TreeAndCommunityDataBean getTreeDataBean(String treeId, int days) throws IOException {
         String dataResult ="";
         //拼接出URL
         String treeDataUrl = URL_TREE_DATA+"?day="+days+"&treeId="+treeId;
         Log.d(TAG,"-----getTreeDataBean====="+treeDataUrl);
-        CollectorItemBean.TreeDataBean treeDataBean = null;
+        TreeAndCommunityDataBean treeDataBean = null;
         try{
             dataResult = service(treeDataUrl,"POST");
             //Log.d(TAG,"-----getTreeDataBean  result======"+dataResult);
             Gson gson = new Gson();
-            treeDataBean = gson.fromJson(dataResult, CollectorItemBean.TreeDataBean.class);
+            treeDataBean = gson.fromJson(dataResult, TreeAndCommunityDataBean.class);
             //Log.d(TAG,"====getTreeDataBean====解析后的treeDataBean==:"+ treeDataBean.toString());
         }catch (IOException e) {
             e.printStackTrace();
@@ -283,5 +287,41 @@ public class NetUtil {
         }
        // Log.d(TAG,"====getDaysData====daysDataItemBeans==:"+daysDataItemBeans);
         return daysDataItemBeans;
+    }
+
+    public static CommunityBean getCommunityBean(String weatherStationId) throws IOException {
+        String dataResult ="";
+        //拼接出URL
+        String communityUrl = URL_COMMNUITY+"?weatherStationId="+weatherStationId;
+        //Log.d(TAG,"-----getCommunityBean======"+communityUrl);
+        CommunityBean communityBean = null;
+        try{
+            dataResult = service(communityUrl,"POST");
+            //Log.d(TAG,"-----getCommunityBean  result======"+dataResult);
+            Gson gson = new Gson();
+            communityBean = gson.fromJson(dataResult, CommunityBean.class);
+            //Log.d(TAG,"====getCommunityBean====communityBean==:"+ communityBean.toString());
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+        return communityBean;
+    }
+
+    public static TreeAndCommunityDataBean getCommunityDataBean(String communityId, int day) throws IOException {
+        String dataResult ="";
+        //拼接出URL
+        String communityDataUrl = URL_COMMNUITY_DATA+"?communityId="+communityId+"&day="+day;
+        Log.d(TAG,"-----getCommunityDataBean====="+communityDataUrl);
+        TreeAndCommunityDataBean communityDataBean = null;
+        try{
+            dataResult = service(communityDataUrl,"POST");
+            //Log.d(TAG,"-----getCommunityDataBean  result======"+dataResult);
+            Gson gson = new Gson();
+            communityDataBean = gson.fromJson(dataResult, TreeAndCommunityDataBean.class);
+            //Log.d(TAG,"====getCommunityDataBean====解析后的communityDataBean==:"+ communityDataBean.toString());
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+        return communityDataBean;
     }
 }
