@@ -218,7 +218,8 @@ public class NetUtil {
         String dataResult ="";
         ReportBean reportBean = null;
         //拼接出URL
-        String newestDataUrl = URL_TODAY_DATA+"?collectorConfigId="+selectConfigId+"&collectorId="+stationId+"&count="+count;Log.d("fan","-----newestDataUrl======"+newestDataUrl);
+        String newestDataUrl = URL_TODAY_DATA+"?collectorConfigId="+selectConfigId+"&collectorId="+stationId+"&count="+count;
+        //Log.d(TAG,"-----newestDataUrl======"+newestDataUrl);
         try{
             dataResult = service(newestDataUrl,"POST");
             //Log.d(TAG,"-----getNewestData  result======"+dataResult);

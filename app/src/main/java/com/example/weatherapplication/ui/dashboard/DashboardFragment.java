@@ -57,7 +57,7 @@ public class DashboardFragment extends Fragment {
     private MapView mMapView = null;
     private BaiduMap mBaiduMap;
     private LocationClient mLocationClient;
-    private String userName,collectorName,collectorId;
+    private String userName,collectorName,collectorId,status;
     private View pop;
     ////2022/02/15
     private TextView tvStationName,tvAirTem,tvAirHum,tvSoilTem,tvSoilHum,tvSoilSalt,tvPlantFluid,tvPlantDia,tvPlantRad,
@@ -178,6 +178,14 @@ public class DashboardFragment extends Fragment {
             if(pop.isShown() && !infoWindowShown && pop!=null){
                 infoWindowShown = true;
                 pop.setVisibility(View.INVISIBLE);
+                Bundle bundle = lastMarker.getExtraInfo();
+                String status = bundle.getString("status");
+                Log.d(TAG, "---====mapClickListener===mapClickListener--status======"+status);
+                if("1".equals(status)){
+                    icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_location);
+                }else{
+                    icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_location_basic);
+                }
                 lastMarker.setIcon(icon);
                 return;
             }
@@ -194,21 +202,34 @@ public class DashboardFragment extends Fragment {
         @Override
         public boolean onMarkerClick(Marker marker) {
             //显示一个泡泡，单击泡泡有事件
-            iconClick = BitmapDescriptorFactory.fromResource(R.drawable.icon_click_marker);
+            Bundle bundle = marker.getExtraInfo();
+            String id = bundle.getString("id");
+            String collectorId = bundle.getString("collectorId");
+            String status = bundle.getString("status");
+            Log.d(TAG, "-----status======" + status);
+            if("1".equals(status)){
+                iconClick = BitmapDescriptorFactory.fromResource(R.drawable.icon_click_marker);
+            }else{
+                iconClick = BitmapDescriptorFactory.fromResource(R.drawable.icon_click_marker_basic);
+            }
             if(lastMarker != null){
                 //判断上次点击的和这次点击的是不是同一个
                 if(lastMarker.getId() == marker.getId()){
 
                 }else{//不是的话将上次的icon还原
+                    Bundle bundleLast = lastMarker.getExtraInfo();
+                    String statusLast = bundleLast.getString("status");
+                    if("1".equals(statusLast)){
+                        icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_location);
+                    }else{
+                        icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_location_basic);
+                    }
                     lastMarker.setIcon(icon);
                 }
             }
             lastMarker = marker ;
             lastMarker.setIcon(iconClick);
             infoWindowShown = false;
-            Bundle bundle = marker.getExtraInfo();
-            String id = bundle.getString("id");
-            String collectorId = bundle.getString("collectorId");
             if("1".equals(id) ||"2".equals(id)||"3".equals(id)||"4".equals(id)){
                 if (pop == null) {
                     try {
@@ -246,15 +267,18 @@ public class DashboardFragment extends Fragment {
                         intent.putExtra("fragment_flag", 2);
                         intent.putExtra("collectorId",collectorId);
                         intent.putExtra("collectorName", bundle.getString("collectorName"));
-                        /*Log.d(TAG, "-----weatherStationId======" + weatherStationId
-                                +"-----userName======" + userName);
-                        Log.d(TAG, "-----collectorId======" + collectorId
-                                + "-----collectorName======" + bundle.getString("collectorName"));*/
+                        /*Log.d(TAG, "-----weatherStationId======" + weatherStationId"-----userName======" + userName);
+                        Log.d(TAG, "-----collectorId======" + collectorId"-----collectorName======" + bundle.getString("collectorName"));*/
                         startActivity(intent);
                     }
                 });
             }else{
                 if(pop.isShown()){
+                    if("1".equals(status)){
+                        icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_location);
+                    }else{
+                        icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_location_basic);
+                    }
                     marker.setIcon(icon);
                     pop.setVisibility(View.INVISIBLE);
                 }
@@ -283,13 +307,13 @@ public class DashboardFragment extends Fragment {
         valPlantDia = (TextView) pop.findViewById(R.id.val_plant_dia);
         valPlantRad = (TextView) pop.findViewById(R.id.val_plant_rad);
         Map indexMap = stationFacade.initIndex(collectorId);
-        Log.d(TAG,"==================indexMap=====" + indexMap);
+        //Log.d(TAG,"==================indexMap=====" + indexMap);
         for(Iterator it = indexMap.keySet().iterator();it.hasNext();){
             String indexAndUnit = (String) it.next();
-            Log.d(TAG,"==================indexAndUnit=====" + indexAndUnit);
+            //Log.d(TAG,"==================indexAndUnit=====" + indexAndUnit);
             String index = indexAndUnit.split(",")[0];
             String unit = indexAndUnit.split(",")[1];
-            Log.d(TAG,"======index==========:"+index+"======unit==========:"+unit+"########collectorId======" + collectorId);
+           // Log.d(TAG,"======index==========:"+index+"======unit==========:"+unit+"########collectorId======" + collectorId);
             String tem = stationFacade.getNewestData(indexAndUnit,collectorId,1)+" "+unit;
             try {
                 if("空气温度".equals(index) || "AirTC_Avg1".equals(index) ){
@@ -367,7 +391,7 @@ public class DashboardFragment extends Fragment {
     }
     //////根据username权限抓取站点位置并初始化标记覆盖物
     private void initMarker() {
-        icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_location);
+
         try {
             List<WeatherStationItemBean> stationItems = NetUtil.getWeatherStationItemInfo(userName);
             Iterator it = stationItems.iterator();
@@ -394,9 +418,9 @@ public class DashboardFragment extends Fragment {
                         LatLng point = new LatLng( latitude,longitude);
                         collectorId = collectorItem.getId();
                         collectorName = collectorItem.getCollectorName();
-                        //Log.d(TAG,"-------------collectorItem==:"+collectorItem);
-                        //Log.d(TAG,"############collectorName==:"+collectorName);
-                        //Log.d(TAG,"############collectorId==:"+collectorId);
+                        status = collectorItem.getStatus();
+                        //Log.d(TAG,"-------------collectorItem==:"+collectorItem+"############collectorName==:"+collectorName);
+                        //Log.d(TAG,"############collectorId==:"+collectorId+"############status==:"+status);
                         if( point!= null){
                             /////Bundle用来传值 也可以识别点击的是哪一个marker
                             Bundle mBundle = new Bundle();
@@ -405,11 +429,17 @@ public class DashboardFragment extends Fragment {
                             mBundle.putString("collectorId", collectorId);
                             mBundle.putString("collectorName",collectorName);
                             mBundle.putString("id", i+"");
+                            mBundle.putString("status", status);
+                            if("0".equals(status)){
+                                icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_location_basic);
+                            }else{
+                               icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_location);
+                            }
                             OverlayOptions options = new MarkerOptions().position(point)//位置
-                                .title(item.getWeatherStationName()+"("+collectorItem.getCollectorName()+")")//标题
-                                .icon(icon)             //图标
-                                .draggable(false) //设置图标是否可拖动
-                                .extraInfo(mBundle) ;//这里bundle 跟maker关联上;
+                                    .title(item.getWeatherStationName()+"("+collectorItem.getCollectorName()+")")//标题
+                                    .icon(icon)  //图标
+                                    .draggable(false) //设置图标是否可拖动
+                                    .extraInfo(mBundle) ;//这里bundle 跟maker关联上;
                             mBaiduMap.addOverlay(options);//在地图上添加Marker数组，并显示
                         }
                     }

@@ -5,8 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /*
-
-{"collectorName":"滨江森林公园基准","collectorPort":"","id":"54","latitude":"31.3888997","longitude":"121.53680877"}
+{"collectorName":"滨江森林公园1号点","collectorPort":"","id":"52","latitude":"31.38771","longitude":"121.531994","status":"1"}
  */
 public class CollectorItemBean {
     @SerializedName("collectorName")
@@ -19,6 +18,8 @@ public class CollectorItemBean {
     private String latitude;
     @SerializedName("longitude")
     private String longitude;
+    @SerializedName("status")
+    private String status;
 
     public void setId(String id) {
         this.id = id;
@@ -60,14 +61,23 @@ public class CollectorItemBean {
         this.longitude = longitude;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
-        return "StationItemBean{" +
+        return "CollectorItemBean{" +
                 "collectorName='" + collectorName + '\'' +
                 ", collectorPort='" + collectorPort + '\'' +
                 ", id='" + id + '\'' +
                 ", latitude='" + latitude + '\'' +
                 ", longitude='" + longitude + '\'' +
+                ", status='" + status + '\'' +
                 '}';
     }
 

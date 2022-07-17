@@ -80,8 +80,8 @@ public class StationFacade {
     public String getNewestData(String selectConfigName, String collectorId, int count) throws IOException {
         Map indexMap = initIndex(collectorId);
         String newestData = "";
-        Log.d(TAG,"======indexMap =====:"+indexMap);
-        Log.d(TAG,"======selectConfigName =====:"+selectConfigName);
+        //Log.d(TAG,"======indexMap =====:"+indexMap);
+        //Log.d(TAG,"======selectConfigName =====:"+selectConfigName);
         String selectConfigId = (String) indexMap.get(selectConfigName);
         //Log.d(TAG,"======selectConfigId =====:"+selectConfigId);
         ReportBean newestRrpotData = NetUtil.getNewestData(selectConfigId, collectorId,1);
