@@ -21,6 +21,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
+import com.baidu.mapapi.animation.Animation;
+import com.baidu.mapapi.animation.RotateAnimation;
+import com.baidu.mapapi.animation.ScaleAnimation;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
@@ -175,7 +178,7 @@ public class DashboardFragment extends Fragment {
     BaiduMap.OnMapClickListener mapClickListener = new BaiduMap.OnMapClickListener() {
         @Override
         public void onMapClick(LatLng latLng) {
-            if(pop.isShown() && !infoWindowShown && pop!=null){
+            if(pop!=null && pop.isShown() && !infoWindowShown){
                 infoWindowShown = true;
                 pop.setVisibility(View.INVISIBLE);
                 Bundle bundle = lastMarker.getExtraInfo();
@@ -187,9 +190,10 @@ public class DashboardFragment extends Fragment {
                     icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_location_basic);
                 }
                 lastMarker.setIcon(icon);
+                lastMarker.setAnimation(null);
                 return;
             }
-            if(!pop.isShown() && !infoWindowShown){
+            if(pop!=null && !pop.isShown() && !infoWindowShown){
                 infoWindowShown = false;
             }
         }
@@ -201,12 +205,18 @@ public class DashboardFragment extends Fragment {
     BaiduMap.OnMarkerClickListener markerClickListener = new BaiduMap.OnMarkerClickListener() {
         @Override
         public boolean onMarkerClick(Marker marker) {
+            ScaleAnimation animation = new ScaleAnimation(1f,1.5f,1f) ;//marker点动画(需导入百度地图的Animation包)
+            animation.setDuration(4000);
+            animation.setRepeatMode(Animation.RepeatMode.RESTART);
+            animation.setRepeatCount(5);
+
             //显示一个泡泡，单击泡泡有事件
             Bundle bundle = marker.getExtraInfo();
             String id = bundle.getString("id");
             String collectorId = bundle.getString("collectorId");
             String status = bundle.getString("status");
             Log.d(TAG, "-----status======" + status);
+
             if("1".equals(status)){
                 iconClick = BitmapDescriptorFactory.fromResource(R.drawable.icon_click_marker);
             }else{
@@ -229,6 +239,12 @@ public class DashboardFragment extends Fragment {
             }
             lastMarker = marker ;
             lastMarker.setIcon(iconClick);
+            if(lastMarker.getIcon() == iconClick){
+                lastMarker.setAnimation(animation);
+                lastMarker.startAnimation();
+            }else{
+                lastMarker.setAnimation(null);
+            }
             infoWindowShown = false;
             if("1".equals(id) ||"2".equals(id)||"3".equals(id)||"4".equals(id)){
                 if (pop == null) {

@@ -65,7 +65,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     private static final String TAG = "HomeFragment";
     private HomeViewModel homeViewModel;
     private FragmentHomeBinding binding;
-    private TextView tvStation,tvChartname1,tvChartname2,tvChartname3,tvNewestData1,tvNewestData2,tvNewestData3;
+    private TextView tvStation,tvChartname1,tvChartname2,tvChartname3,tvNewestData1,tvNewestData2,tvNewestData3,tvUnit1,tvUnit2,tvUnit3;
     private ImageView ivAdd;
     private String  userName,collectorId,collectorName,configType,weatherStationName;//监测指标类型
     private Map indexMap;
@@ -76,7 +76,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     private Button btOneDay,btSevenDay, btThirtyDay,btNintyDay,btMeteorology,btPlant,btSoil;
     private ScrollView scrollView;
     List<DaysDataItemBean>  daysDataItemBean = null;
-    private int days = 0;//
+    private int days = 0;
     private ProgressDialog progressDialog = null;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -142,6 +142,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         tvNewestData1 = fragmentHomeView.findViewById(R.id.newestData_tv_1);
         tvNewestData2 = fragmentHomeView.findViewById(R.id.newestData_tv_2);
         tvNewestData3 = fragmentHomeView.findViewById(R.id.newestData_tv_3);
+        tvUnit1 = fragmentHomeView.findViewById(R.id.unit_tv_1);
+        tvUnit2 = fragmentHomeView.findViewById(R.id.unit_tv_2);
+        tvUnit3 = fragmentHomeView.findViewById(R.id.unit_tv_3);
         scrollView = fragmentHomeView.findViewById(R.id.scrollview);
     }
     @Override
@@ -242,12 +245,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     private void setScrollInvisiable() {
         tvChartname1.setVisibility(View.INVISIBLE);
         tvNewestData1.setVisibility(View.INVISIBLE);
+        tvUnit1.setVisibility(View.INVISIBLE);
         lineChart1.setVisibility(View.INVISIBLE);
         tvChartname2.setVisibility(View.INVISIBLE);
+        tvUnit2.setVisibility(View.INVISIBLE);
         tvNewestData2.setVisibility(View.INVISIBLE);
         lineChart2.setVisibility(View.INVISIBLE);
         tvChartname3.setVisibility(View.INVISIBLE);
         tvNewestData3.setVisibility(View.INVISIBLE);
+        tvUnit3.setVisibility(View.INVISIBLE);
         lineChart3.setVisibility(View.INVISIBLE);
     }
 
@@ -339,10 +345,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         btn.setEnabled(false);
     }
     private List<DaysDataItemBean> getDaysData(String configType,int days) throws IOException {
-        StationFacade stationFacade = StationFacade.getInstance();
         if (configType != null) {
             //Log.d(TAG "=========configType=:" + configType);
-            String newestData = "";
             try {
                 //Log.dTAG, "===####======days==:" + days);
                 daysDataItemBean = NetUtil.getDaysData(collectorId, configType, days);
@@ -378,12 +382,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                             tvChartname1.setVisibility(View.VISIBLE);
                             tvNewestData1.setText(newestData);
                             tvNewestData1.setVisibility(View.VISIBLE);
+                            tvUnit1.setVisibility(View.VISIBLE);
+                            tvUnit1.setText(item.getUnit());
                             lineChart1.setVisibility(View.VISIBLE);
-                            lineChart1.zoom(0f,1f,0,0);
                             lineChart1.zoom(0.25f,1f,0,0);
                             setLineChart(days,item,lineChart1,entries1,item.getDescription(),item.getUnit());
                             lineChart1.notifyDataSetChanged();
-                            lineChart1.getData().notifyDataChanged();
+                            //lineChart1.getData().notifyDataChanged();
                             lineChart1.invalidate();
                         }
                         if(i==1){
@@ -391,12 +396,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                             tvChartname2.setVisibility(View.VISIBLE);
                             tvNewestData2.setText(newestData);
                             tvNewestData2.setVisibility(View.VISIBLE);
+                            tvUnit2.setVisibility(View.VISIBLE);
+                            tvUnit2.setText(item.getUnit());
                             lineChart2.setVisibility(View.VISIBLE);
-                            lineChart2.zoom(0f,1f,0,0);
                             lineChart2.zoom(0.25f,1f,0,0);
                             setLineChart(days,item,lineChart2,entries2,item.getDescription(),item.getUnit());
                             lineChart2.notifyDataSetChanged();
-                            lineChart2.getData().notifyDataChanged();
+                            ///lineChart2.getData().notifyDataChanged();
                             lineChart2.invalidate();
                         }
                         if(i==2){
@@ -404,12 +410,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                             tvChartname3.setVisibility(View.VISIBLE);
                             tvNewestData3.setText(newestData);
                             tvNewestData3.setVisibility(View.VISIBLE);
+                            tvUnit3.setVisibility(View.VISIBLE);
+                            tvUnit3.setText(item.getUnit());
                             lineChart3.setVisibility(View.VISIBLE);
-                            lineChart3.zoom(0f,1f,0,0);
                             lineChart3.zoom(0.25f,1f,0,0);
                             setLineChart(days,item,lineChart3,entries3,item.getDescription(),item.getUnit());
                             lineChart3.notifyDataSetChanged();
-                            lineChart3.getData().notifyDataChanged();
+                            //lineChart3.getData().notifyDataChanged();
                             lineChart3.invalidate();
                         }
                     }
@@ -419,16 +426,19 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 if(i==0){
                     tvChartname1.setVisibility(View.INVISIBLE);
                     tvNewestData1.setVisibility(View.INVISIBLE);
+                    tvUnit1.setVisibility(View.INVISIBLE);
                     lineChart1.setVisibility(View.INVISIBLE);
                 }
                 if(i==1){
                     tvChartname2.setVisibility(View.INVISIBLE);
                     tvNewestData2.setVisibility(View.INVISIBLE);
+                    tvUnit2.setVisibility(View.INVISIBLE);
                     lineChart2.setVisibility(View.INVISIBLE);
                 }
                 if(i==2){
                     tvChartname3.setVisibility(View.INVISIBLE);
                     tvNewestData3.setVisibility(View.INVISIBLE);
+                    tvUnit3.setVisibility(View.INVISIBLE);
                     lineChart3.setVisibility(View.INVISIBLE);
                 }
             }
@@ -454,40 +464,43 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                                scrollView.scrollTo(0,0);
                                tvChartname1.setText(item.getDescription());
                                tvChartname1.setVisibility(View.VISIBLE);
-                               tvNewestData1.setText(newestData+" "+item.getUnit());
+                               tvNewestData1.setText(newestData);
                                tvNewestData1.setVisibility(View.VISIBLE);
+                               tvUnit1.setVisibility(View.VISIBLE);
+                               tvUnit1.setText(item.getUnit());
                                lineChart1.setVisibility(View.VISIBLE);
-                               lineChart1.zoom(0f,1f,0,0);
                                lineChart1.zoom(0.25f,1f,0,0);
                                setLineChart(days,item,lineChart1,entries1,item.getDescription(),item.getUnit());
                                lineChart1.notifyDataSetChanged();
-                               lineChart1.getData().notifyDataChanged();
+                               //lineChart1.getData().notifyDataChanged();
                                lineChart1.invalidate();
                           }
                           if(i==1){
                                tvChartname2.setText(item.getDescription());
                                tvChartname2.setVisibility(View.VISIBLE);
-                               tvNewestData2.setText(newestData+" "+item.getUnit());
+                               tvNewestData2.setText(newestData);
                                tvNewestData2.setVisibility(View.VISIBLE);
+                               tvUnit2.setVisibility(View.VISIBLE);
+                               tvUnit2.setText(item.getUnit());
                                lineChart2.setVisibility(View.VISIBLE);
-                               lineChart2.zoom(0f,1f,0,0);
                                lineChart2.zoom(0.25f,1f,0,0);
                                setLineChart(days,item,lineChart2,entries2,item.getDescription(),item.getUnit());
                                lineChart2.notifyDataSetChanged();
-                               lineChart2.getData().notifyDataChanged();
+                               //lineChart2.getData().notifyDataChanged();
                                lineChart2.invalidate();
                           }
                           if(i==2){
                                tvChartname3.setText(item.getDescription());
                                tvChartname3.setVisibility(View.VISIBLE);
-                               tvNewestData3.setText(newestData+" "+item.getUnit());
+                               tvNewestData3.setText(newestData);
                                tvNewestData3.setVisibility(View.VISIBLE);
+                               tvUnit3.setVisibility(View.VISIBLE);
+                               tvUnit3.setText(item.getUnit());
                                lineChart3.setVisibility(View.VISIBLE);
-                               lineChart3.zoom(0f,1f,0,0);
                                lineChart3.zoom(0.25f,1f,0,0);
                                setLineChart(days,item,lineChart3,entries3,item.getDescription(),item.getUnit());
                                lineChart3.notifyDataSetChanged();
-                               lineChart3.getData().notifyDataChanged();
+                               //lineChart3.getData().notifyDataChanged();
                                lineChart3.invalidate();
                           }
                           i++;
@@ -497,28 +510,24 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                         tvChartname1.setVisibility(View.INVISIBLE);
                         tvNewestData1.setVisibility(View.INVISIBLE);
                         lineChart1.setVisibility(View.INVISIBLE);
+                        tvUnit1.setVisibility(View.INVISIBLE);
                     }
                     if(i==1){
                         tvChartname2.setVisibility(View.INVISIBLE);
                         tvNewestData2.setVisibility(View.INVISIBLE);
                         lineChart2.setVisibility(View.INVISIBLE);
+                        tvUnit2.setVisibility(View.INVISIBLE);
                     }
                     if(i==2){
                         tvChartname3.setVisibility(View.INVISIBLE);
                         tvNewestData3.setVisibility(View.INVISIBLE);
                         lineChart3.setVisibility(View.INVISIBLE);
+                        tvUnit3.setVisibility(View.INVISIBLE);
                     }
                 }
             } catch (Exception e) {
                     e.printStackTrace();
             }
-        /*}else{
-            String message = "请先选择类别";
-            Toast toastCenter = Toast.makeText(getActivity().getApplicationContext(), message,Toast.LENGTH_SHORT);
-            toastCenter.setGravity(Gravity.CENTER,0,0);
-            toastCenter.show();
-            setDaysButtonEnable(true);
-        }*/
     }
 
     @Override
@@ -585,7 +594,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 dataSet.setCircleRadius(2f);//设置焦点圆心的大小
                 dataSet.setLineWidth(1.5f);//线条宽度
                 dataSet.setValueTextColor(Color.parseColor("#FFFFFFFF"));//设置显示值的文字颜色
-                dataSet.setValueTextSize(7f);//设置显示值的文字大小
+                dataSet.setValueTextSize(10f);//设置显示值的文字大小
                 dataSet.setCubicIntensity(0.9f);//设置曲线的平滑度
                 dataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
                 YAxis rightAxis = lineChart.getAxisRight();
@@ -594,7 +603,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 leftAxis.setDrawGridLines(true);//绘制网格线
                 leftAxis.setEnabled(false);
                 XAxis xAxis = lineChart.getXAxis();
-                xAxis.setTextColor(Color.BLUE);//设置X轴刻度颜色
+                xAxis.setTextColor(Color.WHITE);//设置X轴刻度颜色
                 xAxis.setDrawAxisLine(true);//设置为true，则绘制该行旁边的轴线
                 xAxis.setDrawGridLines(true);//绘制网格线
                 xAxis.setDrawLabels(true);//绘制标签，即X轴上的对应数值
@@ -612,8 +621,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                         }
                     });
                 }else{
-                    xAxis.setTextSize(8f);//设置X轴刻度字体大小
-                    xAxis.setLabelRotationAngle(45f);//旋转45度
+                    xAxis.setTextSize(10f);//设置X轴刻度字体大小
+                    xAxis.setLabelRotationAngle(-45f);//旋转45度
                     xAxis.setValueFormatter(new IAxisValueFormatter() {
                         @Override
                         public String getFormattedValue(float v, AxisBase axis) {
@@ -623,7 +632,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 }
                 Legend legend = lineChart.getLegend();//图例
                 legend.setForm(Legend.LegendForm.EMPTY);//设置图例的形状
-                legend.setTextSize(13f);//设置图例字体大小
+                legend.setTextSize(10f);//设置图例字体大小
                 legend.setTextColor(Color.WHITE);//设置图例颜色
                 legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);//设置图例位置
                 legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
@@ -632,16 +641,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 description.setText(indexUint);//显示单位
                 description.setTextSize(10f);
                 description.setTextColor(Color.WHITE);
-                description.setEnabled(true);//是否显示图表描述信息
+                description.setEnabled(false);//是否显示图表描述信息
                 LineData lineData = new LineData();
                 lineData.addDataSet(dataSet);
-                lineChart.setTouchEnabled(false);//设置是否可触摸
-                lineChart.setScaleEnabled(true);//设置是否可缩放
+                lineChart.setScaleEnabled(false);//设置是否可缩放
                 lineChart.setData(lineData);
                 lineChart.zoom(4,1,0,0);
                 lineChart.setExtraBottomOffset(10);//距离底部距离
-                lineChart.setTouchEnabled( true);//设置chart是否可以触摸
-                lineChart.setDragEnabled( true); //设置是否可以拖拽
+                lineChart.setTouchEnabled(true);//设置chart是否可以触摸
+                lineChart.setDragEnabled(true); //设置是否可以拖拽
                 lineChart.invalidate();//图表刷新
                 } catch (Exception e) {
                     e.printStackTrace();

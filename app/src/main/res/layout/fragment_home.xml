@@ -276,6 +276,17 @@
             android:textSize="18sp"
             android:visibility="invisible">
         </TextView>
+         <TextView
+             android:id="@+id/unit_tv_1"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text=""
+             android:textColor="@color/white"
+             android:layout_marginTop="10dp"
+             android:layout_marginLeft="40dp"
+             android:textSize="18sp"
+             android:visibility="invisible">
+         </TextView>
      </LinearLayout>
      <com.github.mikephil.charting.charts.LineChart
          android:id="@+id/linechart_1"
@@ -315,6 +326,17 @@
              android:textSize="18sp"
              android:visibility="invisible">
          </TextView>
+         <TextView
+             android:id="@+id/unit_tv_2"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text=""
+             android:textColor="@color/white"
+             android:layout_marginTop="10dp"
+             android:layout_marginLeft="40dp"
+             android:textSize="18sp"
+             android:visibility="invisible">
+         </TextView>
      </LinearLayout>
      <com.github.mikephil.charting.charts.LineChart
          android:id="@+id/linechart_2"
@@ -344,6 +366,17 @@
          </TextView>
          <TextView
              android:id="@+id/newestData_tv_3"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text=""
+             android:textColor="@color/white"
+             android:layout_marginTop="10dp"
+             android:layout_marginLeft="40dp"
+             android:textSize="18sp"
+             android:visibility="invisible">
+         </TextView>
+         <TextView
+             android:id="@+id/unit_tv_3"
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
              android:text=""
