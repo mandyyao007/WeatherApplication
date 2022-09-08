@@ -30,7 +30,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WeatherApplication"
         android:usesCleartextTraffic="true">
-
+        <activity
+            android:name=".SplashActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".CommunityActivity"
+            android:exported="false"/>
         <activity
             android:name=".StationActivity"
             android:exported="false" />
@@ -50,13 +60,7 @@
             android:exported="false" />
         <activity
             android:name=".LoginActivity"
-            android:exported="true"
-            android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:exported="false">
         </activity>
     </application>
 

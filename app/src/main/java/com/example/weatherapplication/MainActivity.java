@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_dashboard ,  R.id.navigation_home, R.id.navigation_notifications,R.id.navigation_me)
+                R.id.navigation_dashboard , R.id.navigation_notifications,  R.id.navigation_home)
                 .build();
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupWithNavController(binding.navView, navController);
@@ -48,9 +48,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case 3:
                 navController.navigate(R.id.navigation_notifications);
-                break;
-            case 4:
-                navController.navigate(R.id.navigation_me);
                 break;
         }
         super.onResume();

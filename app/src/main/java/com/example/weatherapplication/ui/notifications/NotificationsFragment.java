@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.weatherapplication.CommunityActivity;
 import com.example.weatherapplication.R;
 import com.example.weatherapplication.StationActivity;
 import com.example.weatherapplication.bean.TreeAndCommunityDataBean;
@@ -400,7 +401,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         Intent intent = null;
         switch (v.getId()) {
             case R.id.iv_station:
-                intent = new Intent(getActivity(), StationActivity.class);
+                intent = new Intent(getActivity(), CommunityActivity.class);
                 Log.d(TAG,"=***************=iv_station=========");
                 intent.putExtra("userName",userName);
                 intent.putExtra("weatherStationId",weatherStationId);

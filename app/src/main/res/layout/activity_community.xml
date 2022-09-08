@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".CommunityActivity">
+    <RelativeLayout
+        android:id="@+id/community_top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/stationTop">
+        <ImageView
+            android:id="@+id/community_iv_back"
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/icon_back"/>
+        <TextView
+            android:id="@+id/tv_community_title"
+            android:text="群落列表"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+    <TextView
+        android:id="@+id/tv_community_name"
+        android:text="群落名称"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ImageView
+        android:id="@+id/community_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DCDCDC"
+        android:layout_below="@id/station_top_layout"/>
+
+    <ListView
+        android:id="@+id/community_lv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/community_line"
+        android:layout_marginTop="10dp"
+        android:divider="@null">
+    </ListView>
+
+</LinearLayout>

@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.example.weatherapplication.adapter.StationAdapter;
 import com.example.weatherapplication.bean.CollectorItemBean;
-import com.example.weatherapplication.bean.WeatherStationBean;
 import com.example.weatherapplication.util.NetUtil;
 import com.example.weatherapplication.util.StatusBarUtils;
 
@@ -110,7 +109,7 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
                weatherStationId ="22";
             }
             List<CollectorItemBean> stationItems = NetUtil.getStationItemInfo(userName,weatherStationId);
-            System.out.println("=================stationItems==========:"+stationItems);
+            Log.d(TAG, "=================stationItems==========:"+stationItems);
             mDatas.clear();
             mDatas.addAll(stationItems);
             adapter.notifyDataSetChanged();

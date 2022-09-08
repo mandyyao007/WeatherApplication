@@ -190,7 +190,7 @@ public class DashboardFragment extends Fragment {
                     icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_location_basic);
                 }
                 lastMarker.setIcon(icon);
-                lastMarker.setAnimation(null);
+                //lastMarker.setAnimation(null);
                 return;
             }
             if(pop!=null && !pop.isShown() && !infoWindowShown){
@@ -239,12 +239,12 @@ public class DashboardFragment extends Fragment {
             }
             lastMarker = marker ;
             lastMarker.setIcon(iconClick);
-            if(lastMarker.getIcon() == iconClick){
-                lastMarker.setAnimation(animation);
-                lastMarker.startAnimation();
-            }else{
-                lastMarker.setAnimation(null);
-            }
+            //if(lastMarker.getIcon() == iconClick){
+                //lastMarker.setAnimation(animation);
+                //lastMarker.startAnimation();
+            //}else{
+                //lastMarker.setAnimation(null);
+            //}
             infoWindowShown = false;
             if("1".equals(id) ||"2".equals(id)||"3".equals(id)||"4".equals(id)){
                 if (pop == null) {

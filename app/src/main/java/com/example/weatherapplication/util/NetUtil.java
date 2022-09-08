@@ -294,14 +294,14 @@ public class NetUtil {
         String dataResult ="";
         //拼接出URL
         String communityUrl = URL_COMMNUITY+"?weatherStationId="+weatherStationId;
-        //Log.d(TAG,"-----getCommunityBean======"+communityUrl);
+        Log.d(TAG,"-----getCommunityBean======"+communityUrl);
         CommunityBean communityBean = null;
         try{
             dataResult = service(communityUrl,"POST");
-            //Log.d(TAG,"-----getCommunityBean  result======"+dataResult);
+            Log.d(TAG,"-----getCommunityBean  result======"+dataResult);
             Gson gson = new Gson();
             communityBean = gson.fromJson(dataResult, CommunityBean.class);
-            //Log.d(TAG,"====getCommunityBean====communityBean==:"+ communityBean.toString());
+            Log.d(TAG,"====getCommunityBean====communityBean==:"+ communityBean.toString());
         }catch (IOException e) {
             e.printStackTrace();
         }
