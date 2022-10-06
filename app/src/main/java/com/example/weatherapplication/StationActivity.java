@@ -113,7 +113,7 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
             mDatas.clear();
             mDatas.addAll(stationItems);
             adapter.notifyDataSetChanged();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

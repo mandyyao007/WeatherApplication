@@ -351,7 +351,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 //Log.dTAG, "===####======days==:" + days);
                 daysDataItemBean = NetUtil.getDaysData(collectorId, configType, days);
                 Log.d(TAG, "===####======daysDataItemBean==:" + daysDataItemBean);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }else{

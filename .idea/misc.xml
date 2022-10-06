@@ -72,13 +72,15 @@
         <entry key="..\:/AndroidStudioProjects/app/src/main/res/layout/activity_main.xml" value="0.140625" />
         <entry key="..\:/AndroidStudioProjects/app/src/main/res/layout/activity_splash.xml" value="0.1" />
         <entry key="..\:/AndroidStudioProjects/app/src/main/res/layout/activity_station.xml" value="0.16041666666666668" />
+        <entry key="..\:/AndroidStudioProjects/app/src/main/res/layout/community_pop_layout.xml" value="0.2" />
         <entry key="..\:/AndroidStudioProjects/app/src/main/res/layout/fragment_dashboard.xml" value="0.11822916666666666" />
-        <entry key="..\:/AndroidStudioProjects/app/src/main/res/layout/fragment_home.xml" value="0.12135416666666667" />
+        <entry key="..\:/AndroidStudioProjects/app/src/main/res/layout/fragment_home.xml" value="0.144" />
         <entry key="..\:/AndroidStudioProjects/app/src/main/res/layout/fragment_me.xml" value="0.11822916666666666" />
-        <entry key="..\:/AndroidStudioProjects/app/src/main/res/layout/fragment_notifications.xml" value="0.10208333333333333" />
+        <entry key="..\:/AndroidStudioProjects/app/src/main/res/layout/fragment_notifications.xml" value="0.4" />
         <entry key="..\:/AndroidStudioProjects/app/src/main/res/layout/item_community_layout.xml" value="0.2" />
         <entry key="..\:/AndroidStudioProjects/app/src/main/res/layout/item_station_layout.xml" value="0.1" />
         <entry key="..\:/AndroidStudioProjects/app/src/main/res/layout/marker_layout.xml" value="0.16" />
+        <entry key="..\:/AndroidStudioProjects/app/src/main/res/layout/toggle_button.xml" value="0.128" />
         <entry key="..\:/AndroidStudioProjects/app/src/main/res/menu/bottom_nav_menu.xml" value="0.140625" />
       </map>
     </option>

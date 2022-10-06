@@ -46,7 +46,6 @@ import com.example.weatherapplication.buiness.StationFacade;
 import com.example.weatherapplication.databinding.FragmentDashboardBinding;
 import com.example.weatherapplication.util.NetUtil;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -60,17 +59,18 @@ public class DashboardFragment extends Fragment {
     private MapView mMapView = null;
     private BaiduMap mBaiduMap;
     private LocationClient mLocationClient;
-    private String userName,collectorName,collectorId,status;
-    private View pop;
+    private String userName,collectorName,collectorId,status,communityId,communityName;
+    private View popStation,popCommunity;
     ////2022/02/15
     private TextView tvStationName,tvAirTem,tvAirHum,tvSoilTem,tvSoilHum,tvSoilSalt,tvPlantFluid,tvPlantDia,tvPlantRad,
-            valAirTem,valAirHum,valSoilTem,valSoilHum,valSoilSalt,valPlantFluid,valPlantDia,valPlantRad;
+            valAirTem,valAirHum,valSoilTem,valSoilHum,valSoilSalt,valPlantFluid,valPlantDia,valPlantRad,tvCommunityName,txCarbon;
     private ListView detailLv,detailLvLeft,valueLvLeft;
     private String[] mDatas,mValueDatas,mValue,mDatasLeft,mValueDatasLeft; //列表数据源
     private ArrayAdapter detailAdapter,valueAdapter,detailAdapterLeft,valueAdapterLeft;
     private List<LatLng> mLatLnglist;
     private  MapStatusUpdate mapStatusUpdate = null;
     private boolean infoWindowShown = false ;
+    private boolean infoCommunityPopShown = false ;
     private BitmapDescriptor icon,iconClick;
     private Marker lastMarker = null;//定义上次点击的marker
 
@@ -162,38 +162,84 @@ public class DashboardFragment extends Fragment {
         //标志正在拖动
         @Override
         public void onMarkerDrag(Marker marker) {
-            mMapView.addView(pop,createLayoutParams(marker.getPosition()));
+            mMapView.addView(popStation,createLayoutParams());
         }
         //标志开始结束
         @Override
         public void onMarkerDragEnd(Marker marker) {
-            mMapView.addView(pop,createLayoutParams(marker.getPosition()));
+            mMapView.addView(popStation,createLayoutParams());
         }
         //标志开始拖动
         @Override
         public void onMarkerDragStart(Marker marker) {
-            mMapView.addView(pop,createLayoutParams(marker.getPosition()));
+            mMapView.addView(popStation,createLayoutParams());
         }
     };
     BaiduMap.OnMapClickListener mapClickListener = new BaiduMap.OnMapClickListener() {
         @Override
         public void onMapClick(LatLng latLng) {
-            if(pop!=null && pop.isShown() && !infoWindowShown){
-                infoWindowShown = true;
-                pop.setVisibility(View.INVISIBLE);
-                Bundle bundle = lastMarker.getExtraInfo();
-                String status = bundle.getString("status");
-                Log.d(TAG, "---====mapClickListener===mapClickListener--status======"+status);
-                if("1".equals(status)){
-                    icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_location);
-                }else{
-                    icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_location_basic);
-                }
-                lastMarker.setIcon(icon);
-                //lastMarker.setAnimation(null);
-                return;
+            Log.d(TAG, "#############====mapClickListener========="+(popStation!=null));
+            Log.d(TAG, "#############====mapClickListener====infoWindowShown====="+infoWindowShown);
+            if(popStation!=null ){
+                Log.d(TAG, "#############====mapClickListener====pop.isShown()====="+popStation.isShown());
             }
-            if(pop!=null && !pop.isShown() && !infoWindowShown){
+            if(popCommunity!=null){
+                Log.d(TAG, "#############====mapClickListener====popCommunity===="+popCommunity.isShown());
+            }
+            if(popStation!=null && popStation.isShown() && !infoWindowShown){
+                infoWindowShown = true;
+                popStation.setVisibility(View.INVISIBLE);
+                if(lastMarker!=null) {
+                    Bundle bundle = lastMarker.getExtraInfo();
+                    String status = bundle.getString("status");
+                    Log.d(TAG, "---====mapClickListener===mapClickListener--status======"+status);
+                    if("1".equals(status)){
+                        icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_location);
+                    }else{
+                        icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_location_basic);
+                    }
+                    lastMarker.setIcon(icon);
+                    //lastMarker.setAnimation(null);
+                    //return;
+                }
+            }
+            Log.d(TAG, "#############====mapClickListener=====popCommunity===="+(popCommunity!=null));
+            Log.d(TAG, "#############====mapClickListener====infoWindowShown====="+infoWindowShown);
+            if(popCommunity!=null ){
+                Log.d(TAG, "#############====mapClickListener====popCommunity.isShown()====="+popCommunity.isShown());
+            }
+            if((popCommunity==null && !infoCommunityPopShown) ||(popCommunity!=null && !popCommunity.isShown())){//地图中点击群落，pop显示30天固碳价值
+                Log.d(TAG, "---====mapClickListener===show community data======");
+                try {
+                    popCommunity = View.inflate(getActivity(), R.layout.community_pop_layout, null);
+                    communityId = "1";
+                    communityName="群落1";
+                    initCommunityPopView(popCommunity,communityId,communityName);
+                    mMapView.addView(popCommunity, createLayoutParams());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                popCommunity.setVisibility(View.VISIBLE);
+                tvCommunityName.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //将userName和stationId串到StationActity
+                        Intent intent = new Intent(getActivity(), MainActivity.class);
+                        intent.putExtra("communityId", communityId);
+                        intent.putExtra("communityName",communityName);
+                        intent.putExtra("userName", userName);
+                        intent.putExtra("fragment_flag", 3);
+                        Log.d(TAG, "-----communityId======" + communityId+"-----userName======" + userName);
+                        Log.d(TAG, "-----communityName======" + communityName);
+                        startActivity(intent);
+                    }
+                });
+
+            }
+            if(popCommunity!=null && !popCommunity.isShown() && !infoCommunityPopShown){
+                infoCommunityPopShown = false;
+            }
+            if(popStation!=null && !popStation.isShown() && !infoWindowShown){
                 infoWindowShown = false;
             }
         }
@@ -247,23 +293,24 @@ public class DashboardFragment extends Fragment {
             //}
             infoWindowShown = false;
             if("1".equals(id) ||"2".equals(id)||"3".equals(id)||"4".equals(id)){
-                if (pop == null) {
+                if (popStation == null) {
                     try {
-                        pop = View.inflate(getActivity(), R.layout.marker_layout, null);
-                        initPopView(pop,collectorId);
-                        mMapView.addView(pop, createLayoutParams(marker.getPosition()));
+                        popStation = View.inflate(getActivity(), R.layout.marker_layout, null);
+                        initPopView(popStation,collectorId);
+                        mMapView.addView(popStation, createLayoutParams());
                     } catch (Exception e) {
                     e.printStackTrace();
                     }
                 } else {
                     try {
-                        initPopView(pop,collectorId);
-                    } catch (IOException e) {
+                        initPopView(popStation,collectorId);
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    mMapView.updateViewLayout(pop, createLayoutParams(marker.getPosition()));
+                    mMapView.updateViewLayout(popStation, createLayoutParams());
                 }
-                pop.setVisibility(View.VISIBLE);
+                popStation.setVisibility(View.VISIBLE);
+                popCommunity.setVisibility(View.INVISIBLE);
                 try {
                     tvStationName.setText(marker.getTitle());
                 } catch (Exception e) {
@@ -289,21 +336,33 @@ public class DashboardFragment extends Fragment {
                     }
                 });
             }else{
-                if(pop.isShown()){
+                if(popStation.isShown()){
                     if("1".equals(status)){
                         icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_location);
                     }else{
                         icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_location_basic);
                     }
                     marker.setIcon(icon);
-                    pop.setVisibility(View.INVISIBLE);
+                    popStation.setVisibility(View.INVISIBLE);
                 }
             }
             return true;
         }
     };
-
-    private void initPopView(View pop,String collectorId) throws IOException {
+    private void initCommunityPopView(View pop,String communityId,String communityName) throws Exception {
+        StationFacade stationFacade = StationFacade.getInstance();
+        tvCommunityName = (TextView) pop.findViewById(R.id.tv_community_name);
+        tvCommunityName.setText(communityName);
+        txCarbon =  (TextView) pop.findViewById(R.id.tx_carbon);
+        Log.d(TAG,"==================initCommunityPopView========communityId:" + communityId+"========communityName:"+communityName);
+        String tem = stationFacade.getCarbonData(communityId,1);
+        try {
+            txCarbon.setText(tem);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private void initPopView(View pop,String collectorId) throws Exception {
         StationFacade stationFacade = StationFacade.getInstance();
         tvStationName = (TextView) pop.findViewById(R.id.tv_station_name);
         tvAirTem =  (TextView) pop.findViewById(R.id.tx_air_tem);
@@ -329,7 +388,7 @@ public class DashboardFragment extends Fragment {
             //Log.d(TAG,"==================indexAndUnit=====" + indexAndUnit);
             String index = indexAndUnit.split(",")[0];
             String unit = indexAndUnit.split(",")[1];
-           // Log.d(TAG,"======index==========:"+index+"======unit==========:"+unit+"########collectorId======" + collectorId);
+            Log.d(TAG,"======index==========:"+index+"======unit==========:"+unit+"########collectorId======" + collectorId);
             String tem = stationFacade.getNewestData(indexAndUnit,collectorId,1)+" "+unit;
             try {
                 if("空气温度".equals(index) || "AirTC_Avg1".equals(index) ){
@@ -394,7 +453,7 @@ public class DashboardFragment extends Fragment {
     }
 
     //创建布局参数
-    private MapViewLayoutParams createLayoutParams(LatLng position){
+    private MapViewLayoutParams createLayoutParams(){
         MapViewLayoutParams.Builder builder =  new MapViewLayoutParams.Builder();
         builder.layoutMode(MapViewLayoutParams.ELayoutMode.absoluteMode);//mapMode是指定坐标类型为经纬度
         builder.point(new Point(540,700)).width(mMapView.getWidth()).height(700);//设置标志的位置,屏幕坐标
@@ -462,7 +521,7 @@ public class DashboardFragment extends Fragment {
                     i++;
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

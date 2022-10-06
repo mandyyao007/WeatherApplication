@@ -82,18 +82,22 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
     private ArrayList<View> mViewArray = new ArrayList<View>();
     private ViewLeft viewLeft;
     private ViewRight viewRight;
+    private TextView tvCommunityName;
     private String selectedId = "";//select tree or community id
     private String weatherStationName;
+    private String communityName,communityId;
 
     public View onCreateView(@NonNull LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
         notificationsViewModel = new ViewModelProvider(this).get(NotificationsViewModel.class);
         binding = FragmentNotificationsBinding.inflate(inflater, container, false);
         View notificationFragmentView = binding.getRoot();
         initView(notificationFragmentView);
-        initVaule();
-        initListener();
+        if(weatherStationId!=null){
+            initVaule();
+            initListener();
+        }
         try{
-            if(collectorId!= null) {
+            if(communityName!= null) {
                 btSevenDay.setOnClickListener(dayListener);
                 btFifDay.setOnClickListener(dayListener);
                 btThirtyDay.setOnClickListener(dayListener);
@@ -121,11 +125,21 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         collectorName = getActivity().getIntent().getStringExtra("collectorName");
         weatherStationId = getActivity().getIntent().getStringExtra("weatherStationId");
         weatherStationName =  getActivity().getIntent().getStringExtra("weatherStationName");
-        //Log.d(TAG,"=***************==userName==:"+ userName+"=***************==collectorId==:"+ collectorId);
-        //Log.d(TAG,"=***************==stationName==:"+ collectorName+"=***************==weatherStationId==:"+ weatherStationId);
+        communityName = getActivity().getIntent().getStringExtra("communityName");
+        communityId = getActivity().getIntent().getStringExtra("communityId");
+        if(collectorId == null){
+            collectorId = "52";//如果没有选几号点，默认是滨江森林公园1号点
+            weatherStationId = "22";
+            weatherStationName = "上海园林";
+        }
+        Log.d(TAG,"=***************==userName==:"+ userName+"=***************==collectorId==:"+ collectorId);
+        Log.d(TAG,"=***************==stationName==:"+ collectorName+"=***************==weatherStationId==:"+ weatherStationId);
         Log.d(TAG,"=***************==weatherStationName======:"+ weatherStationName);
+        Log.d(TAG,"=***************==weatherStationId======:"+ weatherStationId);
+        Log.d(TAG,"=***************==communityName======:"+ communityName);
+        Log.d(TAG,"=***************==communityId======:"+ communityId);
         tvStation = notificationFragmentView.findViewById(R.id.tv_station);
-        tvStation.setText(collectorName);
+        tvStation.setText(communityName);
         ivAdd =     notificationFragmentView.findViewById(R.id.iv_station);
         barChart1 = notificationFragmentView.findViewById(R.id.barchart_1);
         barChart2 = notificationFragmentView.findViewById(R.id.barchart_2);
@@ -234,20 +248,24 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         btThirtyDay = notificationFragmentView.findViewById(R.id.btn_thirty_day);
         btNintyDay = notificationFragmentView.findViewById(R.id.btn_ninty_day);
         expandTabView = notificationFragmentView.findViewById(R.id.expandtab_view);
+        tvCommunityName = notificationFragmentView.findViewById(R.id.tv_community_name);
         viewLeft = new ViewLeft(getActivity(),"tree",collectorId);
-        viewRight = new ViewRight(getActivity(),"community",weatherStationId);
+        //viewRight = new ViewRight(getActivity(),"community",weatherStationId);
     }
     private void initVaule() {
         mViewArray.add(viewLeft);
-        mViewArray.add(viewRight);
+        //mViewArray.add(viewRight);
         ArrayList<String> mTextArray = new ArrayList<String>();
         mTextArray.add("植株");
-        mTextArray.add("群落");
+        //mTextArray.add("群落");
         expandTabView.setValue(mTextArray, mViewArray);
         Log.d(TAG,"=***************==viewLeft.getShowText()==:"+ viewLeft.getShowText());
-        Log.d(TAG,"=***************==viewRight.getShowText()==:"+ viewRight.getShowText());
+        //Log.d(TAG,"=***************==viewRight.getShowText()==:"+ viewRight.getShowText());
         expandTabView.setTitle(viewLeft.getShowText(), 2);
-        expandTabView.setTitle(viewRight.getShowText(), 2);
+        //expandTabView.setTitle(viewRight.getShowText(), 2);
+        tvCommunityName.setText(communityName);
+        tvCommunityName.setTextSize(20);
+        type="community";
     }
     private void initListener() {
         viewLeft.setOnSelectListener(new ViewLeft.OnSelectListener() {
@@ -264,7 +282,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 onRefresh(viewLeft, showText);
             }
         });
-        viewRight.setOnSelectListener(new ViewRight.OnSelectListener() {
+        /*viewRight.setOnSelectListener(new ViewRight.OnSelectListener() {
             @Override
             public void getValue(String distance, String showText) throws IOException {
                 tvChartname1.setText("");
@@ -377,7 +395,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 }
                 onRefresh(viewRight, showText);
             }
-        });
+        });*/
     }
     private void onRefresh(View view, String showText) {
         expandTabView.onPressBack();
@@ -401,8 +419,8 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         Intent intent = null;
         switch (v.getId()) {
             case R.id.iv_station:
-                intent = new Intent(getActivity(), CommunityActivity.class);
                 Log.d(TAG,"=***************=iv_station=========");
+                intent = new Intent(getActivity(), CommunityActivity.class);
                 intent.putExtra("userName",userName);
                 intent.putExtra("weatherStationId",weatherStationId);
                 intent.putExtra("page","notification");
@@ -446,22 +464,26 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                     setBtnEnable(btNintyDay,"days");
                     break;
             }
+            if("community".equals(type)){
+                selectedId = communityId;
+            }
             Log.d(TAG, "====dayListener=====days===========:"+days+"=========selectedId========="+selectedId);
             Log.d(TAG, "====dayListener=====type===========:"+type);
             if("".equals(selectedId)){
                 String message = "";
                 if("tree".equals(type)){
                     message = "请先选择植株！";
-                }else if("community".equals(type)){
-                    message = "请先选择群落！";
-                }else{
-                    message = "请先选择植株或群落！";
-                }
+                }//else if("community".equals(type)){
+                 //   message = "请先选择群落！";
+               // }else{
+                 //   message = "请先选择植株或群落！";
+                //}
                 Toast toastCenter = Toast.makeText(getActivity().getApplicationContext(), message,Toast.LENGTH_SHORT);
                 toastCenter.setGravity(Gravity.CENTER,0,0);
                 toastCenter.show();
             }else{
                 try {
+
                     if(days == 7){
                         drawChart(selectedId,days,type);
                     }else{
@@ -989,7 +1011,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                             }
                         }
                         Log.d(TAG, "==drawChart=====ConfigName=============:" + treeAndCommunityDataItemBean.getConfigName());
-                        tvChartname.setText(treeAndCommunityDataItemBean.getConfigName());
+                        tvChartname.setText(treeAndCommunityDataItemBean.getConfigName()+"("+treeAndCommunityDataItemBean.getTreeConfigId()+")");//增加单位显示
                         tvChartname.setVisibility(View.VISIBLE);
                         barChart.zoom(0, 1f, 0, 0);
                         barChart.zoom(1 / ratio, 1f, 0, 0);

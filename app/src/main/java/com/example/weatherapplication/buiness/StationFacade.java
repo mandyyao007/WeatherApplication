@@ -8,7 +8,6 @@ import com.example.weatherapplication.bean.IndexItemsBean;
 import com.example.weatherapplication.bean.ReportBean;
 import com.example.weatherapplication.util.NetUtil;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,7 +32,7 @@ public class StationFacade {
                 //Log.d(TAG,"===indexMap==:"+ indexMap.toString());
                 return  indexMap;
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -55,7 +54,7 @@ public class StationFacade {
         return indexMap;
     }
 
-    private String[] getIndexOfStation(IndexBean indexbean) throws IOException {
+    private String[] getIndexOfStation(IndexBean indexbean) throws Exception {
         List<IndexItemsBean> indexItems = indexbean.getmIndexItemBeans();
         int count = indexbean.getTotal();
         String[] indexs = new String[count];
@@ -77,7 +76,7 @@ public class StationFacade {
         }
         return indexs;
     }
-    public String getNewestData(String selectConfigName, String collectorId, int count) throws IOException {
+    public String getNewestData(String selectConfigName, String collectorId, int count) throws Exception {
         Map indexMap = initIndex(collectorId);
         String newestData = "";
         //Log.d(TAG,"======indexMap =====:"+indexMap);
@@ -99,5 +98,25 @@ public class StationFacade {
             }
         }
         return newestData;
+    }
+
+    public String getCarbonData(String communityId, int count) throws Exception {
+        String carbonData = "";
+        Log.d(TAG,"======communityId =====:"+communityId);
+        ReportBean newestRrpotData = NetUtil.getCarbonData(communityId,1);
+        if(newestRrpotData != null  && newestRrpotData.getmDayReportBeans() != null) {
+            List<DayReportBean> dayReports = newestRrpotData.getmDayReportBeans();
+            if(dayReports == null){
+                return null;
+            }
+            Iterator iter = dayReports.iterator();
+            while(iter.hasNext()){
+                DayReportBean dayReportBean = (DayReportBean)iter.next();
+                //Log.d(TAG, "===dayReportBean.getCol1()==:" + dayReportBean.getCol1());
+                carbonData = dayReportBean.getCol1();
+                Log.d(TAG, "===carbonData==:" + carbonData);
+            }
+        }
+        return carbonData;
     }
 }

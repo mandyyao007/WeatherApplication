@@ -1,6 +1,7 @@
 package com.example.weatherapplication.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +16,10 @@ import java.util.List;
 public class StationAdapter extends BaseAdapter {
     Context context;
     List<CollectorItemBean> mDatas;
+    private static final String TAG = "StationAdapter";
 
     public StationAdapter(Context context, List<CollectorItemBean> mDatas) {
+        Log.d(TAG, "==========StationAdapter=============:" +mDatas);
         this.context = context;
         this.mDatas = mDatas;
     }

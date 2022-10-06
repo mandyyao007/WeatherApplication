@@ -61,22 +61,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         Intent intent = null;
       if(!"".equals(userName) && !"".equals(password)){
-           try {
-                String status = NetUtil.getloginInfo(userName,password);
-                //Log.d("fan","====status==:"+status);
-                if("S".equals(status)){
-                    ToastUtil.showMessage(LoginActivity.this,success);
-                    intent = new Intent(LoginActivity.this,MainActivity.class);
-                    intent.putExtra("userName",userName);
-                    startActivity(intent);
-                }else{
-                    intent = null;
-                   //toast 居中显示
-                    ToastUtil.showMessage(LoginActivity.this,fail);
-               }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+          String status = "";
+          try {
+              status = NetUtil.getloginInfo(userName, password);
+          } catch (Exception e) {
+              e.printStackTrace();
+          }
+          Log.d("fan","====status==:"+status);
+          if("S".equals(status)){
+              ToastUtil.showMessage(LoginActivity.this,success);
+              intent = new Intent(LoginActivity.this,MainActivity.class);
+              intent.putExtra("userName",userName);
+              startActivity(intent);
+          }else if("E".equals(status)){
+              intent = null;
+              //toast 居中显示
+              ToastUtil.showMessage(LoginActivity.this,fail);
+          }else{
+              ToastUtil.showMessage(LoginActivity.this,"网络连接错误，请联系管理员！");
+          }
         }else{
             //弹出登录失败
             intent = null;

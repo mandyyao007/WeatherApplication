@@ -32,8 +32,9 @@ public class CommunityActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_station);
+        setContentView(R.layout.activity_community);
         StatusBarUtils.setColor(this, getResources().getColor(R.color.stationTop));
+        //View view = this.getLayoutInflater().inflate(R.layout.activity_community,null);
         if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
@@ -51,6 +52,7 @@ public class CommunityActivity extends AppCompatActivity implements View.OnClick
         Log.d(TAG,"======weatherStationId==:"+ weatherStationId);
         Log.d(TAG,"======page==:"+ page);
         Log.d(TAG,"======weatherStationName==:"+ weatherStationName);
+        //initView(view);
         initView();
         initAdapter();
         communityName.setText(weatherStationName);
@@ -61,14 +63,15 @@ public class CommunityActivity extends AppCompatActivity implements View.OnClick
     private void initAdapter() {
         mDatas = new ArrayList<>();
         // 设置适配器
+        Log.d(TAG, "==========initAdapter=============:" +mDatas);
         adapter = new CommunityAdapter(this, mDatas);
         communityLv.setAdapter(adapter);
     }
 
     private void initView() {
-        communityLv = (ListView) findViewById(R.id.community_lv);
-        backIv = (ImageView)findViewById(R.id.community_iv_back);
-        communityName = (TextView)findViewById(R.id.tv_community_name);
+        communityLv = (ListView)findViewById(R.id.community_lv);
+        backIv = findViewById(R.id.community_iv_back);
+        communityName = findViewById(R.id.tv_community_name);
     }
 
     AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
@@ -98,14 +101,17 @@ public class CommunityActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "==========1111111111111111=============:" );
         userName = this.getIntent().getStringExtra("userName");
         weatherStationId = this.getIntent().getStringExtra("weatherStationId");
         page = getIntent().getStringExtra("page");
+        Log.d(TAG, "=========22222222222222222222=============:" );
         List<CommunityItemBean> communityItemBeans = new ArrayList<>();
         try {
             if(weatherStationId == null){
                 weatherStationId ="22";
             }
+            Log.d(TAG, "==========33333333333333333333333=============:" );
             CommunityBean communityBean = NetUtil.getCommunityBean(weatherStationId);
             Log.d(TAG, "==========communityBean=============:" + communityBean);
             if(communityBean != null  && communityBean.getmItemBeans()!= null){
