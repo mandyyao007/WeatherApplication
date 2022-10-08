@@ -8,7 +8,7 @@ public class TreeAndCommunityDataBean {
         @SerializedName("total")
         private int total;
         @SerializedName("rows")
-        private List<TreeAndCommunityDataItemBean> mTreeAndCommunityDataItemBeanList;
+        private List<TreeAndCommunityRowDataBean> mTreeAndCommunityRowDataBeanList;
 
     public int getTotal() {
         return total;
@@ -18,19 +18,19 @@ public class TreeAndCommunityDataBean {
         this.total = total;
     }
 
-    public List<TreeAndCommunityDataItemBean> getmTreeAndCommunityDataItemBeanList() {
-        return mTreeAndCommunityDataItemBeanList;
+    public List<TreeAndCommunityRowDataBean> getmTreeAndCommunityRowDataBeanList() {
+        return mTreeAndCommunityRowDataBeanList;
     }
 
-    public void setmTreeAndCommunityDataItemBeanList(List<TreeAndCommunityDataItemBean> mTreeAndCommunityDataItemBeanList) {
-        this.mTreeAndCommunityDataItemBeanList = mTreeAndCommunityDataItemBeanList;
+    public void setmTreeAndCommunityRowDataBeanList(List<TreeAndCommunityRowDataBean> mTreeAndCommunityRowDataBeanList) {
+        this.mTreeAndCommunityRowDataBeanList = mTreeAndCommunityRowDataBeanList;
     }
 
     @Override
     public String toString() {
         return "TreeAndCommunityDataBean{" +
                 "total=" + total +
-                ", mTreeAndCommunityDataItemBeanList=" + mTreeAndCommunityDataItemBeanList +
+                ", mTreeAndCommunityRowDataBeanList=" + mTreeAndCommunityRowDataBeanList +
                 '}';
     }
 }

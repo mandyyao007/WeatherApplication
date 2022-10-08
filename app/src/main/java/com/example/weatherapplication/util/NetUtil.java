@@ -17,7 +17,6 @@ import com.example.weatherapplication.bean.WeatherStationItemBean;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -95,9 +94,6 @@ public class NetUtil {
             LoginBean loginBean = gson.fromJson(result, LoginBean.class);
             Log.d(TAG,"====解析后的loginBean==:"+loginBean.toString());
             status =  loginBean.getStatus();
-        }catch (IOException e) {
-            Log.d(TAG,"====IOException==:"+e.getMessage());
-            e.printStackTrace();
         }catch(Exception e){
             Log.d(TAG,"====Exception==:"+e.getMessage());
             e.printStackTrace();
@@ -110,7 +106,7 @@ public class NetUtil {
             WeatherStationBean weatherStationBean = getWearherStationInfo(userName);
             weatherStationItem = weatherStationBean.getmItemBeans();
            // Log.d(TAG,"-----weatherStationItem======"+weatherStationItem);
-        }catch (IOException e) {
+        }catch (Exception e) {
             e.printStackTrace();
         }
         return weatherStationItem;
@@ -127,7 +123,7 @@ public class NetUtil {
             Gson gson = new Gson();
             weatherStationBean = gson.fromJson(result, WeatherStationBean.class);
            // Log.d(TAG,"====weatherStationBean==:"+weatherStationBean.toString());
-        }catch (IOException e) {
+        }catch (Exception e) {
             e.printStackTrace();
         }
         return weatherStationBean;
@@ -142,7 +138,7 @@ public class NetUtil {
             result = service(stationUrl,"POST");
             Gson gson = new Gson();
             collectorBean = gson.fromJson(result, CollectorBean.class);
-        }catch (IOException e) {
+        }catch (Exception e) {
             e.printStackTrace();
         }
         return collectorBean;
@@ -170,7 +166,7 @@ public class NetUtil {
             //Log.d(TAG,"-----indexUrl===result==="+result);
             Gson gson = new Gson();
             indexBean = gson.fromJson(result, IndexBean.class);
-        }catch (IOException e) {
+        }catch (Exception e) {
             e.printStackTrace();
         }
         return indexBean;
@@ -186,7 +182,7 @@ public class NetUtil {
             Gson gson = new Gson();
             reportBean = gson.fromJson(result, ReportBean.class);
            // Log.d(TAG,"====解析后的reportBean==:"+reportBean.toString());
-        }catch (IOException e) {
+        }catch (Exception e) {
             e.printStackTrace();
         }
         return reportBean;
@@ -199,7 +195,7 @@ public class NetUtil {
        // Log.d(TAG,"-----reportUrl======"+reportUrl);
         try{
             reportResult = service(reportUrl,"POST");
-        }catch (IOException e) {
+        }catch (Exception e) {
             e.printStackTrace();
         }
         return reportResult;
@@ -212,7 +208,7 @@ public class NetUtil {
             Gson gson = new Gson();
             reportBean = gson.fromJson(reportResult, ReportBean.class);
             //Log.d(TAG,"====解析后的reportBean==:"+reportBean.toString());
-        }catch (IOException e) {
+        }catch (Exception e) {
             e.printStackTrace();
         }
         return reportBean;
@@ -230,7 +226,7 @@ public class NetUtil {
             Gson gson = new Gson();
             reportBean = gson.fromJson(dataResult, ReportBean.class);
            // Log.d(TAG,"====getNewestData====解析后的reportBean==:"+reportBean.toString());
-        }catch (IOException e) {
+        }catch (Exception e) {
             e.printStackTrace();
         }
         return reportBean;
@@ -247,7 +243,7 @@ public class NetUtil {
             Gson gson = new Gson();
             treeBean = gson.fromJson(dataResult, TreeBean.class);
             Log.d(TAG,"====getTreeBean====解析后的treeBean==:"+ treeBean.toString());
-        }catch (IOException e) {
+        }catch (Exception e) {
             e.printStackTrace();
         }
         return treeBean;
@@ -259,12 +255,16 @@ public class NetUtil {
         Log.d(TAG,"-----getTreeDataBean====="+treeDataUrl);
         TreeAndCommunityDataBean treeDataBean = null;
         try{
-            dataResult = service(treeDataUrl,"POST");
-            //Log.d(TAG,"-----getTreeDataBean  result======"+dataResult);
+            //dataResult = service(treeDataUrl,"POST");
+            dataResult = "{\"total\":3,\"rows\":[{\"mainConfigId\":\"61\",\"treeDataList\":[{\"configName\":\"树株1水文调节\",\"dataList\":[{\"acquisitionTime\":\"2022-10-06 00:00:00\",\"val\":\"21\"},{\"acquisitionTime\":\"2022-10-05 00:00:00\",\"val\":\"24\"},{\"acquisitionTime\":\"2022-10-04 00:00:00\",\"val\":\"38\"},{\"acquisitionTime\":\"2022-10-03 00:00:00\",\"val\":\"45\"},{\"acquisitionTime\":\"2022-10-02 00:00:00\",\"val\":\"26\"},{\"acquisitionTime\":\"2022-10-01 00:00:00\",\"val\":\"32\"}],\"groupId\":\"62\",\"mainConfigId\":\"61\",\"treeConfigId\":\"61\",\"unit\":\"ml\"},\n" +
+                    "{\"configName\":\"树株1水文调节价值\",\"dataList\":[{\"acquisitionTime\":\"2022-10-06 00:00:00\",\"val\":\"111\"},{\"acquisitionTime\":\"2022-10-05 00:00:00\",\"val\":\"213\"},{\"acquisitionTime\":\"2022-10-04 00:00:00\",\"val\":\"-\"},{\"acquisitionTime\":\"2022-10-03 00:00:00\",\"val\":\"452\"},{\"acquisitionTime\":\"2022-10-02 00:00:00\",\"val\":\"432\"},{\"acquisitionTime\":\"2022-10-01 00:00:00\",\"val\":\"145\"}],\"groupId\":\"61\",\"mainConfigId\":\"61\",\"treeConfigId\":\"62\",\"unit\":\"yuan\"}\n" +
+                    "]},{\"mainConfigId\":\"67\",\"treeDataList\":[{\"configName\":\"树株1滞纳PM10\",\"dataList\":[{\"acquisitionTime\":\"2022-10-06 00:00:00\",\"val\":\"3\"},{\"acquisitionTime\":\"2022-10-05 00:00:00\",\"val\":\"14\"},{\"acquisitionTime\":\"2022-10-04 00:00:00\",\"val\":\"25\"},{\"acquisitionTime\":\"2022-10-03 00:00:00\",\"val\":\"17\"},{\"acquisitionTime\":\"2022-10-02 00:00:00\",\"val\":\"14\"},{\"acquisitionTime\":\"2022-10-01 00:00:00\",\"val\":\"4\"}],\"groupId\":\"71\",\"mainConfigId\":\"67\",\"treeConfigId\":\"67\",\"unit\":\"g-m-2\"},\n"+
+                    "{\"configName\":\"树株1滞纳PM10价值\",\"dataList\":[{\"acquisitionTime\":\"2022-10-06 00:00:00\",\"val\":\"1000\"},{\"acquisitionTime\":\"2022-10-05 00:00:00\",\"val\":\"1565\"},{\"acquisitionTime\":\"2022-10-04 00:00:00\",\"val\":\"3214\"},{\"acquisitionTime\":\"2022-10-03 00:00:00\",\"val\":\"1347\"},{\"acquisitionTime\":\"2022-10-02 00:00:00\",\"val\":\"2367\"},{\"acquisitionTime\":\"2022-10-01 00:00:00\",\"val\":\"2874\"}],\"groupId\":\"67\",\"mainConfigId\":\"67\",\"treeConfigId\":\"71\",\"unit\":\"yuan\"}]}]}";
+            Log.d(TAG,"-----getTreeDataBean  result======"+dataResult);
             Gson gson = new Gson();
             treeDataBean = gson.fromJson(dataResult, TreeAndCommunityDataBean.class);
-            //Log.d(TAG,"====getTreeDataBean====解析后的treeDataBean==:"+ treeDataBean.toString());
-        }catch (IOException e) {
+            Log.d(TAG,"====getTreeDataBean====解析后的treeDataBean==:"+ treeDataBean.toString());
+        }catch (Exception e) {
             e.printStackTrace();
         }
         return treeDataBean;
@@ -287,7 +287,7 @@ public class NetUtil {
             }else{
                 return null;
             }
-        }catch (IOException e) {
+        }catch (Exception e) {
             e.printStackTrace();
         }
        // Log.d(TAG,"====getDaysData====daysDataItemBeans==:"+daysDataItemBeans);
@@ -306,7 +306,7 @@ public class NetUtil {
             Gson gson = new Gson();
             communityBean = gson.fromJson(dataResult, CommunityBean.class);
             Log.d(TAG,"====getCommunityBean====communityBean==:"+ communityBean.toString());
-        }catch (IOException e) {
+        }catch (Exception e) {
             e.printStackTrace();
         }
         return communityBean;
@@ -324,7 +324,7 @@ public class NetUtil {
             Gson gson = new Gson();
             communityDataBean = gson.fromJson(dataResult, TreeAndCommunityDataBean.class);
             //Log.d(TAG,"====getCommunityDataBean====解析后的communityDataBean==:"+ communityDataBean.toString());
-        }catch (IOException e) {
+        }catch (Exception e) {
             e.printStackTrace();
         }
         return communityDataBean;
@@ -341,7 +341,7 @@ public class NetUtil {
             Gson gson = new Gson();
             reportBean = gson.fromJson(dataResult, ReportBean.class);
             // Log.d(TAG,"====getNewestData====解析后的reportBean==:"+reportBean.toString());
-        }catch (IOException e) {
+        }catch (Exception e) {
             e.printStackTrace();
         }
         return reportBean;

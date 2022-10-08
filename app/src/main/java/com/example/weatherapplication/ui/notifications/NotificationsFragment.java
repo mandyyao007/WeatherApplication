@@ -27,12 +27,14 @@ import com.example.weatherapplication.StationActivity;
 import com.example.weatherapplication.bean.TreeAndCommunityDataBean;
 import com.example.weatherapplication.bean.TreeAndCommunityDataItemBean;
 import com.example.weatherapplication.bean.TreeAndCommunityDataItemDetailBean;
+import com.example.weatherapplication.bean.TreeAndCommunityRowDataBean;
 import com.example.weatherapplication.databinding.FragmentNotificationsBinding;
 import com.example.weatherapplication.util.NetUtil;
 import com.example.weatherapplication.view.ExpandTabView;
 import com.example.weatherapplication.view.ViewLeft;
 import com.example.weatherapplication.view.ViewRight;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -40,6 +42,10 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.CombinedData;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 
 import java.io.IOException;
@@ -57,16 +63,11 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
     private ImageView ivAdd;
     private TextView tvStation,tvChartname1,tvChartname2,tvChartname3,tvChartname4,tvChartname5,tvChartname6,tvChartname7,tvChartname8,
             tvChartname9,tvChartname10,tvChartname11,tvChartname12,tvChartname13,tvChartname14,tvChartname15,tvChartname16,tvChartname17,
-            tvChartname18,tvChartname19,tvChartname20,tvChartname21,tvChartname22,tvChartname23,tvChartname24,tvChartname25,tvChartname26,
-            tvChartname27,tvChartname28,tvChartname29,tvChartname30,tvChartname31,tvChartname32,tvChartname33,tvChartname34,tvChartname35,
-            tvChartname36,tvChartname37,tvChartname38,tvChartname39,tvChartname40,tvChartname41,tvChartname42,tvChartname43,tvChartname44,
-            tvChartname45,tvChartname46,tvChartname47,tvChartname48,tvChartname49,tvChartname50,tvChartname = null;
+            tvChartname18,tvChartname19,tvChartname20,tvChartname = null;
     private String  userName,collectorId,collectorName,weatherStationId;
-    private BarChart barChart1,barChart2,barChart3,barChart4,barChart5,barChart6,barChart7,barChart8,barChart9,barChart10,barChart11,barChart12,
-            barChart13,barChart14,barChart15,barChart16,barChart17,barChart18,barChart19,barChart20,barChart21,barChart22,barChart23,barChart24,
-            barChart25,barChart26,barChart27,barChart28,barChart29,barChart30,barChart31,barChart32,barChart33,barChart34,barChart35,barChart36,
-            barChart37,barChart38,barChart39,barChart40,barChart41,barChart42,barChart43,barChart44,barChart45,barChart46,barChart47,barChart48,
-            barChart49,barChart50,barChart = null;
+    private CombinedChart combinedChart1,combinedChart2,combinedChart3,combinedChart4,combinedChart5,
+            combinedChart6,combinedChart7,combinedChart8,combinedChart9,combinedChart10,combinedChart11,combinedChart12,
+            combinedChart13,combinedChart14,combinedChart15,combinedChart16,combinedChart17,combinedChart18,combinedChart19,combinedChart20,combinedChart = null;
     private Button btSevenDay,btFifDay, btThirtyDay,btNintyDay;
     private ScrollView scrollView;
     private String type = "";//tree or commnuity
@@ -86,18 +87,17 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
     private String selectedId = "";//select tree or community id
     private String weatherStationName;
     private String communityName,communityId;
+    private StringBuffer chatName = new StringBuffer();
 
     public View onCreateView(@NonNull LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
         notificationsViewModel = new ViewModelProvider(this).get(NotificationsViewModel.class);
         binding = FragmentNotificationsBinding.inflate(inflater, container, false);
         View notificationFragmentView = binding.getRoot();
         initView(notificationFragmentView);
-        if(weatherStationId!=null){
-            initVaule();
-            initListener();
-        }
         try{
             if(communityName!= null) {
+                initVaule();
+                initListener();
                 btSevenDay.setOnClickListener(dayListener);
                 btFifDay.setOnClickListener(dayListener);
                 btThirtyDay.setOnClickListener(dayListener);
@@ -109,11 +109,27 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 btNintyDay.setVisibility(View.INVISIBLE);
             }
             ivAdd.setOnClickListener(this);
-            barChart1.setNoDataText("");//无数据时显示的文字
-            barChart2.setNoDataText("");
-            barChart3.setNoDataText("");
-            barChart4.setNoDataText("");
-            barChart5.setNoDataText("");
+            combinedChart1.setNoDataText("");//无数据时显示的文字
+            combinedChart2.setNoDataText("");
+            combinedChart3.setNoDataText("");
+            combinedChart4.setNoDataText("");
+            combinedChart5.setNoDataText("");
+            combinedChart6.setNoDataText("");
+            combinedChart7.setNoDataText("");
+            combinedChart8.setNoDataText("");
+            combinedChart9.setNoDataText("");
+            combinedChart10.setNoDataText("");
+            combinedChart11.setNoDataText("");
+            combinedChart12.setNoDataText("");
+            combinedChart13.setNoDataText("");
+            combinedChart14.setNoDataText("");
+            combinedChart15.setNoDataText("");
+            combinedChart16.setNoDataText("");
+            combinedChart17.setNoDataText("");
+            combinedChart18.setNoDataText("");
+            combinedChart19.setNoDataText("");
+            combinedChart20.setNoDataText("");
+
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -140,57 +156,27 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         Log.d(TAG,"=***************==communityId======:"+ communityId);
         tvStation = notificationFragmentView.findViewById(R.id.tv_station);
         tvStation.setText(communityName);
-        ivAdd =     notificationFragmentView.findViewById(R.id.iv_station);
-        barChart1 = notificationFragmentView.findViewById(R.id.barchart_1);
-        barChart2 = notificationFragmentView.findViewById(R.id.barchart_2);
-        barChart3 = notificationFragmentView.findViewById(R.id.barchart_3);
-        barChart4 = notificationFragmentView.findViewById(R.id.barchart_4);
-        barChart5 = notificationFragmentView.findViewById(R.id.barchart_5);
-        barChart6 = notificationFragmentView.findViewById(R.id.barchart_6);
-        barChart7 = notificationFragmentView.findViewById(R.id.barchart_7);
-        barChart8 = notificationFragmentView.findViewById(R.id.barchart_8);
-        barChart9 = notificationFragmentView.findViewById(R.id.barchart_9);
-        barChart10 = notificationFragmentView.findViewById(R.id.barchart_10);
-        barChart11 = notificationFragmentView.findViewById(R.id.barchart_11);
-        barChart12 = notificationFragmentView.findViewById(R.id.barchart_12);
-        barChart13 = notificationFragmentView.findViewById(R.id.barchart_13);
-        barChart14 = notificationFragmentView.findViewById(R.id.barchart_14);
-        barChart15 = notificationFragmentView.findViewById(R.id.barchart_15);
-        barChart16 = notificationFragmentView.findViewById(R.id.barchart_16);
-        barChart17 = notificationFragmentView.findViewById(R.id.barchart_17);
-        barChart18 = notificationFragmentView.findViewById(R.id.barchart_18);
-        barChart19 = notificationFragmentView.findViewById(R.id.barchart_19);
-        barChart20 = notificationFragmentView.findViewById(R.id.barchart_20);
-        barChart21 = notificationFragmentView.findViewById(R.id.barchart_21);
-        barChart22 = notificationFragmentView.findViewById(R.id.barchart_22);
-        barChart23 = notificationFragmentView.findViewById(R.id.barchart_23);
-        barChart24 = notificationFragmentView.findViewById(R.id.barchart_24);
-        barChart25 = notificationFragmentView.findViewById(R.id.barchart_25);
-        barChart26 = notificationFragmentView.findViewById(R.id.barchart_26);
-        barChart27 = notificationFragmentView.findViewById(R.id.barchart_27);
-        barChart28 = notificationFragmentView.findViewById(R.id.barchart_28);
-        barChart29 = notificationFragmentView.findViewById(R.id.barchart_29);
-        barChart30 = notificationFragmentView.findViewById(R.id.barchart_30);
-        barChart31 = notificationFragmentView.findViewById(R.id.barchart_31);
-        barChart32 = notificationFragmentView.findViewById(R.id.barchart_32);
-        barChart33 = notificationFragmentView.findViewById(R.id.barchart_33);
-        barChart34 = notificationFragmentView.findViewById(R.id.barchart_34);
-        barChart35 = notificationFragmentView.findViewById(R.id.barchart_35);
-        barChart36 = notificationFragmentView.findViewById(R.id.barchart_36);
-        barChart37 = notificationFragmentView.findViewById(R.id.barchart_37);
-        barChart38 = notificationFragmentView.findViewById(R.id.barchart_38);
-        barChart39 = notificationFragmentView.findViewById(R.id.barchart_39);
-        barChart40 = notificationFragmentView.findViewById(R.id.barchart_40);
-        barChart41 = notificationFragmentView.findViewById(R.id.barchart_41);
-        barChart42 = notificationFragmentView.findViewById(R.id.barchart_42);
-        barChart43 = notificationFragmentView.findViewById(R.id.barchart_43);
-        barChart44 = notificationFragmentView.findViewById(R.id.barchart_44);
-        barChart45 = notificationFragmentView.findViewById(R.id.barchart_45);
-        barChart46 = notificationFragmentView.findViewById(R.id.barchart_46);
-        barChart47 = notificationFragmentView.findViewById(R.id.barchart_47);
-        barChart48 = notificationFragmentView.findViewById(R.id.barchart_48);
-        barChart49 = notificationFragmentView.findViewById(R.id.barchart_49);
-        barChart50 = notificationFragmentView.findViewById(R.id.barchart_50);
+        ivAdd = notificationFragmentView.findViewById(R.id.iv_station);
+        combinedChart1 = notificationFragmentView.findViewById(R.id.combinedChart_1);
+        combinedChart2 = notificationFragmentView.findViewById(R.id.combinedChart_2);
+        combinedChart3 = notificationFragmentView.findViewById(R.id.combinedChart_3);
+        combinedChart4 = notificationFragmentView.findViewById(R.id.combinedChart_4);
+        combinedChart5 = notificationFragmentView.findViewById(R.id.combinedChart_5);
+        combinedChart6 = notificationFragmentView.findViewById(R.id.combinedChart_6);
+        combinedChart7 = notificationFragmentView.findViewById(R.id.combinedChart_7);
+        combinedChart8 = notificationFragmentView.findViewById(R.id.combinedChart_8);
+        combinedChart9 = notificationFragmentView.findViewById(R.id.combinedChart_9);
+        combinedChart10 = notificationFragmentView.findViewById(R.id.combinedChart_10);
+        combinedChart11 = notificationFragmentView.findViewById(R.id.combinedChart_11);
+        combinedChart12 = notificationFragmentView.findViewById(R.id.combinedChart_12);
+        combinedChart13 = notificationFragmentView.findViewById(R.id.combinedChart_13);
+        combinedChart14 = notificationFragmentView.findViewById(R.id.combinedChart_14);
+        combinedChart15 = notificationFragmentView.findViewById(R.id.combinedChart_15);
+        combinedChart16 = notificationFragmentView.findViewById(R.id.combinedChart_16);
+        combinedChart17 = notificationFragmentView.findViewById(R.id.combinedChart_17);
+        combinedChart18 = notificationFragmentView.findViewById(R.id.combinedChart_18);
+        combinedChart19 = notificationFragmentView.findViewById(R.id.combinedChart_19);
+        combinedChart20 = notificationFragmentView.findViewById(R.id.combinedChart_20);
         tvChartname1 = notificationFragmentView.findViewById(R.id.chartname_tv_1);
         tvChartname2 = notificationFragmentView.findViewById(R.id.chartname_tv_2);
         tvChartname3 = notificationFragmentView.findViewById(R.id.chartname_tv_3);
@@ -211,37 +197,6 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         tvChartname18 = notificationFragmentView.findViewById(R.id.chartname_tv_18);
         tvChartname19 = notificationFragmentView.findViewById(R.id.chartname_tv_19);
         tvChartname20 = notificationFragmentView.findViewById(R.id.chartname_tv_20);
-        tvChartname21 = notificationFragmentView.findViewById(R.id.chartname_tv_21);
-        tvChartname22 = notificationFragmentView.findViewById(R.id.chartname_tv_22);
-        tvChartname23 = notificationFragmentView.findViewById(R.id.chartname_tv_23);
-        tvChartname24 = notificationFragmentView.findViewById(R.id.chartname_tv_24);
-        tvChartname25 = notificationFragmentView.findViewById(R.id.chartname_tv_25);
-        tvChartname26 = notificationFragmentView.findViewById(R.id.chartname_tv_26);
-        tvChartname27 = notificationFragmentView.findViewById(R.id.chartname_tv_27);
-        tvChartname28 = notificationFragmentView.findViewById(R.id.chartname_tv_28);
-        tvChartname29 = notificationFragmentView.findViewById(R.id.chartname_tv_29);
-        tvChartname30 = notificationFragmentView.findViewById(R.id.chartname_tv_30);
-        tvChartname31 = notificationFragmentView.findViewById(R.id.chartname_tv_31);
-        tvChartname32 = notificationFragmentView.findViewById(R.id.chartname_tv_32);
-        tvChartname33 = notificationFragmentView.findViewById(R.id.chartname_tv_33);
-        tvChartname34 = notificationFragmentView.findViewById(R.id.chartname_tv_34);
-        tvChartname35 = notificationFragmentView.findViewById(R.id.chartname_tv_35);
-        tvChartname36 = notificationFragmentView.findViewById(R.id.chartname_tv_36);
-        tvChartname37 = notificationFragmentView.findViewById(R.id.chartname_tv_37);
-        tvChartname38 = notificationFragmentView.findViewById(R.id.chartname_tv_38);
-        tvChartname39 = notificationFragmentView.findViewById(R.id.chartname_tv_39);
-        tvChartname40 = notificationFragmentView.findViewById(R.id.chartname_tv_40);
-        tvChartname41 = notificationFragmentView.findViewById(R.id.chartname_tv_41);
-        tvChartname42 = notificationFragmentView.findViewById(R.id.chartname_tv_42);
-        tvChartname43 = notificationFragmentView.findViewById(R.id.chartname_tv_43);
-        tvChartname44 = notificationFragmentView.findViewById(R.id.chartname_tv_44);
-        tvChartname45 = notificationFragmentView.findViewById(R.id.chartname_tv_45);
-        tvChartname46 = notificationFragmentView.findViewById(R.id.chartname_tv_46);
-        tvChartname47 = notificationFragmentView.findViewById(R.id.chartname_tv_47);
-        tvChartname48 = notificationFragmentView.findViewById(R.id.chartname_tv_48);
-        tvChartname49 = notificationFragmentView.findViewById(R.id.chartname_tv_49);
-        tvChartname50 = notificationFragmentView.findViewById(R.id.chartname_tv_50);
-
         scrollView = notificationFragmentView.findViewById(R.id.scrollview_eva);
         btSevenDay = notificationFragmentView.findViewById(R.id.btn_seven_day);
         btFifDay = notificationFragmentView.findViewById(R.id.btn_fifteen_day);
@@ -277,7 +232,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 Log.d(TAG,"=********left*******=selectedId==:"+ selectedId+"=******left*********=days==:"+ days);
                 Log.d(TAG,"=*********left******=type==:"+ type);
                 if(days!=0){
-                    drawChart(selectedId,days,type);
+                    //drawChart(selectedId,days,type);
                 }
                 onRefresh(viewLeft, showText);
             }
@@ -520,7 +475,6 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                     e.printStackTrace();
                 }
             }
-
         }
     };
     private List<TreeAndCommunityDataItemBean> getReportData(String selectedId, int days,String type) {
@@ -537,12 +491,12 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                     }catch (IOException e) {
                         e.printStackTrace();
                     }
-                    if (treeAndCommunityDataBean != null && treeAndCommunityDataBean.getmTreeAndCommunityDataItemBeanList() != null) {
-                        treeAndCommunityDataItemBeanList = treeAndCommunityDataBean.getmTreeAndCommunityDataItemBeanList() ;
-                        if (treeAndCommunityDataItemBeanList == null) {
-                            return null;
-                        }
-                    }
+//                    if (treeAndCommunityDataBean != null && treeAndCommunityDataBean.getmTreeAndCommunityDataItemBeanList() != null) {
+//                        treeAndCommunityDataItemBeanList = treeAndCommunityDataBean.getmTreeAndCommunityDataItemBeanList() ;
+//                        if (treeAndCommunityDataItemBeanList == null) {
+//                            return null;
+//                        }
+//                    }
             }catch (Exception e) {
                 e.printStackTrace();
             }
@@ -563,220 +517,100 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                     if (treeAndCommunityDataItemDetailBeanList != null) {
                         if (i == 1) {
                             tvChartname = tvChartname1;
-                            barChart = barChart1;
+                            combinedChart = combinedChart1;
                         }
                         if (i == 2) {
                             tvChartname = tvChartname2;
-                            barChart = barChart2;
+                            combinedChart = combinedChart2;
                         }
                         if (i == 3) {
                             tvChartname = tvChartname3;
-                            barChart = barChart3;
+                            combinedChart = combinedChart3;
                         }
                         if (i == 4) {
                             tvChartname = tvChartname4;
-                            barChart = barChart4;
+                            combinedChart = combinedChart4;
                         }
                         if (i == 5) {
                             tvChartname = tvChartname5;
-                            barChart = barChart5;
+                            combinedChart = combinedChart5;
                         }
                         if (i == 6) {
                             tvChartname = tvChartname6;
-                            barChart = barChart6;
+                            combinedChart = combinedChart6;
                         }
                         if (i == 7) {
                             tvChartname = tvChartname7;
-                            barChart = barChart7;
+                            combinedChart = combinedChart7;
                         }
                         if (i == 8) {
                             tvChartname = tvChartname8;
-                            barChart = barChart8;
+                            combinedChart = combinedChart8;
                         }
                         if (i == 9) {
                             tvChartname = tvChartname9;
-                            barChart = barChart9;
+                            combinedChart = combinedChart9;
                         }
                         if (i == 10) {
                             tvChartname = tvChartname10;
-                            barChart = barChart10;
+                            combinedChart = combinedChart10;
                         }
                         if (i == 11) {
                             tvChartname = tvChartname11;
-                            barChart = barChart11;
+                            combinedChart = combinedChart11;
                         }
                         if (i == 12) {
                             tvChartname = tvChartname12;
-                            barChart = barChart12;
+                            combinedChart = combinedChart12;
                         }
                         if (i == 13) {
                             tvChartname = tvChartname13;
-                            barChart = barChart13;
+                            combinedChart = combinedChart13;
                         }
                         if (i == 14) {
                             tvChartname = tvChartname14;
-                            barChart = barChart14;
+                            combinedChart = combinedChart14;
                         }
                         if (i == 15) {
                             tvChartname = tvChartname15;
-                            barChart = barChart15;
+                            combinedChart = combinedChart15;
                         }
                         if (i == 16) {
                             tvChartname = tvChartname16;
-                            barChart = barChart16;
+                            combinedChart = combinedChart16;
                         }
                         if (i == 17) {
                             tvChartname = tvChartname17;
-                            barChart = barChart17;
+                            combinedChart = combinedChart17;
                         }
                         if (i == 18) {
                             tvChartname = tvChartname18;
-                            barChart = barChart18;
+                            combinedChart = combinedChart18;
                         }
                         if (i == 19) {
                             tvChartname = tvChartname19;
-                            barChart = barChart19;
+                            combinedChart = combinedChart19;
                         }
                         if (i == 20) {
                             tvChartname = tvChartname20;
-                            barChart = barChart20;
-                        }
-                        if (i == 21) {
-                            tvChartname = tvChartname21;
-                            barChart = barChart21;
-                        }
-                        if (i == 22) {
-                            tvChartname = tvChartname22;
-                            barChart = barChart22;
-                        }
-                        if (i == 23) {
-                            tvChartname = tvChartname23;
-                            barChart = barChart23;
-                        }
-                        if (i == 24) {
-                            tvChartname = tvChartname24;
-                            barChart = barChart24;
-                        }
-                        if (i == 25) {
-                            tvChartname = tvChartname25;
-                            barChart = barChart5;
-                        }
-                        if (i == 26) {
-                            tvChartname = tvChartname26;
-                            barChart = barChart26;
-                        }
-                        if (i == 27) {
-                            tvChartname = tvChartname27;
-                            barChart = barChart27;
-                        }
-                        if (i == 28) {
-                            tvChartname = tvChartname28;
-                            barChart = barChart28;
-                        }
-                        if (i == 29) {
-                            tvChartname = tvChartname29;
-                            barChart = barChart29;
-                        }
-                        if (i == 30) {
-                            tvChartname = tvChartname30;
-                            barChart = barChart30;
-                        }
-                        if (i == 31) {
-                            tvChartname = tvChartname31;
-                            barChart = barChart31;
-                        }
-                        if (i == 32) {
-                            tvChartname = tvChartname32;
-                            barChart = barChart32;
-                        }
-                        if (i == 33) {
-                            tvChartname = tvChartname33;
-                            barChart = barChart33;
-                        }
-                        if (i == 34) {
-                            tvChartname = tvChartname34;
-                            barChart = barChart34;
-                        }
-                        if (i == 35) {
-                            tvChartname = tvChartname35;
-                            barChart = barChart35;
-                        }
-                        if (i == 36) {
-                            tvChartname = tvChartname36;
-                            barChart = barChart36;
-                        }
-                        if (i == 37) {
-                            tvChartname = tvChartname37;
-                            barChart = barChart37;
-                        }
-                        if (i == 38) {
-                            tvChartname = tvChartname38;
-                            barChart = barChart38;
-                        }
-                        if (i == 39) {
-                            tvChartname = tvChartname39;
-                            barChart = barChart39;
-                        }
-                        if (i == 40) {
-                            tvChartname = tvChartname40;
-                            barChart = barChart40;
-                        }
-                        if (i == 41) {
-                            tvChartname = tvChartname41;
-                            barChart = barChart41;
-                        }
-                        if (i == 42) {
-                            tvChartname = tvChartname42;
-                            barChart = barChart42;
-                        }
-                        if (i == 43) {
-                            tvChartname = tvChartname43;
-                            barChart = barChart43;
-                        }
-                        if (i == 44) {
-                            tvChartname = tvChartname44;
-                            barChart = barChart44;
-                        }
-                        if (i == 45) {
-                            tvChartname = tvChartname45;
-                            barChart = barChart45;
-                        }
-                        if (i == 46) {
-                            tvChartname = tvChartname46;
-                            barChart = barChart46;
-                        }
-                        if (i == 47) {
-                            tvChartname = tvChartname47;
-                            barChart = barChart47;
-                        }
-                        if (i == 48) {
-                            tvChartname = tvChartname48;
-                            barChart = barChart48;
-                        }
-                        if (i == 49) {
-                            tvChartname = tvChartname49;
-                            barChart = barChart49;
-                        }
-                        if (i == 50) {
-                            tvChartname = tvChartname50;
-                            barChart = barChart50;
+                            combinedChart = combinedChart20;
                         }
                     }
                     Log.d(TAG, "==drawChart=====ConfigName=============:" + treeAndCommunityDataItemBean.getConfigName());
                     tvChartname.setText(treeAndCommunityDataItemBean.getConfigName());
                     tvChartname.setVisibility(View.VISIBLE);
-                    barChart.zoom(0, 1f, 0, 0);//显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
-                    barChart.zoom(1 / ratio, 1f, 0, 0);
+                    combinedChart.zoom(0, 1f, 0, 0);//显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
+                    combinedChart.zoom(1 / ratio, 1f, 0, 0);
                     try {
-                        setChart(ratio, barChart, treeAndCommunityDataItemDetailBeanList, days);
+                        //setChart(ratio, barChart, treeAndCommunityDataItemDetailBeanList, days);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    barChart.setVisibility(View.VISIBLE);
-                    barChart.setExtraBottomOffset(10);
-                    barChart.notifyDataSetChanged();
-                    barChart.getBarData().notifyDataChanged();
-                    barChart.invalidate();
+                    combinedChart.setVisibility(View.VISIBLE);
+                    combinedChart.setExtraBottomOffset(10);
+                    combinedChart.notifyDataSetChanged();
+                    combinedChart.getBarData().notifyDataChanged();
+                    combinedChart.invalidate();
                     i++;
                 }
             } catch (Exception e) {
@@ -784,8 +618,9 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
             }
         }
     }
-    private void drawChart(String selectedId,int days,String type) throws IOException {
+    private void drawChart(String selectedId,int days,String type) throws Exception {
         try {
+            String mainConfigId ="";
             Log.d(TAG, "==drawChart=====selectedId=============:" + selectedId+"=====type=============:"+type);
             TreeAndCommunityDataBean treeAndCommunityDataBean = null;
             if("tree".equals(type)){
@@ -794,247 +629,153 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 treeAndCommunityDataBean = NetUtil.getCommunityDataBean(selectedId, days);
             }
             Log.d(TAG, "==drawChart======drawChart===treeAndCommunityDataBean====:" + treeAndCommunityDataBean);
-            if (treeAndCommunityDataBean != null && treeAndCommunityDataBean.getmTreeAndCommunityDataItemBeanList() != null) {
-                List<TreeAndCommunityDataItemBean> treeAndCommunityDataItemBeanList = treeAndCommunityDataBean.getmTreeAndCommunityDataItemBeanList();
-                if (treeAndCommunityDataItemBeanList == null) {
+            if (treeAndCommunityDataBean != null && treeAndCommunityDataBean.getmTreeAndCommunityRowDataBeanList()!= null) {
+                List<TreeAndCommunityRowDataBean> treeAndCommunityRowDataBeanList = treeAndCommunityDataBean.getmTreeAndCommunityRowDataBeanList();
+                if (treeAndCommunityRowDataBeanList == null) {
                     return;
                 }
-                Log.d(TAG, "==drawChart=====treeAndCommunityDataItemBeanList====:" + treeAndCommunityDataItemBeanList);
-                Iterator its = treeAndCommunityDataItemBeanList.iterator();
+                Log.d(TAG, "==drawChart=====treeAndCommunityRowDataBeanList====:" + treeAndCommunityRowDataBeanList);
+                Iterator its = treeAndCommunityRowDataBeanList.iterator();
                 int i = 1;
+
+                List<BarEntry> list1 = new ArrayList<>();//实例化一个List用来存储数据
+                List<Entry> list2 = new ArrayList<>();
                 while (its.hasNext()) {
-                    TreeAndCommunityDataItemBean treeAndCommunityDataItemBean = (TreeAndCommunityDataItemBean) its.next();
-                    if (!"test".equals(treeAndCommunityDataItemBean.getConfigName())) {
-                        List<TreeAndCommunityDataItemDetailBean> treeAndCommunityDataItemDetailBeanList = treeAndCommunityDataItemBean.getTreeAndCommunityDataItemDetailBeanList();
-                        Log.d(TAG, "=====drawChart=================treeAndCommunityDataItemDetailBeanList====:" + treeAndCommunityDataItemDetailBeanList);
+                    TreeAndCommunityRowDataBean treeAndCommunityRowDataBean = (TreeAndCommunityRowDataBean) its.next();
+                    mainConfigId = treeAndCommunityRowDataBean.getMainConfigId();
+                    Log.d(TAG, "==drawChart=====mainConfigId====:" + mainConfigId);
+                    if(treeAndCommunityRowDataBean != null && treeAndCommunityRowDataBean.getTreeAndCommunityDataItemBean()!= null){//如果有mainConfigId，说明此指标有物质量和价值量，物质量是柱形图，价值量是曲线图
+                        List<TreeAndCommunityDataItemBean> treeAndCommunityDataItemBeanList = treeAndCommunityRowDataBean.getTreeAndCommunityDataItemBean();
+                        if (treeAndCommunityDataItemBeanList == null) {
+                            return;
+                        }
+                        Iterator iter = treeAndCommunityDataItemBeanList.iterator();
+                        int j = 1;
+                        chatName= new StringBuffer();
+                        while(iter.hasNext()){
+                            TreeAndCommunityDataItemBean treeAndCommunityDataItemBean = (TreeAndCommunityDataItemBean)iter.next();
+                            Log.d(TAG, "==drawChart=====treeAndCommunityDataItemBean====:" + treeAndCommunityDataItemBean);
+                            chatName.append(treeAndCommunityDataItemBean.getConfigName()+"("+treeAndCommunityDataItemBean.getUnit()+"）");
+                            if (!"test".equals(treeAndCommunityDataItemBean.getConfigName())) {
+                                List<TreeAndCommunityDataItemDetailBean> treeAndCommunityDataItemDetailBeanList = treeAndCommunityDataItemBean.getTreeAndCommunityDataItemDetailBeanList();
+                                Log.d(TAG, "=====drawChart=================treeAndCommunityDataItemDetailBeanList====:" + treeAndCommunityDataItemDetailBeanList);
+                                if(treeAndCommunityDataItemDetailBeanList!=null && j == 1){
+                                     list1 = setBarChartData(treeAndCommunityDataItemDetailBeanList,days);
+                                }else if(treeAndCommunityDataItemDetailBeanList!=null && j == 2){
+                                     list2 = setChartData(treeAndCommunityDataItemDetailBeanList,days);
+                                }
+                            }
+                            j++;
+                        }
+                        Log.d(TAG, "=====drawChart=================list1====:" + list1);
+                        Log.d(TAG, "=====drawChart=================list2====:" + list2);
                         float ratio = 2.0f;
-                        if (treeAndCommunityDataItemDetailBeanList != null) {
+                        if (list1.size()>0 || list2.size()>0) {
                             if (i == 1) {
                                 tvChartname = tvChartname1;
-                                barChart = barChart1;
+                                combinedChart = combinedChart1;
                             }
                             if (i == 2) {
                                 tvChartname = tvChartname2;
-                                barChart = barChart2;
+                                combinedChart = combinedChart2;
                             }
                             if (i == 3) {
                                 tvChartname = tvChartname3;
-                                barChart = barChart3;
+                                combinedChart = combinedChart3;
                             }
                             if (i == 4) {
                                 tvChartname = tvChartname4;
-                                barChart = barChart4;
+                                combinedChart = combinedChart4;
                             }
                             if (i == 5) {
                                 tvChartname = tvChartname5;
-                                barChart = barChart5;
+                                combinedChart = combinedChart5;
                             }
                             if (i == 6) {
                                 tvChartname = tvChartname6;
-                                barChart = barChart6;
+                                combinedChart = combinedChart6;
                             }
                             if (i == 7) {
                                 tvChartname = tvChartname7;
-                                barChart = barChart7;
+                                combinedChart = combinedChart7;
                             }
                             if (i == 8) {
                                 tvChartname = tvChartname8;
-                                barChart = barChart8;
+                                combinedChart = combinedChart8;
                             }
                             if (i == 9) {
                                 tvChartname = tvChartname9;
-                                barChart = barChart9;
+                                combinedChart = combinedChart9;
                             }
                             if (i == 10) {
                                 tvChartname = tvChartname10;
-                                barChart = barChart10;
+                                combinedChart = combinedChart10;
                             }
                             if (i == 11) {
                                 tvChartname = tvChartname11;
-                                barChart = barChart11;
+                                combinedChart = combinedChart11;
                             }
                             if (i == 12) {
                                 tvChartname = tvChartname12;
-                                barChart = barChart12;
+                                combinedChart = combinedChart12;
                             }
                             if (i == 13) {
                                 tvChartname = tvChartname13;
-                                barChart = barChart13;
+                                combinedChart = combinedChart13;
                             }
                             if (i == 14) {
                                 tvChartname = tvChartname14;
-                                barChart = barChart14;
+                                combinedChart = combinedChart14;
                             }
                             if (i == 15) {
                                 tvChartname = tvChartname15;
-                                barChart = barChart15;
+                                combinedChart = combinedChart15;
                             }
                             if (i == 16) {
                                 tvChartname = tvChartname16;
-                                barChart = barChart16;
+                                combinedChart = combinedChart16;
                             }
                             if (i == 17) {
                                 tvChartname = tvChartname17;
-                                barChart = barChart17;
+                                combinedChart = combinedChart17;
                             }
                             if (i == 18) {
                                 tvChartname = tvChartname18;
-                                barChart = barChart18;
+                                combinedChart = combinedChart18;
                             }
                             if (i == 19) {
                                 tvChartname = tvChartname19;
-                                barChart = barChart19;
+                                combinedChart = combinedChart19;
                             }
                             if (i == 20) {
                                 tvChartname = tvChartname20;
-                                barChart = barChart20;
-                            }
-                            if (i == 21) {
-                                tvChartname = tvChartname21;
-                                barChart = barChart21;
-                            }
-                            if (i == 22) {
-                                tvChartname = tvChartname22;
-                                barChart = barChart22;
-                            }
-                            if (i == 23) {
-                                tvChartname = tvChartname23;
-                                barChart = barChart23;
-                            }
-                            if (i == 24) {
-                                tvChartname = tvChartname24;
-                                barChart = barChart24;
-                            }
-                            if (i == 25) {
-                                tvChartname = tvChartname25;
-                                barChart = barChart5;
-                            }
-                            if (i == 26) {
-                                tvChartname = tvChartname26;
-                                barChart = barChart26;
-                            }
-                            if (i == 27) {
-                                tvChartname = tvChartname27;
-                                barChart = barChart27;
-                            }
-                            if (i == 28) {
-                                tvChartname = tvChartname28;
-                                barChart = barChart28;
-                            }
-                            if (i == 29) {
-                                tvChartname = tvChartname29;
-                                barChart = barChart29;
-                            }
-                            if (i == 30) {
-                                tvChartname = tvChartname30;
-                                barChart = barChart30;
-                            }
-                            if (i == 31) {
-                                tvChartname = tvChartname31;
-                                barChart = barChart31;
-                            }
-                            if (i == 32) {
-                                tvChartname = tvChartname32;
-                                barChart = barChart32;
-                            }
-                            if (i == 33) {
-                                tvChartname = tvChartname33;
-                                barChart = barChart33;
-                            }
-                            if (i == 34) {
-                                tvChartname = tvChartname34;
-                                barChart = barChart34;
-                            }
-                            if (i == 35) {
-                                tvChartname = tvChartname35;
-                                barChart = barChart35;
-                            }
-                            if (i == 36) {
-                                tvChartname = tvChartname36;
-                                barChart = barChart36;
-                            }
-                            if (i == 37) {
-                                tvChartname = tvChartname37;
-                                barChart = barChart37;
-                            }
-                            if (i == 38) {
-                                tvChartname = tvChartname38;
-                                barChart = barChart38;
-                            }
-                            if (i == 39) {
-                                tvChartname = tvChartname39;
-                                barChart = barChart39;
-                            }
-                            if (i == 40) {
-                                tvChartname = tvChartname40;
-                                barChart = barChart40;
-                            }
-                            if (i == 41) {
-                                tvChartname = tvChartname41;
-                                barChart = barChart41;
-                            }
-                            if (i == 42) {
-                                tvChartname = tvChartname42;
-                                barChart = barChart42;
-                            }
-                            if (i == 43) {
-                                tvChartname = tvChartname43;
-                                barChart = barChart43;
-                            }
-                            if (i == 44) {
-                                tvChartname = tvChartname44;
-                                barChart = barChart44;
-                            }
-                            if (i == 45) {
-                                tvChartname = tvChartname45;
-                                barChart = barChart45;
-                            }
-                            if (i == 46) {
-                                tvChartname = tvChartname46;
-                                barChart = barChart46;
-                            }
-                            if (i == 47) {
-                                tvChartname = tvChartname47;
-                                barChart = barChart47;
-                            }
-                            if (i == 48) {
-                                tvChartname = tvChartname48;
-                                barChart = barChart48;
-                            }
-                            if (i == 49) {
-                                tvChartname = tvChartname49;
-                                barChart = barChart49;
-                            }
-                            if (i == 50) {
-                                tvChartname = tvChartname50;
-                                barChart = barChart50;
+                                combinedChart = combinedChart20;
                             }
                         }
-                        Log.d(TAG, "==drawChart=====ConfigName=============:" + treeAndCommunityDataItemBean.getConfigName());
-                        tvChartname.setText(treeAndCommunityDataItemBean.getConfigName()+"("+treeAndCommunityDataItemBean.getTreeConfigId()+")");//增加单位显示
+                        tvChartname.setText(chatName);//增加单位显示
                         tvChartname.setVisibility(View.VISIBLE);
-                        barChart.zoom(0, 1f, 0, 0);
-                        barChart.zoom(1 / ratio, 1f, 0, 0);
-                        setChart(ratio, barChart, treeAndCommunityDataItemDetailBeanList, days);
-                        barChart.setVisibility(View.VISIBLE);
-                        barChart.setExtraBottomOffset(10);
-                        barChart.notifyDataSetChanged();
-                        barChart.getBarData().notifyDataChanged();
-                        barChart.invalidate();
+                        //combinedChart.zoom(0, 1f, 0, 0);
+                       // combinedChart.zoom(1 / ratio, 1f, 0, 0);
+                        setChart(ratio, combinedChart, list1,list2, days);
+                        combinedChart.setVisibility(View.VISIBLE);
+                        combinedChart.setExtraBottomOffset(10);
+                        combinedChart.notifyDataSetChanged();
+                        combinedChart.getBarData().notifyDataChanged();
+                        combinedChart.invalidate();
                         i++;
+                        }
                     }
                 }
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
     /*
-     * 设置BarChart的数据
+     * 设置LineChart的数据
      * */
-    private  List<BarEntry> setChartData(List<TreeAndCommunityDataItemDetailBean> treeAndCommunityDataItemDetailBeanList, int days) {
+    private  List<Entry> setChartData(List<TreeAndCommunityDataItemDetailBean> treeAndCommunityDataItemDetailBeanList, int days) {
         int count = 0;
-        List<BarEntry> list = new ArrayList<>();//实例化一个List用来存储数据
+        List<Entry> list = new ArrayList<>();//实例化一个List用来存储数据
         tempMap.clear();
         dataMap.clear();
         if(treeAndCommunityDataItemDetailBeanList != null){
@@ -1081,78 +822,163 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         return list ;
     }
     /*
-    画柱形图
+     * 设置BarChart的数据
+     * */
+    private  List<BarEntry> setBarChartData(List<TreeAndCommunityDataItemDetailBean> treeAndCommunityDataItemDetailBeanList, int days) {
+        int count = 0;
+        List<BarEntry> list = new ArrayList<>();//实例化一个List用来存储数据
+        tempMap.clear();
+        dataMap.clear();
+        if(treeAndCommunityDataItemDetailBeanList != null){
+            Iterator iter = treeAndCommunityDataItemDetailBeanList.iterator();
+            while (iter.hasNext() ){
+                TreeAndCommunityDataItemDetailBean treeAndCommunityDataItemDetailBean = (TreeAndCommunityDataItemDetailBean) iter.next();
+                //Log.d(TAG, "===treeAndCommunityDataItemDetailBean====:" + treeAndCommunityDataItemDetailBean);
+                if(treeAndCommunityDataItemDetailBean!=null ){
+                    float time = 0.0f;
+                    /*if(days ==7){
+                        time = Float.parseFloat(treeDataItemDetailBean.getAcquisitionTime().substring(11,13));
+                    }else*/ if(days==7 && count< 7){
+                        tempMap.put(count,treeAndCommunityDataItemDetailBean.getAcquisitionTime().substring(0,10));
+                        time = count;
+                    }else if(days == 15 && count < 15){
+                        tempMap.put(count,treeAndCommunityDataItemDetailBean.getAcquisitionTime().substring(0,10));
+                        time = count;
+                    }if((days == 30 ||days == 90)&& count < 15){
+                        treeAndCommunityDataItemDetailBean = (TreeAndCommunityDataItemDetailBean) iter.next();
+                        tempMap.put(count,treeAndCommunityDataItemDetailBean.getAcquisitionTime().substring(0,10));
+                        time = count;
+                    }
+                    float value = 0.0f;
+                    if(!"".equals(treeAndCommunityDataItemDetailBean.getValue())){
+                        if(!"-".equals(treeAndCommunityDataItemDetailBean.getValue())) {
+                            value = Float.parseFloat(treeAndCommunityDataItemDetailBean.getValue());
+                        }
+                        list.add(new BarEntry(time,value));
+                    }
+                }
+                count++;
+            }
+        }
+        int j = 0;
+        ListIterator<Map.Entry<Float,String>> i = new ArrayList<Map.Entry<Float,String>>(tempMap.entrySet()).listIterator(0);
+        while(i.hasNext()) {
+            Map.Entry<Float, String> entry=i.next();
+            //Log.d(TAG, j+":"+entry.getValue());
+            dataMap.put(j,entry.getValue());
+            j++;
+        }
+        Log.d(TAG, "===list不为空====:" + (list!= null)+"===list.size()====:" + (list.size()));
+        Log.d(TAG, "===dataMap====:" + dataMap);
+        return list ;
+    }
+    /*
+    画柱形图和曲线图
      */
-    private void setChart(float ratio,BarChart barChart,List<TreeAndCommunityDataItemDetailBean> treeAndCommunityDataItemDetailBeanList,int days) {
-        List<BarEntry> list = setChartData(treeAndCommunityDataItemDetailBeanList,days);
-        Log.d(TAG, "=========setChart======list==:" +list);
-        Log.d(TAG, "=====setChart=====dataMap====:" +dataMap);
-        barChart.setDescription(null);                             //设置描述文字为null
-        barChart.setBackgroundColor(Color.parseColor("#00000000"));  //设置背景颜色
-        barChart.setDrawBarShadow(false);                          //绘制当前展示的内容顶部阴影
-        barChart.setPinchZoom(false);                              //设置x轴和y轴能否同时缩放。默认否
-        barChart.setMaxVisibleValueCount(10);                       //设置图表能显示的最大值，仅当setDrawValues()属性值为true时有用
-        barChart.setFitBars(true);                                 //设置X轴范围两侧柱形条是否显示一半
-        BarDataSet barDataSet=new BarDataSet(list,"");   //list是你这条线的数据  "语文" 是你对这条线的描述
-        BarData barData=new BarData(barDataSet);
-        barChart.setData(barData);
-        barData.setBarWidth(0.5f);   //设置柱子的宽度
-        barData.setValueTextSize(13f);
-        barData.setValueTextColor(Color.parseColor("#FFFFFFFF"));
-        XAxis xAxis = barChart.getXAxis();                         //x轴
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);             //设置label在底下
-        xAxis.setDrawGridLines(false);                             //不设置竖型网格线
+    private void setChart(float ratio,CombinedChart combinedChart,List<BarEntry> list1,List<Entry> list2,int days) {
+        Log.d(TAG, "=========setChart======list1==:" +list1);
+        Log.d(TAG, "=========setChart======list2==:" +list2);
+        Log.d(TAG, "=========setChart======dataMap==:" +dataMap);
+        combinedChart.setDrawBorders(true);//显示边界
+        combinedChart.getDescription().setEnabled(false);//不显示备注信息
+        combinedChart.setPinchZoom(true);//比例缩放
+        combinedChart.animateY(1500);
+        XAxis xAxis = combinedChart.getXAxis();
         xAxis.setTextColor(Color.parseColor("#ffffff"));
-        xAxis.setDrawLabels(true);                                 //是否显示X坐标轴上的刻度，默认是true
-        xAxis.setLabelCount(6,false);                //第一个参数是轴坐标的个数，第二个参数是 是否不均匀分布，true是不均匀分布
+        xAxis.setDrawGridLines(false);
+        /*解决左右两端柱形图只显示一半的情况，只有使用conbinedChart时出现，如果单独使用barchart不会有这个问题*/
+        xAxis.setAxisMinimum(-0.5f);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);//设置X轴标签的位置，BOTTOM在底部显示，TOP在顶部显示
+        xAxis.setDrawLabels(true);     //是否显示X坐标轴上的刻度，默认是true
+        xAxis.setLabelCount(6,false);   //第一个参数是轴坐标的个数，第二个参数是 是否不均匀分布，true是不均匀分布
         //xAxis.setAxisMinimum(-0.4f);   //X轴最小数值
         xAxis.setGranularity(1);
-
-        YAxis leftAxis = barChart.getAxisLeft();              //获取到y轴，分左右
-        leftAxis.setLabelCount(3, true);         //第一个参数是轴坐标的个数，第二个参数是 是否不均匀分布，true是不均匀分布
-        leftAxis.setDrawGridLines(true);                      //不要横网格
-        leftAxis.setGridColor(Color.parseColor("#000000"));   //设置横网格颜色
-        leftAxis.setSpaceTop(20f);                            //设置在图表上最高处的值相比轴上最高值的顶端空间（总轴范围的百分比）
-        leftAxis.setAxisMinimum(0f);                          //为这个轴设置一个自定义的最小值。如果设置,这个值不会自动根据所提供的数据计算
-
-        leftAxis.setTextColor(Color.WHITE);
-        leftAxis.setDrawAxisLine(false);                      //设置为true,绘制轴线
-        leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);       //y轴的数值显示在外侧
-        //这里也可以自定义y轴显示样式。和x轴的自定义方法一样
-        barChart.getAxisRight().setEnabled(false); // 隐藏右边 的坐标轴
-        Legend legend = barChart.getLegend();
-        legend.setEnabled(false);//不设置图例
-        //显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
-        //barChart.zoom(4,1f,0,0);
-        if(days== 7){
-            barChart.zoom(1,1f,0,0);
-        }else{
-            barChart.zoom(2,1f,0,0);
-        }
-        Log.d(TAG, "=====setChart==================days===============:" + days);
         xAxis.setTextSize(10f);//设置X轴刻度字体大小
         xAxis.setLabelRotationAngle(-60f);//旋转45度
-
         xAxis.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float v, AxisBase axis) {
                 return String.valueOf(dataMap.get((int) v));
             }
         });
+        YAxis axisLeft = combinedChart.getAxisRight();//获取Y轴右边操作类
+        axisLeft.setAxisMinimum(0f);//设置最小值
+        axisLeft.setGranularity(10);//设置label间隔
+        axisLeft.setLabelCount(3, true);         //第一个参数是轴坐标的个数，第二个参数是 是否不均匀分布，true是不均匀分布
+        axisLeft.setDrawGridLines(true);                      //不要横网格
+        axisLeft.setGridColor(Color.parseColor("#000000"));   //设置横网格颜色
+        axisLeft.setSpaceTop(20f);                            //设置在图表上最高处的值相比轴上最高值的顶端空间（总轴范围的百分比）
+        axisLeft.setTextColor(Color.WHITE);
+        axisLeft.setDrawAxisLine(false);                      //设置为true,绘制轴线
+        axisLeft.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);       //y轴的数值显示在外侧
+        axisLeft.setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                return value+"";
+            }
+        });
+
+        YAxis axisRight = combinedChart.getAxisRight();//获取Y轴右边操作类
+        axisRight.setDrawAxisLine(false);//不绘制背景线
+        axisRight.setAxisMinimum(0);//设置最小值
+        axisRight.setGranularity(10);//设置label间隔
+        axisRight.setLabelCount(10);//设置标签数量
+        axisRight.setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                return value+"";
+            }
+        });
+        /**
+         * 初始化柱形图的数据
+         * 此处用的时list的数量做循环，因为总共所需要的数据数量应该和标签个数一直
+         * 其中BarEntry时柱形图数据源的实体类，包装xy坐标数据
+         */
+        Log.d(TAG,"*****************BarChart Start*******************");
+        BarDataSet barDataSet = new BarDataSet(list1,"LAR");//新建一组柱形图，LAR为本柱形图的label
+        barDataSet.setColor(Color.parseColor("#0288d1"));//设置柱形图颜色
+        BarData barData = new BarData();
+        barData.addDataSet(barDataSet);//添加一组柱形图，如果有多组柱形图数据，则可以多次addDataSet来设置
+        barData.setBarWidth(0.5f);   //设置柱子的宽度
+        barData.setValueTextSize(13f);
+        barData.setValueTextColor(Color.parseColor("#FFFFFFFF"));
+        Log.d(TAG,"*****************BarChart End*******************");
+        /**
+         * 初始化折线图数据
+         * 说明同上
+         */
+        Log.d(TAG,"*****************LineChart Start*******************");
+        LineDataSet lineDataSet = new LineDataSet(list2,"MAR");
+        lineDataSet.setColor(Color.parseColor("#b71c1c"));
+        lineDataSet.setCircleColor(Color.parseColor("#b71c1c"));
+        lineDataSet.setValueTextColor(Color.parseColor("#f44336"));
+        lineDataSet.setLineWidth(3f);
+        lineDataSet.setHighlightEnabled(false);
+        LineData lineData = new LineData();
+        lineData.addDataSet(lineDataSet);
+        Log.d(TAG,"*****************LineChart Start*******************");
+        CombinedData combinedData =  new CombinedData();//创建组合图的数据源
+        combinedData.setData(barData);//添加柱形图数据源
+        combinedData.setData(lineData);//添加曲线图数据源
+        combinedChart.setData(combinedData);//为组合图设置数据源
+        combinedChart.setBackgroundColor(Color.parseColor("#00000000"));  //设置背景颜色
+        combinedChart.setDescription(null);                             //设置描述文字为null
+        combinedChart.setDrawBarShadow(false);                          //绘制当前展示的内容顶部阴影
+        combinedChart.setPinchZoom(false);                              //设置x轴和y轴能否同时缩放。默认否
+        combinedChart.setMaxVisibleValueCount(10);                       //设置图表能显示的最大值，仅当setDrawValues()属性值为true时有用
+
+        Legend legend = combinedChart.getLegend();
+        legend.setEnabled(false);//不设置图例
+        //显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
+        //barChart.zoom(4,1f,0,0);
+        if(days== 7){
+            //combinedChart.zoom(1,1f,0,0);
+        }else{
+           // combinedChart.zoom(2,1f,0,0);
+        }
+        Log.d(TAG, "=====setChart==================days===============:" + days);
         //从Y轴弹出的动画时间
-        barChart.animateY(1500);
-    }
-    private void setScrollInvisiable() {
-        tvChartname1.setVisibility(View.INVISIBLE);
-        barChart1.setVisibility(View.INVISIBLE);
-        tvChartname2.setVisibility(View.INVISIBLE);
-        barChart2.setVisibility(View.INVISIBLE);
-        tvChartname3.setVisibility(View.INVISIBLE);
-        barChart3.setVisibility(View.INVISIBLE);
-        tvChartname4.setVisibility(View.INVISIBLE);
-        barChart4.setVisibility(View.INVISIBLE);
-        tvChartname5.setVisibility(View.INVISIBLE);
-        barChart5.setVisibility(View.INVISIBLE);
+        combinedChart.animateY(1500);
     }
     private void setBtnEnable(Button btn,String category) {
         List<Button> buttonList = new ArrayList<>();

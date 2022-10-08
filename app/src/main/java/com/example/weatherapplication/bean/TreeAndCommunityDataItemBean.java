@@ -15,8 +15,14 @@ public class TreeAndCommunityDataItemBean {
     private String configName;
     @SerializedName("dataList")
     private List<TreeAndCommunityDataItemDetailBean> treeAndCommunityDataItemDetailBeanList;
+    @SerializedName("groupId")
+    private String groupId;
+    @SerializedName("mainConfigId")
+    private String mainConfigId;
     @SerializedName("treeConfigId")
     private String treeConfigId;
+    @SerializedName("unit")
+    private String unit;
 
     public String getConfigName() {
         return configName;
@@ -42,12 +48,39 @@ public class TreeAndCommunityDataItemBean {
         this.treeConfigId = treeConfigId;
     }
 
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getMainConfigId() {
+        return mainConfigId;
+    }
+
+    public void setMainConfigId(String mainConfigId) {
+        this.mainConfigId = mainConfigId;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
     @Override
     public String toString() {
         return "TreeAndCommunityDataItemBean{" +
                 "configName='" + configName + '\'' +
                 ", treeAndCommunityDataItemDetailBeanList=" + treeAndCommunityDataItemDetailBeanList +
+                ", groupId='" + groupId + '\'' +
+                ", mainConfigId='" + mainConfigId + '\'' +
                 ", treeConfigId='" + treeConfigId + '\'' +
+                ", unit='" + unit + '\'' +
                 '}';
     }
 }

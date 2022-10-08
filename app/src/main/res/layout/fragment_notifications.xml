@@ -212,8 +212,8 @@
                 </TextView>
             </LinearLayout>
 
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_1"
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/combinedChart_1"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginLeft="10dp"
@@ -224,7 +224,7 @@
                 android:paddingBottom="20dp"
                 android:visibility="invisible">
 
-            </com.github.mikephil.charting.charts.BarChart>
+            </com.github.mikephil.charting.charts.CombinedChart>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -242,8 +242,8 @@
                     android:visibility="invisible">
                 </TextView>
             </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_2"
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/combinedChart_2"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginTop="10dp"
@@ -253,7 +253,7 @@
                 android:background="@color/transparent"
                 android:visibility="invisible">
 
-            </com.github.mikephil.charting.charts.BarChart>
+            </com.github.mikephil.charting.charts.CombinedChart>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -270,8 +270,8 @@
                     android:visibility="invisible">
                 </TextView>
             </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_3"
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/combinedChart_3"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:paddingLeft="10dp"
@@ -281,7 +281,7 @@
                 android:background="@color/transparent"
                 android:visibility="invisible">
 
-            </com.github.mikephil.charting.charts.BarChart>
+            </com.github.mikephil.charting.charts.CombinedChart>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -298,8 +298,8 @@
                     android:visibility="invisible">
                 </TextView>
             </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_4"
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/combinedChart_4"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginTop="10dp"
@@ -309,7 +309,7 @@
                 android:background="@color/transparent"
                 android:visibility="invisible">
 
-            </com.github.mikephil.charting.charts.BarChart>
+            </com.github.mikephil.charting.charts.CombinedChart>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -326,8 +326,8 @@
                     android:visibility="invisible">
                 </TextView>
             </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_5"
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/combinedChart_5"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:paddingLeft="10dp"
@@ -336,7 +336,7 @@
                 android:background="@color/transparent"
                 android:visibility="invisible">
 
-            </com.github.mikephil.charting.charts.BarChart>
+            </com.github.mikephil.charting.charts.CombinedChart>
 
 
             <LinearLayout
@@ -356,8 +356,8 @@
                 </TextView>
             </LinearLayout>
 
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_6"
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/combinedChart_6"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginLeft="10dp"
@@ -368,7 +368,7 @@
                 android:paddingBottom="20dp"
                 android:visibility="invisible">
 
-            </com.github.mikephil.charting.charts.BarChart>
+            </com.github.mikephil.charting.charts.CombinedChart>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -386,8 +386,8 @@
                     android:visibility="invisible">
                 </TextView>
             </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_7"
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/combinedChart_7"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginTop="10dp"
@@ -397,7 +397,7 @@
                 android:background="@color/transparent"
                 android:visibility="invisible">
 
-            </com.github.mikephil.charting.charts.BarChart>
+            </com.github.mikephil.charting.charts.CombinedChart>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -414,8 +414,8 @@
                     android:visibility="invisible">
                 </TextView>
             </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_8"
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/combinedChart_8"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:paddingLeft="10dp"
@@ -425,7 +425,7 @@
                 android:background="@color/transparent"
                 android:visibility="invisible">
 
-            </com.github.mikephil.charting.charts.BarChart>
+            </com.github.mikephil.charting.charts.CombinedChart>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -442,8 +442,8 @@
                     android:visibility="invisible">
                 </TextView>
             </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_9"
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/combinedChart_9"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginTop="10dp"
@@ -453,7 +453,7 @@
                 android:background="@color/transparent"
                 android:visibility="invisible">
 
-            </com.github.mikephil.charting.charts.BarChart>
+            </com.github.mikephil.charting.charts.CombinedChart>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -470,8 +470,8 @@
                     android:visibility="invisible">
                 </TextView>
             </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_10"
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/combinedChart_10"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:paddingLeft="10dp"
@@ -480,7 +480,7 @@
                 android:background="@color/transparent"
                 android:visibility="invisible">
 
-            </com.github.mikephil.charting.charts.BarChart>
+            </com.github.mikephil.charting.charts.CombinedChart>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -498,8 +498,8 @@
                 </TextView>
             </LinearLayout>
 
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_11"
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/combinedChart_11"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginLeft="10dp"
@@ -510,7 +510,7 @@
                 android:paddingBottom="20dp"
                 android:visibility="invisible">
 
-            </com.github.mikephil.charting.charts.BarChart>
+            </com.github.mikephil.charting.charts.CombinedChart>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -528,8 +528,8 @@
                     android:visibility="invisible">
                 </TextView>
             </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_12"
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/combinedChart_12"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginTop="10dp"
@@ -539,7 +539,7 @@
                 android:background="@color/transparent"
                 android:visibility="invisible">
 
-            </com.github.mikephil.charting.charts.BarChart>
+            </com.github.mikephil.charting.charts.CombinedChart>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -556,8 +556,8 @@
                     android:visibility="invisible">
                 </TextView>
             </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_13"
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/combinedChart_13"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:paddingLeft="10dp"
@@ -567,7 +567,7 @@
                 android:background="@color/transparent"
                 android:visibility="invisible">
 
-            </com.github.mikephil.charting.charts.BarChart>
+            </com.github.mikephil.charting.charts.CombinedChart>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -584,8 +584,8 @@
                     android:visibility="invisible">
                 </TextView>
             </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_14"
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/combinedChart_14"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginTop="10dp"
@@ -595,7 +595,7 @@
                 android:background="@color/transparent"
                 android:visibility="invisible">
 
-            </com.github.mikephil.charting.charts.BarChart>
+            </com.github.mikephil.charting.charts.CombinedChart>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -612,8 +612,8 @@
                     android:visibility="invisible">
                 </TextView>
             </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_15"
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/combinedChart_15"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:paddingLeft="10dp"
@@ -622,7 +622,7 @@
                 android:background="@color/transparent"
                 android:visibility="invisible">
 
-            </com.github.mikephil.charting.charts.BarChart>
+            </com.github.mikephil.charting.charts.CombinedChart>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -640,8 +640,8 @@
                 </TextView>
             </LinearLayout>
 
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_16"
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/combinedChart_16"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginLeft="10dp"
@@ -652,7 +652,7 @@
                 android:paddingBottom="20dp"
                 android:visibility="invisible">
 
-            </com.github.mikephil.charting.charts.BarChart>
+            </com.github.mikephil.charting.charts.CombinedChart>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -670,8 +670,8 @@
                     android:visibility="invisible">
                 </TextView>
             </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_17"
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/combinedChart_17"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginTop="10dp"
@@ -681,7 +681,7 @@
                 android:background="@color/transparent"
                 android:visibility="invisible">
 
-            </com.github.mikephil.charting.charts.BarChart>
+            </com.github.mikephil.charting.charts.CombinedChart>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -698,8 +698,8 @@
                     android:visibility="invisible">
                 </TextView>
             </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_18"
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/combinedChart_18"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:paddingLeft="10dp"
@@ -709,7 +709,7 @@
                 android:background="@color/transparent"
                 android:visibility="invisible">
 
-            </com.github.mikephil.charting.charts.BarChart>
+            </com.github.mikephil.charting.charts.CombinedChart>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -726,8 +726,8 @@
                     android:visibility="invisible">
                 </TextView>
             </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_19"
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/combinedChart_19"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginTop="10dp"
@@ -737,7 +737,7 @@
                 android:background="@color/transparent"
                 android:visibility="invisible">
 
-            </com.github.mikephil.charting.charts.BarChart>
+            </com.github.mikephil.charting.charts.CombinedChart>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -754,8 +754,8 @@
                     android:visibility="invisible">
                 </TextView>
             </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_20"
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/combinedChart_20"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:paddingLeft="10dp"
@@ -763,862 +763,7 @@
                 android:layout_marginLeft="10dp"
                 android:background="@color/transparent"
                 android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_21"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:visibility="invisible"
-                    android:textSize="18sp">
-                </TextView>
-            </LinearLayout>
-
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_21"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:background="@color/transparent"
-                android:paddingLeft="10dp"
-                android:paddingBottom="20dp"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_22"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_22"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:paddingLeft="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_23"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_23"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:paddingLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_24"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_24"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:paddingLeft="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_25"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_25"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:paddingLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_26"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:visibility="invisible"
-                    android:textSize="18sp">
-                </TextView>
-            </LinearLayout>
-
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_26"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:background="@color/transparent"
-                android:paddingLeft="10dp"
-                android:paddingBottom="20dp"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_27"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_27"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:paddingLeft="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_28"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_28"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:paddingLeft="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_29"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_29"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:paddingLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_30"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_30"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:paddingLeft="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_31"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_31"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:paddingLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_32"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:visibility="invisible"
-                    android:textSize="18sp">
-                </TextView>
-            </LinearLayout>
-
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_32"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:background="@color/transparent"
-                android:paddingLeft="10dp"
-                android:paddingBottom="20dp"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_33"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_33"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:paddingLeft="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_34"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_34"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:paddingLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_35"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_35"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:paddingLeft="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_36"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_36"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:paddingLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_37"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:visibility="invisible"
-                    android:textSize="18sp">
-                </TextView>
-            </LinearLayout>
-
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_37"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:background="@color/transparent"
-                android:paddingLeft="10dp"
-                android:paddingBottom="20dp"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_38"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_38"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:paddingLeft="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_39"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_39"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:paddingLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_40"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_40"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:paddingLeft="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_41"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_41"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:paddingLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_42"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:visibility="invisible"
-                    android:textSize="18sp">
-                </TextView>
-            </LinearLayout>
-
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_42"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:background="@color/transparent"
-                android:paddingLeft="10dp"
-                android:paddingBottom="20dp"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_43"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_43"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:paddingLeft="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_44"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_44"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:paddingLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_45"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_45"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:paddingLeft="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_46"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_46"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:paddingLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_47"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:visibility="invisible"
-                    android:textSize="18sp">
-                </TextView>
-            </LinearLayout>
-
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_47"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:background="@color/transparent"
-                android:paddingLeft="10dp"
-                android:paddingBottom="20dp"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_48"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_48"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:paddingLeft="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_49"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_49"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:paddingLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/chartname_tv_50"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="18sp"
-                    android:visibility="invisible">
-                </TextView>
-            </LinearLayout>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart_50"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:paddingLeft="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/transparent"
-                android:visibility="invisible">
-
-            </com.github.mikephil.charting.charts.BarChart>
+            </com.github.mikephil.charting.charts.CombinedChart>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
