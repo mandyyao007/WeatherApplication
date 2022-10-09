@@ -91,9 +91,13 @@ public class NetUtil {
             result = service(loginUrl,"POST");
             Log.d(TAG,"-----result======"+result);
             Gson gson = new Gson();
-            LoginBean loginBean = gson.fromJson(result, LoginBean.class);
-            Log.d(TAG,"====解析后的loginBean==:"+loginBean.toString());
-            status =  loginBean.getStatus();
+            Log.d(TAG,"-----result  null======"+(result == null));
+            Log.d(TAG,"-----result======"+(!"".equals(result)));
+            if(result == null || !"".equals(result)){
+                LoginBean loginBean = gson.fromJson(result, LoginBean.class);
+                Log.d(TAG,"====解析后的loginBean==:"+loginBean.toString());
+                status =  loginBean.getStatus();
+            }
         }catch(Exception e){
             Log.d(TAG,"====Exception==:"+e.getMessage());
             e.printStackTrace();
@@ -257,9 +261,9 @@ public class NetUtil {
         try{
             //dataResult = service(treeDataUrl,"POST");
             dataResult = "{\"total\":3,\"rows\":[{\"mainConfigId\":\"61\",\"treeDataList\":[{\"configName\":\"树株1水文调节\",\"dataList\":[{\"acquisitionTime\":\"2022-10-06 00:00:00\",\"val\":\"21\"},{\"acquisitionTime\":\"2022-10-05 00:00:00\",\"val\":\"24\"},{\"acquisitionTime\":\"2022-10-04 00:00:00\",\"val\":\"38\"},{\"acquisitionTime\":\"2022-10-03 00:00:00\",\"val\":\"45\"},{\"acquisitionTime\":\"2022-10-02 00:00:00\",\"val\":\"26\"},{\"acquisitionTime\":\"2022-10-01 00:00:00\",\"val\":\"32\"}],\"groupId\":\"62\",\"mainConfigId\":\"61\",\"treeConfigId\":\"61\",\"unit\":\"ml\"},\n" +
-                    "{\"configName\":\"树株1水文调节价值\",\"dataList\":[{\"acquisitionTime\":\"2022-10-06 00:00:00\",\"val\":\"111\"},{\"acquisitionTime\":\"2022-10-05 00:00:00\",\"val\":\"213\"},{\"acquisitionTime\":\"2022-10-04 00:00:00\",\"val\":\"-\"},{\"acquisitionTime\":\"2022-10-03 00:00:00\",\"val\":\"452\"},{\"acquisitionTime\":\"2022-10-02 00:00:00\",\"val\":\"432\"},{\"acquisitionTime\":\"2022-10-01 00:00:00\",\"val\":\"145\"}],\"groupId\":\"61\",\"mainConfigId\":\"61\",\"treeConfigId\":\"62\",\"unit\":\"yuan\"}\n" +
-                    "]},{\"mainConfigId\":\"67\",\"treeDataList\":[{\"configName\":\"树株1滞纳PM10\",\"dataList\":[{\"acquisitionTime\":\"2022-10-06 00:00:00\",\"val\":\"3\"},{\"acquisitionTime\":\"2022-10-05 00:00:00\",\"val\":\"14\"},{\"acquisitionTime\":\"2022-10-04 00:00:00\",\"val\":\"25\"},{\"acquisitionTime\":\"2022-10-03 00:00:00\",\"val\":\"17\"},{\"acquisitionTime\":\"2022-10-02 00:00:00\",\"val\":\"14\"},{\"acquisitionTime\":\"2022-10-01 00:00:00\",\"val\":\"4\"}],\"groupId\":\"71\",\"mainConfigId\":\"67\",\"treeConfigId\":\"67\",\"unit\":\"g-m-2\"},\n"+
-                    "{\"configName\":\"树株1滞纳PM10价值\",\"dataList\":[{\"acquisitionTime\":\"2022-10-06 00:00:00\",\"val\":\"1000\"},{\"acquisitionTime\":\"2022-10-05 00:00:00\",\"val\":\"1565\"},{\"acquisitionTime\":\"2022-10-04 00:00:00\",\"val\":\"3214\"},{\"acquisitionTime\":\"2022-10-03 00:00:00\",\"val\":\"1347\"},{\"acquisitionTime\":\"2022-10-02 00:00:00\",\"val\":\"2367\"},{\"acquisitionTime\":\"2022-10-01 00:00:00\",\"val\":\"2874\"}],\"groupId\":\"67\",\"mainConfigId\":\"67\",\"treeConfigId\":\"71\",\"unit\":\"yuan\"}]}]}";
+                    "{\"configName\":\"树株1水文调节价值\",\"dataList\":[{\"acquisitionTime\":\"2022-10-06 00:00:00\",\"val\":\"111\"},{\"acquisitionTime\":\"2022-10-05 00:00:00\",\"val\":\"213\"},{\"acquisitionTime\":\"2022-10-04 00:00:00\",\"val\":\"341\"},{\"acquisitionTime\":\"2022-10-03 00:00:00\",\"val\":\"452\"},{\"acquisitionTime\":\"2022-10-02 00:00:00\",\"val\":\"432\"},{\"acquisitionTime\":\"2022-10-01 00:00:00\",\"val\":\"145\"}],\"groupId\":\"61\",\"mainConfigId\":\"61\",\"treeConfigId\":\"62\",\"unit\":\"yuan\"}\n" +
+                    "]},{\"mainConfigId\":\"67\",\"treeDataList\":[{\"configName\":\"树株1滞纳PM10\",\"dataList\":[{\"acquisitionTime\":\"2022-10-06 00:00:00\",\"val\":\"3\"},{\"acquisitionTime\":\"2022-10-05 00:00:00\",\"val\":\"14\"},{\"acquisitionTime\":\"2022-10-04 00:00:00\",\"val\":\"25\"},{\"acquisitionTime\":\"2022-10-03 00:00:00\",\"val\":\"17\"},{\"acquisitionTime\":\"2022-10-02 00:00:00\",\"val\":\"14\"},{\"acquisitionTime\":\"2022-10-01 00:00:00\",\"val\":\"54\"}],\"groupId\":\"71\",\"mainConfigId\":\"67\",\"treeConfigId\":\"67\",\"unit\":\"g-m-2\"},\n"+
+                    "{\"configName\":\"树株1滞纳PM10价值\",\"dataList\":[{\"acquisitionTime\":\"2022-10-06 00:00:00\",\"val\":\"100\"},{\"acquisitionTime\":\"2022-10-05 00:00:00\",\"val\":\"156\"},{\"acquisitionTime\":\"2022-10-04 00:00:00\",\"val\":\"321\"},{\"acquisitionTime\":\"2022-10-03 00:00:00\",\"val\":\"134\"},{\"acquisitionTime\":\"2022-10-02 00:00:00\",\"val\":\"236\"},{\"acquisitionTime\":\"2022-10-01 00:00:00\",\"val\":\"287\"}],\"groupId\":\"67\",\"mainConfigId\":\"67\",\"treeConfigId\":\"71\",\"unit\":\"yuan\"}]}]}";
             Log.d(TAG,"-----getTreeDataBean  result======"+dataResult);
             Gson gson = new Gson();
             treeDataBean = gson.fromJson(dataResult, TreeAndCommunityDataBean.class);

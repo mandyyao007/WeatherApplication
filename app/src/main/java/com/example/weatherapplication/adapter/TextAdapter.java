@@ -51,6 +51,8 @@ public class TextAdapter extends ArrayAdapter<String> {
                         mOnItemClickListener.onItemClick(view, selectedPos);
                     } catch (IOException e) {
                         e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -159,7 +161,7 @@ public class TextAdapter extends ArrayAdapter<String> {
      * 重新定义菜单选项单击接口
      */
     public interface OnItemClickListener {
-        public void onItemClick(View view, int position) throws IOException;
+        public void onItemClick(View view, int position) throws Exception;
     }
 
 }

@@ -263,6 +263,7 @@ public class DashboardFragment extends Fragment {
             String status = bundle.getString("status");
             Log.d(TAG, "-----status======" + status);
 
+
             if("1".equals(status)){
                 iconClick = BitmapDescriptorFactory.fromResource(R.drawable.icon_click_marker);
             }else{
@@ -309,13 +310,16 @@ public class DashboardFragment extends Fragment {
                     }
                     mMapView.updateViewLayout(popStation, createLayoutParams());
                 }
-                popStation.setVisibility(View.VISIBLE);
-                popCommunity.setVisibility(View.INVISIBLE);
                 try {
+                    Log.d(TAG, "-----marker title======" + marker.getTitle());
                     tvStationName.setText(marker.getTitle());
+                    Log.d(TAG, "-----tvStationName======" + tvStationName.getText());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                popStation.setVisibility(View.VISIBLE);
+                popCommunity.setVisibility(View.INVISIBLE);
+
                 tvStationName.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -474,28 +478,28 @@ public class DashboardFragment extends Fragment {
             mBaiduMap.clear();//先清除图层
             if(it.hasNext()){
                 WeatherStationItemBean item = (WeatherStationItemBean) it.next();
-                //Log.d(TAG,"############station=====Items==:"+item.toString());
+                Log.d(TAG,"############station=====Items==:"+item.toString());
                 String weatherStationId = item.getWeatherStationId();
-                //Log.d(TAG,"############weatherStationId==:"+weatherStationId);
+                Log.d(TAG,"############weatherStationId==:"+weatherStationId);
                 String reg = "^[0-9]+(.[0-9]+)?$";
                 initLatLngData(item);//初始化四边形的点
                 List<CollectorItemBean> collectorItems = NetUtil.getStationItemInfo(userName,weatherStationId);
-                //Log.d(TAG,"############collectorItems==:"+collectorItems);
+                Log.d(TAG,"############collectorItems==:"+collectorItems);
                 Iterator iter = collectorItems.iterator();
                 while(iter.hasNext()){
                     CollectorItemBean collectorItem =  (CollectorItemBean)iter.next();
-                    //Log.d(TAG,"============collectorItem==:"+collectorItem);
+                    Log.d(TAG,"============collectorItem==:"+collectorItem);
                     if((!"".equals(collectorItem.getLatitude()) && collectorItem.getLatitude().matches(reg))
                             && (!"".equals(collectorItem.getLongitude()) && collectorItem.getLongitude().matches(reg)) ){
                         float latitude =  Float.parseFloat(collectorItem.getLatitude()) ;
                         float longitude=  Float.parseFloat(collectorItem.getLongitude());
-                        //Log.d(TAG,"############latitude==:"+latitude+"############longitude==:"+longitude);
+                        Log.d(TAG,"############latitude==:"+latitude+"############longitude==:"+longitude);
                         LatLng point = new LatLng( latitude,longitude);
                         collectorId = collectorItem.getId();
                         collectorName = collectorItem.getCollectorName();
                         status = collectorItem.getStatus();
-                        //Log.d(TAG,"-------------collectorItem==:"+collectorItem+"############collectorName==:"+collectorName);
-                        //Log.d(TAG,"############collectorId==:"+collectorId+"############status==:"+status);
+                        Log.d(TAG,"-------------collectorItem==:"+collectorItem+"############collectorName==:"+collectorName);
+                        Log.d(TAG,"############collectorId==:"+collectorId+"############status==:"+status);
                         if( point!= null){
                             /////Bundle用来传值 也可以识别点击的是哪一个marker
                             Bundle mBundle = new Bundle();

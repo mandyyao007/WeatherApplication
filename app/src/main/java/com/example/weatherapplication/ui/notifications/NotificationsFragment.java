@@ -225,132 +225,18 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
     private void initListener() {
         viewLeft.setOnSelectListener(new ViewLeft.OnSelectListener() {
             @Override
-            public void getValue(String distance, String showText) throws IOException {
+            public void getValue(String distance, String showText) throws Exception {
                 Log.d(TAG,"=********left*******=distance==:"+ distance+"=***********left****=showText==:"+ showText);
                 selectedId = distance;////selectedTreeId
                 type = "tree";
                 Log.d(TAG,"=********left*******=selectedId==:"+ selectedId+"=******left*********=days==:"+ days);
                 Log.d(TAG,"=*********left******=type==:"+ type);
                 if(days!=0){
-                    //drawChart(selectedId,days,type);
+                    drawChart(selectedId,days,type);
                 }
                 onRefresh(viewLeft, showText);
             }
         });
-        /*viewRight.setOnSelectListener(new ViewRight.OnSelectListener() {
-            @Override
-            public void getValue(String distance, String showText) throws IOException {
-                tvChartname1.setText("");
-                barChart1.clear();
-                tvChartname2.setText("");
-                barChart2.clear();
-                tvChartname3.setText("");
-                barChart3.clear();
-                tvChartname4.setText("");
-                barChart4.clear();
-                tvChartname5.setText("");
-                barChart5.clear();
-                tvChartname6.setText("");
-                barChart6.clear();
-                tvChartname7.setText("");
-                barChart7.clear();
-                tvChartname8.setText("");
-                barChart8.clear();
-                tvChartname9.setText("");
-                barChart9.clear();
-                tvChartname10.setText("");
-                barChart10.clear();
-                tvChartname11.setText("");
-                barChart11.clear();
-                tvChartname12.setText("");
-                barChart12.clear();
-                tvChartname13.setText("");
-                barChart13.clear();
-                tvChartname14.setText("");
-                barChart14.clear();
-                tvChartname15.setText("");
-                barChart15.clear();
-                tvChartname16.setText("");
-                barChart16.clear();
-                tvChartname17.setText("");
-                barChart17.clear();
-                tvChartname18.setText("");
-                barChart18.clear();
-                tvChartname19.setText("");
-                barChart19.clear();
-                tvChartname20.setText("");
-                barChart20.clear();
-                tvChartname21.setText("");
-                barChart21.clear();
-                tvChartname22.setText("");
-                barChart22.clear();
-                tvChartname23.setText("");
-                barChart23.clear();
-                tvChartname24.setText("");
-                barChart24.clear();
-                tvChartname25.setText("");
-                barChart25.clear();
-                tvChartname26.setText("");
-                barChart26.clear();
-                tvChartname27.setText("");
-                barChart27.clear();
-                tvChartname28.setText("");
-                barChart28.clear();
-                tvChartname29.setText("");
-                barChart29.clear();
-                tvChartname30.setText("");
-                barChart30.clear();
-                tvChartname31.setText("");
-                barChart31.clear();
-                tvChartname32.setText("");
-                barChart32.clear();
-                tvChartname33.setText("");
-                barChart33.clear();
-                tvChartname34.setText("");
-                barChart34.clear();
-                tvChartname35.setText("");
-                barChart35.clear();
-                tvChartname36.setText("");
-                barChart36.clear();
-                tvChartname37.setText("");
-                barChart37.clear();
-                tvChartname38.setText("");
-                barChart38.clear();
-                tvChartname39.setText("");
-                barChart39.clear();
-                tvChartname40.setText("");
-                barChart40.clear();
-                tvChartname41.setText("");
-                barChart41.clear();
-                tvChartname42.setText("");
-                barChart42.clear();
-                tvChartname43.setText("");
-                barChart43.clear();
-                tvChartname44.setText("");
-                barChart44.clear();
-                tvChartname45.setText("");
-                barChart45.clear();
-                tvChartname46.setText("");
-                barChart46.clear();
-                tvChartname47.setText("");
-                barChart47.clear();
-                tvChartname48.setText("");
-                barChart48.clear();
-                tvChartname49.setText("");
-                barChart49.clear();
-                tvChartname50.setText("");
-                barChart50.clear();
-                Log.d(TAG,"=======right==========distance==:"+ distance+"=******=right===*********=showText==:"+ showText);
-                selectedId = distance;/////selectedWeaherStationId
-                type = "commnuity";
-                Log.d(TAG,"=********=right===*******=selectedId==:"+ selectedId+"=*****=right===**********=days==:"+ days);
-                Log.d(TAG,"=********=right===*******=type==:"+ type);
-                if(days!=0){
-                    drawChart(selectedId,days,type);
-                }
-                onRefresh(viewRight, showText);
-            }
-        });*/
     }
     private void onRefresh(View view, String showText) {
         expandTabView.onPressBack();
@@ -438,7 +324,6 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 toastCenter.show();
             }else{
                 try {
-
                     if(days == 7){
                         drawChart(selectedId,days,type);
                     }else{
@@ -754,8 +639,8 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                         }
                         tvChartname.setText(chatName);//增加单位显示
                         tvChartname.setVisibility(View.VISIBLE);
-                        //combinedChart.zoom(0, 1f, 0, 0);
-                       // combinedChart.zoom(1 / ratio, 1f, 0, 0);
+                        combinedChart.zoom(0, 1f, 0, 0);
+                        combinedChart.zoom(1 / ratio, 1f, 0, 0);
                         setChart(ratio, combinedChart, list1,list2, days);
                         combinedChart.setVisibility(View.VISIBLE);
                         combinedChart.setExtraBottomOffset(10);
@@ -879,10 +764,13 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         Log.d(TAG, "=========setChart======list1==:" +list1);
         Log.d(TAG, "=========setChart======list2==:" +list2);
         Log.d(TAG, "=========setChart======dataMap==:" +dataMap);
-        combinedChart.setDrawBorders(true);//显示边界
-        combinedChart.getDescription().setEnabled(false);//不显示备注信息
+        combinedChart.setDrawBorders(false);//不显示边界
         combinedChart.setPinchZoom(true);//比例缩放
         combinedChart.animateY(1500);
+        combinedChart.setBackgroundColor(Color.WHITE);
+        combinedChart.setDrawGridBackground(false);
+        combinedChart.setHighlightFullBarEnabled(false);
+
         XAxis xAxis = combinedChart.getXAxis();
         xAxis.setTextColor(Color.parseColor("#ffffff"));
         xAxis.setDrawGridLines(false);
@@ -894,7 +782,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         //xAxis.setAxisMinimum(-0.4f);   //X轴最小数值
         xAxis.setGranularity(1);
         xAxis.setTextSize(10f);//设置X轴刻度字体大小
-        xAxis.setLabelRotationAngle(-60f);//旋转45度
+        xAxis.setLabelRotationAngle(-60);//旋转60度
         xAxis.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float v, AxisBase axis) {
@@ -920,7 +808,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
 
         YAxis axisRight = combinedChart.getAxisRight();//获取Y轴右边操作类
         axisRight.setDrawAxisLine(false);//不绘制背景线
-        axisRight.setAxisMinimum(0);//设置最小值
+        axisRight.setAxisMinimum(0f);//设置最小值
         axisRight.setGranularity(10);//设置label间隔
         axisRight.setLabelCount(10);//设置标签数量
         axisRight.setValueFormatter(new IAxisValueFormatter() {
@@ -941,7 +829,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         barData.addDataSet(barDataSet);//添加一组柱形图，如果有多组柱形图数据，则可以多次addDataSet来设置
         barData.setBarWidth(0.5f);   //设置柱子的宽度
         barData.setValueTextSize(13f);
-        barData.setValueTextColor(Color.parseColor("#FFFFFFFF"));
+        barData.setValueTextColor(Color.parseColor("#f44336"));
         Log.d(TAG,"*****************BarChart End*******************");
         /**
          * 初始化折线图数据
@@ -972,9 +860,9 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         //显示的时候是按照多大的比率缩放显示，1f表示不放大缩小
         //barChart.zoom(4,1f,0,0);
         if(days== 7){
-            //combinedChart.zoom(1,1f,0,0);
+           combinedChart.zoom(1,1f,0,0);
         }else{
-           // combinedChart.zoom(2,1f,0,0);
+           combinedChart.zoom(2,1f,0,0);
         }
         Log.d(TAG, "=====setChart==================days===============:" + days);
         //从Y轴弹出的动画时间
