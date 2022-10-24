@@ -2,6 +2,8 @@ package com.example.weatherapplication.buiness;
 
 import android.util.Log;
 
+import com.example.weatherapplication.bean.CarbonItemBean;
+import com.example.weatherapplication.bean.CarbonItemDataBean;
 import com.example.weatherapplication.bean.DayReportBean;
 import com.example.weatherapplication.bean.IndexBean;
 import com.example.weatherapplication.bean.IndexItemsBean;
@@ -100,21 +102,26 @@ public class StationFacade {
         return newestData;
     }
 
-    public String getCarbonData(String communityId, int count) throws Exception {
+    public String getCarbonData(String communityId) throws Exception {
         String carbonData = "";
         Log.d(TAG,"======communityId =====:"+communityId);
-        ReportBean newestRrpotData = NetUtil.getCarbonData(communityId,1);
-        if(newestRrpotData != null  && newestRrpotData.getmDayReportBeans() != null) {
-            List<DayReportBean> dayReports = newestRrpotData.getmDayReportBeans();
-            if(dayReports == null){
-                return null;
-            }
-            Iterator iter = dayReports.iterator();
-            while(iter.hasNext()){
-                DayReportBean dayReportBean = (DayReportBean)iter.next();
-                //Log.d(TAG, "===dayReportBean.getCol1()==:" + dayReportBean.getCol1());
-                carbonData = dayReportBean.getCol1();
-                Log.d(TAG, "===carbonData==:" + carbonData);
+        List<CarbonItemBean> carbonItemBeans = NetUtil.getCarbonData(communityId);
+        Log.d(TAG,"*************8888getCarbonData =====:"+carbonItemBeans);
+        if(carbonItemBeans !=null){
+            Iterator<CarbonItemBean> iter = carbonItemBeans.iterator();
+            if(iter.hasNext()){
+              CarbonItemBean carbonItemBean = iter.next();
+                Log.d(TAG,"*************8888carbonItemBean=====:"+carbonItemBean);
+                List<CarbonItemDataBean> carbonItemDataBeanList = carbonItemBean.getmCarbonItemDataBean();
+                Log.d(TAG,"*************8888carbonItemDataBeanList=====:"+carbonItemDataBeanList);
+                Iterator<CarbonItemDataBean> iterator = carbonItemDataBeanList.iterator();
+                if(iterator.hasNext()){
+                    iterator.next();
+                    CarbonItemDataBean carbonItemDataBean = iterator.next();
+                    Log.d(TAG,"*************8888carbonItemDataBean=====:"+carbonItemDataBean);
+                    carbonData = carbonItemDataBean.getValue();
+                    Log.d(TAG,"*************8888carbonData=====:"+carbonData);
+                }
             }
         }
         return carbonData;

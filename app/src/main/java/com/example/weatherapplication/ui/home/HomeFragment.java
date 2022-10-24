@@ -34,6 +34,7 @@ import com.example.weatherapplication.bean.IndexItemsBean;
 import com.example.weatherapplication.bean.ReportBean;
 import com.example.weatherapplication.buiness.StationFacade;
 import com.example.weatherapplication.databinding.FragmentHomeBinding;
+import com.example.weatherapplication.util.Def;
 import com.example.weatherapplication.util.NetUtil;
 import com.example.weatherapplication.util.ToastUtil;
 import com.github.mikephil.charting.charts.LineChart;
@@ -78,6 +79,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     List<DaysDataItemBean>  daysDataItemBean = null;
     private int days = 0;
     private ProgressDialog progressDialog = null;
+    private String markerFlag,stationFlag ;
+    private Boolean typeFlag = false;
+    private Boolean dayFlag = false;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
@@ -120,9 +124,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         collectorName = getActivity().getIntent().getStringExtra("collectorName");
         weatherStationId = getActivity().getIntent().getStringExtra("weatherStationId");
         weatherStationName = getActivity().getIntent().getStringExtra("weatherStationName");
+        markerFlag = getActivity().getIntent().getStringExtra("markerFlag");
+        stationFlag = getActivity().getIntent().getStringExtra("stationFlag");
         Log.d(TAG,"=&&&&&&&&initView==userName==:"+ userName+"=&&&&&&&&initView==collectorId==:"+ collectorId);
         Log.d(TAG,"=&&&&&&&&initView==collectorName==:"+ collectorName+"=&&&&&&&&initView==weatherStationId==:"+ weatherStationId);
         Log.d(TAG,"=&&&&&&&&iweatherStationName==========:"+ weatherStationName);
+        Log.d(TAG,"=&&&&&&&&markerFlag==========:"+ markerFlag);
+        Log.d(TAG,"=&&&&&&&&stationFlag==========:"+ stationFlag);
         tvStation = fragmentHomeView.findViewById(R.id.tv_station);
         tvStation.setText(collectorName);
         ivAdd = (ImageView) fragmentHomeView.findViewById(R.id.iv_add);
@@ -146,10 +154,33 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         tvUnit2 = fragmentHomeView.findViewById(R.id.unit_tv_2);
         tvUnit3 = fragmentHomeView.findViewById(R.id.unit_tv_3);
         scrollView = fragmentHomeView.findViewById(R.id.scrollview);
+        //if (markerFlag == null && stationFlag == null) {//如果是从底部菜单进入，需要默认显示一号站点，气象，近一天 数据
+        if(collectorId == null){
+            Log.d(TAG,"=============11111111111111111=========");
+            collectorName = Def.DefCollectorName;
+            collectorId = Def.DefCollectorId;
+        }
+            tvStation.setText(collectorName);
+            btMeteorology.setEnabled(false);
+            typeFlag = true;
+            btOneDay.setEnabled(false);
+            dayFlag = true;
+            configType = "1";
+            days =1;
+            drawChart(configType,days);
+       // }
     }
     @Override
     public void onClick(View v) {
         Intent intent = null;
+        if(!typeFlag){
+           Log.d(TAG,"=============typeFlag====onClick=====");
+           btMeteorology.setEnabled(true);
+        }
+        if(!dayFlag){
+            Log.d(TAG,"=============dayFlag====onClick=====");
+            btOneDay.setEnabled(true);
+        }
         switch (v.getId()) {
             case R.id.iv_add:
                 intent = new Intent(getActivity(), StationActivity.class);
@@ -265,8 +296,17 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     }
 
     View.OnClickListener dayListener =  new View.OnClickListener() {
+
         @Override
         public void onClick(View v) {
+            if(!typeFlag){
+                Log.d(TAG,"=============typeFlag====dayListener=====");
+                btMeteorology.setEnabled(true);
+            }
+            if(!dayFlag){
+                Log.d(TAG,"=============dayFlag====dayListener=====");
+                btOneDay.setEnabled(true);
+            }
             switch(v.getId()){
                 case R.id.btn_one_day:
                     days = 1;
@@ -348,7 +388,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         if (configType != null) {
             //Log.d(TAG "=========configType=:" + configType);
             try {
-                //Log.dTAG, "===####======days==:" + days);
+                Log.d(TAG, "===####======days==:" + days);
                 daysDataItemBean = NetUtil.getDaysData(collectorId, configType, days);
                 Log.d(TAG, "===####======daysDataItemBean==:" + daysDataItemBean);
             } catch (Exception e) {
@@ -544,7 +584,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
             return null;
         }
         //Log.d(TAG, "==============dayDataDetailReports==:" +dayDataDetailReports);
-        Collections.reverse(dayDataDetailReports);
+        //Collections.reverse(dayDataDetailReports);//将结果集倒序
         //Log.d(TAG, "==========reverse====dayDataDetailReports==:" + dayDataDetailReports);
         Iterator it = dayDataDetailReports.iterator();
         int count = 0;
@@ -556,10 +596,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
             DaysDataItemDetailBean dayDataDetailReportBean = (DaysDataItemDetailBean)it.next();
             //Log.d(TAG, "==========dayDataDetailReportBean==:" + dayDataDetailReportBean);
             float time = 0.0f;
-            if(days==1){
-                time = Float.parseFloat(dayDataDetailReportBean.getAcquisitionTime().substring(11,13));
-            }else if(days==7){
-                dataMap.put(count,dayDataDetailReportBean.getAcquisitionTime().substring(0,16));
+           // if(days==1){
+             //   time = Float.parseFloat(dayDataDetailReportBean.getAcquisitionTime().substring(11,13));
+            //}else
+            if(days==1 || days==7){
+                dataMap.put(count,dayDataDetailReportBean.getAcquisitionTime().substring(0,13));
                 time = count;
             }else{
                 dataMap.put(count,dayDataDetailReportBean.getAcquisitionTime().substring(0,10));
@@ -611,16 +652,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 xAxis.setGranularity(1f);//设置最小间隔
                 xAxis.setEnabled(true);
                 xAxis.setAxisMinimum(-0.3f);//设置X轴最小值
-                if(days==1){
-                    xAxis.setTextSize(10f);//设置X轴刻度字体大小
-                    xAxis.setLabelRotationAngle(0f);//不旋转
-                    xAxis.setValueFormatter(new IAxisValueFormatter() {
-                        @Override
-                        public String getFormattedValue(float v, AxisBase axis) {
-                            return String.valueOf((int) v+":00");
-                        }
-                    });
-                }else{
+//                if(days==1){
+//                    xAxis.setTextSize(10f);//设置X轴刻度字体大小
+//                    xAxis.setLabelRotationAngle(0f);//不旋转
+//                    xAxis.setValueFormatter(new IAxisValueFormatter() {
+//                        @Override
+//                        public String getFormattedValue(float v, AxisBase axis) {
+//                            return String.valueOf((int) v+":00");
+//                        }
+//                    });
+//                }else{
                     xAxis.setTextSize(10f);//设置X轴刻度字体大小
                     xAxis.setLabelRotationAngle(-45f);//旋转45度
                     xAxis.setValueFormatter(new IAxisValueFormatter() {
@@ -629,7 +670,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                             return String.valueOf(dataMap.get((int) v));
                         }
                     });
-                }
+                //}
                 Legend legend = lineChart.getLegend();//图例
                 legend.setForm(Legend.LegendForm.EMPTY);//设置图例的形状
                 legend.setTextSize(10f);//设置图例字体大小

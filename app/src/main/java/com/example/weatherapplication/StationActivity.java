@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.weatherapplication.adapter.StationAdapter;
 import com.example.weatherapplication.bean.CollectorItemBean;
+import com.example.weatherapplication.util.Def;
 import com.example.weatherapplication.util.NetUtil;
 import com.example.weatherapplication.util.StatusBarUtils;
 
@@ -47,8 +48,8 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
         weatherStationName = getIntent().getStringExtra("weatherStationName");
         page = getIntent().getStringExtra("page");
         if (weatherStationId == null) {
-            weatherStationId = "22";
-            weatherStationName = "上海园林";
+            weatherStationId = Def.DefWeatherStationId;
+            weatherStationName = Def.DefWeatherStationName;
         }
         Log.d(TAG,"========userName==:"+ userName);
         Log.d(TAG,"======weatherStationId==:"+ weatherStationId);
@@ -89,6 +90,7 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
                 intent.putExtra("collectorName", selectedCollector.getCollectorName());
                 intent.putExtra("weatherStationId",weatherStationId);
                 intent.putExtra("weatherStationName",weatherStationName);
+                intent.putExtra("stationFlag", "Y");
                 if("home".equals(page) || page ==null){
                     intent.putExtra("fragment_flag", 2);
                 }else{
@@ -106,7 +108,7 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
         page = getIntent().getStringExtra("page");
         try {
             if(weatherStationId == null){
-               weatherStationId ="22";
+               weatherStationId = Def.DefWeatherStationId;
             }
             List<CollectorItemBean> stationItems = NetUtil.getStationItemInfo(userName,weatherStationId);
             Log.d(TAG, "=================stationItems==========:"+stationItems);

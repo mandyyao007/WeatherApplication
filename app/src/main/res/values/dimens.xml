@@ -7,4 +7,6 @@
     <dimen name="expand_tab_area_height">380dp</dimen>
     <dimen name="head_bar_height">45dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="combined_chart_name_font_size">15dp</dimen>
+    <dimen name="combined_chart_height">220dp</dimen>
 </resources>

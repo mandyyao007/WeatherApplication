@@ -94,8 +94,8 @@ public class ViewLeft extends RelativeLayout implements ViewBaseAction{
         for (int i = 0; i < groups.size(); i++) {
             Log.d(TAG, "===itemsGroupVaule.get(i)=============:" + itemsGroupVaule.get(i));
             Log.d(TAG, "===groups.get(i)=============:" +groups.get(i));
-            adapter.setSelectedPositionNoNotify(i);
-            showText = groups.get(i);
+            adapter.setSelectedPositionNoNotify(0);///第一项后面有绿色勾选按钮
+            showText = groups.get(0);
         }
         mListView.setAdapter(adapter);
         adapter.setOnItemClickListener(new TextAdapter.OnItemClickListener() {

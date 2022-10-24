@@ -2,6 +2,7 @@ package com.example.weatherapplication.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -115,7 +116,10 @@ public class ExpandTabView extends LinearLayout implements OnDismissListener {
                         selectedButton.setChecked(false);
                     }
                     selectedButton = tButton;
+                    //selectedButton.setBackgroundColor(Color.parseColor("#FFDEE3E4"));
                     selectPosition = (Integer) selectedButton.getTag();
+                    Log.d(TAG,"=***************=2222222222222====selectedButton color========="+Color.YELLOW);
+                    selectedButton.setTextColor(Color.YELLOW);
                     startAnimation();
                     if (mOnButtonClickListener != null && tButton.isChecked()) {
                         mOnButtonClickListener.onClick(selectPosition);
@@ -216,4 +220,11 @@ public class ExpandTabView extends LinearLayout implements OnDismissListener {
         public void onClick(int selectPosition);
     }
 
+    public ToggleButton getSelectedButton() {
+        return selectedButton;
+    }
+
+    public void setSelectedButton(ToggleButton selectedButton) {
+        this.selectedButton = selectedButton;
+    }
 }

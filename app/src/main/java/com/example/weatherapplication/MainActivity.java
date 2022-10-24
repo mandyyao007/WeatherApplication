@@ -1,6 +1,7 @@
 package com.example.weatherapplication;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.weatherapplication.util.StatusBarUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -41,13 +42,16 @@ public class MainActivity extends AppCompatActivity {
         switch (fragmentFlag){
             case 1:
                 // 控制跳转到底部导航项(navigation_home为该Fragment的对应控件的id值)
-                navController.navigate(R.id.navigation_dashboard);
+                Log.d(TAG,"=********fragmentFlag*******=111111111111111111111==:");
+                navController.navigate(R.id.navigation_dashboard);//地图
                 break;
             case 2:
-                navController.navigate(R.id.navigation_home);
+                Log.d(TAG,"=********fragmentFlag*******=222222222222222==:");
+                navController.navigate(R.id.navigation_home);//基础数据
                 break;
             case 3:
-                navController.navigate(R.id.navigation_notifications);
+                Log.d(TAG,"=********fragmentFlag*******=33333333333333333==:");
+                navController.navigate(R.id.navigation_notifications);//评价数据
                 break;
         }
         super.onResume();

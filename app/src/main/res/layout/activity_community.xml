@@ -19,7 +19,7 @@
             android:src="@drawable/icon_back"/>
         <TextView
             android:id="@+id/tv_community_title"
-            android:text="群落列表"
+            android:text="@string/community_list"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_centerInParent="true"

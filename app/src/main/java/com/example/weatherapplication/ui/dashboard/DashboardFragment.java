@@ -22,7 +22,6 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.animation.Animation;
-import com.baidu.mapapi.animation.RotateAnimation;
 import com.baidu.mapapi.animation.ScaleAnimation;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
@@ -44,6 +43,7 @@ import com.example.weatherapplication.bean.CollectorItemBean;
 import com.example.weatherapplication.bean.WeatherStationItemBean;
 import com.example.weatherapplication.buiness.StationFacade;
 import com.example.weatherapplication.databinding.FragmentDashboardBinding;
+import com.example.weatherapplication.util.Def;
 import com.example.weatherapplication.util.NetUtil;
 
 import java.util.ArrayList;
@@ -60,10 +60,10 @@ public class DashboardFragment extends Fragment {
     private BaiduMap mBaiduMap;
     private LocationClient mLocationClient;
     private String userName,collectorName,collectorId,status,communityId,communityName;
-    private View popStation,popCommunity;
+    private View popStationNormal,popStationBasic,popCommunity;
     ////2022/02/15
-    private TextView tvStationName,tvAirTem,tvAirHum,tvSoilTem,tvSoilHum,tvSoilSalt,tvPlantFluid,tvPlantDia,tvPlantRad,
-            valAirTem,valAirHum,valSoilTem,valSoilHum,valSoilSalt,valPlantFluid,valPlantDia,valPlantRad,tvCommunityName,txCarbon;
+    private TextView tvStationName,tvAirTem,tvAirHum,tvSoilTem,tvSoilHum,tvSoilSalt,tvPlantFluid,tvPlantDia,tvAirRad,
+            valAirTem,valAirHum,valSoilTem,valSoilHum,valSoilSalt,valPlantFluid,valPlantDia,valAirRad,tvCommunityName,txCarbon;
     private ListView detailLv,detailLvLeft,valueLvLeft;
     private String[] mDatas,mValueDatas,mValue,mDatasLeft,mValueDatasLeft; //列表数据源
     private ArrayAdapter detailAdapter,valueAdapter,detailAdapterLeft,valueAdapterLeft;
@@ -113,7 +113,7 @@ public class DashboardFragment extends Fragment {
         LocationClientOption option = new LocationClientOption();
 
         //设置地图中心点，默认是上海园林，百度地图的默认中心是天安门
-        mapStatusUpdate = MapStatusUpdateFactory.newLatLng(new LatLng( 31.38771,121.531994));
+        mapStatusUpdate = MapStatusUpdateFactory.newLatLng(new LatLng( Def.LAT,Def.LNG));
         mBaiduMap.setMapStatus(mapStatusUpdate);
         mBaiduMap.setMyLocationEnabled(true);
         //定位初始化
@@ -126,13 +126,13 @@ public class DashboardFragment extends Fragment {
         //设置locationClientOption
         mLocationClient.setLocOption(locationOption);
         mLocationClient.start(); //开启地图定位图层
-        mapStatusUpdate = MapStatusUpdateFactory.zoomTo(17);//设置地图缩放为18
+        mapStatusUpdate = MapStatusUpdateFactory.zoomTo(Def.MAPLEVAL);//设置地图缩放
         mBaiduMap.setMapStatus(mapStatusUpdate);
         initMarker();///初始化标志
         addArea(Color.parseColor("#FFFFFFFF"), Color.parseColor("#80FFFFFF"), mLatLnglist);//添加多边形区域
         mBaiduMap.setOnMarkerClickListener(markerClickListener);//注册点击监听器事件
         mBaiduMap.setOnMapClickListener(mapClickListener);
-        mBaiduMap.showMapPoi(false);
+        mBaiduMap.showMapPoi(false);//是否显示地图标注(各类道路地点等)
         //设置扫描时间间隔
         option.setScanSpan(1000);
     }
@@ -155,41 +155,54 @@ public class DashboardFragment extends Fragment {
         mLatLnglist.add(position++, new LatLng(Float.parseFloat(weatherStationItemBean.getLatLng1().split(",")[1]),Float.parseFloat(weatherStationItemBean.getLatLng1().split(",")[0])));
         mLatLnglist.add(position++, new LatLng(Float.parseFloat(weatherStationItemBean.getLatLng2().split(",")[1]),Float.parseFloat(weatherStationItemBean.getLatLng2().split(",")[0])));
         mLatLnglist.add(position++, new LatLng(Float.parseFloat(weatherStationItemBean.getLatLng3().split(",")[1]),Float.parseFloat(weatherStationItemBean.getLatLng3().split(",")[0])));
-        mLatLnglist.add(position++, new LatLng(Float.parseFloat(weatherStationItemBean.getLatLng4().split(",")[1]),Float.parseFloat(weatherStationItemBean.getLatLng4().split(",")[0])));
+        mLatLnglist.add(position++, new  LatLng(Float.parseFloat(weatherStationItemBean.getLatLng4().split(",")[1]),Float.parseFloat(weatherStationItemBean.getLatLng4().split(",")[0])));
     }
     //拖拽监听器
     BaiduMap.OnMarkerDragListener markerDragListener = new BaiduMap.OnMarkerDragListener() {
         //标志正在拖动
         @Override
         public void onMarkerDrag(Marker marker) {
-            mMapView.addView(popStation,createLayoutParams());
+            //mMapView.addView(popStation,createLayoutParams());
         }
         //标志开始结束
         @Override
         public void onMarkerDragEnd(Marker marker) {
-            mMapView.addView(popStation,createLayoutParams());
+            //mMapView.addView(popStation,createLayoutParams());
         }
         //标志开始拖动
         @Override
         public void onMarkerDragStart(Marker marker) {
-            mMapView.addView(popStation,createLayoutParams());
+            //mMapView.addView(popStation,createLayoutParams());
         }
     };
     BaiduMap.OnMapClickListener mapClickListener = new BaiduMap.OnMapClickListener() {
         @Override
         public void onMapClick(LatLng latLng) {
-            Log.d(TAG, "#############====mapClickListener========="+(popStation!=null));
-            Log.d(TAG, "#############====mapClickListener====infoWindowShown====="+infoWindowShown);
-            if(popStation!=null ){
-                Log.d(TAG, "#############====mapClickListener====pop.isShown()====="+popStation.isShown());
+//            Log.d(TAG, "#############====mapClickListener===popStationNormal======"+(popStationNormal!=null));
+//            Log.d(TAG, "#############====mapClickListener=====popStationBasic===="+(popStationBasic!=null));
+//            Log.d(TAG, "#############====mapClickListener====infoWindowShown====="+infoWindowShown);
+            if(popStationNormal!=null ){
+                Log.d(TAG, "#############====mapClickListener====popStationNormal.isShown()====="+popStationNormal.isShown());
+            }
+            if(popStationBasic!=null  ){
+                Log.d(TAG, "#############====mapClickListener====popStationBasic.isShown()====="+popStationBasic.isShown());
             }
             if(popCommunity!=null){
                 Log.d(TAG, "#############====mapClickListener====popCommunity===="+popCommunity.isShown());
             }
-            if(popStation!=null && popStation.isShown() && !infoWindowShown){
+            if((popStationNormal!=null && popStationNormal.isShown() && !infoWindowShown) ||(popStationBasic!=null && popStationBasic.isShown() && !infoWindowShown)){
                 infoWindowShown = true;
-                popStation.setVisibility(View.INVISIBLE);
+                Log.d(TAG, "#############====mapClickListener====11111111111111111111===");
+                if(popStationNormal!=null ){
+                    Log.d(TAG, "#############====mapClickListener===222222222222222=");
+                    popStationNormal.setVisibility(View.INVISIBLE);
+                }
+                if(popStationBasic!=null ){
+                    Log.d(TAG, "#############====mapClickListener====333333333333333===");
+                    popStationBasic.setVisibility(View.INVISIBLE);
+                }
                 if(lastMarker!=null) {
+                    Log.d(TAG, "#############====mapClickListener====44444444444444444==");
                     Bundle bundle = lastMarker.getExtraInfo();
                     String status = bundle.getString("status");
                     Log.d(TAG, "---====mapClickListener===mapClickListener--status======"+status);
@@ -203,8 +216,8 @@ public class DashboardFragment extends Fragment {
                     //return;
                 }
             }
-            Log.d(TAG, "#############====mapClickListener=====popCommunity===="+(popCommunity!=null));
-            Log.d(TAG, "#############====mapClickListener====infoWindowShown====="+infoWindowShown);
+            //Log.d(TAG, "#############====mapClickListener=====popCommunity===="+(popCommunity!=null));
+            //Log.d(TAG, "#############====mapClickListener====infoWindowShown====="+infoWindowShown);
             if(popCommunity!=null ){
                 Log.d(TAG, "#############====mapClickListener====popCommunity.isShown()====="+popCommunity.isShown());
             }
@@ -212,8 +225,8 @@ public class DashboardFragment extends Fragment {
                 Log.d(TAG, "---====mapClickListener===show community data======");
                 try {
                     popCommunity = View.inflate(getActivity(), R.layout.community_pop_layout, null);
-                    communityId = "1";
-                    communityName="群落1";
+                    communityId = Def.DefCommunityId;
+                    communityName=Def.DefCommunityName;
                     initCommunityPopView(popCommunity,communityId,communityName);
                     mMapView.addView(popCommunity, createLayoutParams());
                 } catch (Exception e) {
@@ -229,8 +242,9 @@ public class DashboardFragment extends Fragment {
                         intent.putExtra("communityName",communityName);
                         intent.putExtra("userName", userName);
                         intent.putExtra("fragment_flag", 3);
-                        Log.d(TAG, "-----communityId======" + communityId+"-----userName======" + userName);
-                        Log.d(TAG, "-----communityName======" + communityName);
+                        intent.putExtra("map_flag", "Y");
+                        //Log.d(TAG, "-----communityId======" + communityId+"-----userName======" + userName);
+                        //Log.d(TAG, "-----communityName======" + communityName);
                         startActivity(intent);
                     }
                 });
@@ -239,7 +253,8 @@ public class DashboardFragment extends Fragment {
             if(popCommunity!=null && !popCommunity.isShown() && !infoCommunityPopShown){
                 infoCommunityPopShown = false;
             }
-            if(popStation!=null && !popStation.isShown() && !infoWindowShown){
+
+            if((popStationNormal!=null && popStationNormal.isShown() && !infoWindowShown) ||(popStationBasic!=null && popStationBasic.isShown() && !infoWindowShown)){
                 infoWindowShown = false;
             }
         }
@@ -261,8 +276,8 @@ public class DashboardFragment extends Fragment {
             String id = bundle.getString("id");
             String collectorId = bundle.getString("collectorId");
             String status = bundle.getString("status");
-            Log.d(TAG, "-----status======" + status);
-
+            //Log.d(TAG, "-----status======" + status);
+            //Log.d(TAG, "-----collectorId======" + collectorId);
 
             if("1".equals(status)){
                 iconClick = BitmapDescriptorFactory.fromResource(R.drawable.icon_click_marker);
@@ -294,32 +309,67 @@ public class DashboardFragment extends Fragment {
             //}
             infoWindowShown = false;
             if("1".equals(id) ||"2".equals(id)||"3".equals(id)||"4".equals(id)){
-                if (popStation == null) {
+                if (popStationNormal == null && !"59".equals(collectorId)) {
                     try {
-                        popStation = View.inflate(getActivity(), R.layout.marker_layout, null);
-                        initPopView(popStation,collectorId);
-                        mMapView.addView(popStation, createLayoutParams());
+                        //Log.d(TAG, "--------popStationNormal======");
+                        popStationNormal = View.inflate(getActivity(), R.layout.marker_layout, null);
+                        initPopView(popStationNormal,collectorId);
+                        mMapView.addView(popStationNormal, createLayoutParams());
                     } catch (Exception e) {
                     e.printStackTrace();
                     }
-                } else {
+                } else if(popStationNormal != null && !"59".equals(collectorId)){
                     try {
-                        initPopView(popStation,collectorId);
+                        initPopView(popStationNormal,collectorId);
+                        mMapView.updateViewLayout(popStationNormal, createLayoutParams());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    mMapView.updateViewLayout(popStation, createLayoutParams());
+                }
+                if ( popStationBasic ==null  && "59".equals(collectorId)) {
+                    try {
+                        //Log.d(TAG, "-----popStationBasic======");
+                        popStationBasic = View.inflate(getActivity(), R.layout.marker_soil_layout, null);
+                        initPopView(popStationBasic,collectorId);
+                        mMapView.addView(popStationBasic, createLayoutParams());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else if(popStationBasic != null  && "59".equals(collectorId)){
+                    try {
+                        initPopView(popStationBasic,collectorId);
+                        mMapView.updateViewLayout(popStationBasic, createLayoutParams());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
                 try {
-                    Log.d(TAG, "-----marker title======" + marker.getTitle());
+                    //Log.d(TAG, "-----marker title======" + marker.getTitle());
                     tvStationName.setText(marker.getTitle());
-                    Log.d(TAG, "-----tvStationName======" + tvStationName.getText());
+                    //Log.d(TAG, "-----tvStationName======" + tvStationName.getText());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                popStation.setVisibility(View.VISIBLE);
-                popCommunity.setVisibility(View.INVISIBLE);
-
+                if("59".equals(collectorId)){
+                    //Log.d(TAG, "-----marker title===59595959===");
+                    if(popStationBasic!=null){
+                        popStationBasic.setVisibility(View.VISIBLE);
+                    }
+                    if(popStationNormal!=null){
+                        popStationNormal.setVisibility(View.INVISIBLE);
+                    }
+                }else{
+                    //Log.d(TAG, "-----marker title===ELSEELSESLESE===");
+                    if(popStationBasic!=null){
+                        popStationBasic.setVisibility(View.INVISIBLE);
+                    }
+                    if(popStationNormal!=null){
+                        popStationNormal.setVisibility(View.VISIBLE);
+                    }
+                }
+                if(popCommunity!=null){
+                    popCommunity.setVisibility(View.INVISIBLE);
+                }
                 tvStationName.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -334,20 +384,27 @@ public class DashboardFragment extends Fragment {
                         intent.putExtra("fragment_flag", 2);
                         intent.putExtra("collectorId",collectorId);
                         intent.putExtra("collectorName", bundle.getString("collectorName"));
+                        intent.putExtra("markerFlag", "Y");
                         /*Log.d(TAG, "-----weatherStationId======" + weatherStationId"-----userName======" + userName);
                         Log.d(TAG, "-----collectorId======" + collectorId"-----collectorName======" + bundle.getString("collectorName"));*/
                         startActivity(intent);
                     }
                 });
             }else{
-                if(popStation.isShown()){
+                if((popStationBasic!=null && popStationBasic.isShown())|| (popStationNormal!=null && popStationNormal.isShown() ) ){
                     if("1".equals(status)){
                         icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_location);
                     }else{
                         icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_location_basic);
                     }
                     marker.setIcon(icon);
-                    popStation.setVisibility(View.INVISIBLE);
+                    if("59".equals(collectorId)){
+                        popStationBasic.setVisibility(View.INVISIBLE);
+                        popStationNormal.setVisibility(View.VISIBLE);
+                    }else{
+                        popStationNormal.setVisibility(View.VISIBLE);
+                        popStationBasic.setVisibility(View.INVISIBLE);
+                    }
                 }
             }
             return true;
@@ -357,11 +414,13 @@ public class DashboardFragment extends Fragment {
         StationFacade stationFacade = StationFacade.getInstance();
         tvCommunityName = (TextView) pop.findViewById(R.id.tv_community_name);
         tvCommunityName.setText(communityName);
-        txCarbon =  (TextView) pop.findViewById(R.id.tx_carbon);
-        Log.d(TAG,"==================initCommunityPopView========communityId:" + communityId+"========communityName:"+communityName);
-        String tem = stationFacade.getCarbonData(communityId,1);
+        txCarbon =  (TextView) pop.findViewById(R.id.val_carbon);
+        //Log.d(TAG,"==================initCommunityPopView========communityId:" + communityId+"========communityName:"+communityName);
+        String tem = stationFacade.getCarbonData(communityId);
+        //Log.d(TAG,"==================initCommunityPopView========tem:" + tem);
         try {
             txCarbon.setText(tem);
+            //Log.d(TAG,"==================initCommunityPopView========txCarbon:" + txCarbon.getText());
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -371,35 +430,54 @@ public class DashboardFragment extends Fragment {
         tvStationName = (TextView) pop.findViewById(R.id.tv_station_name);
         tvAirTem =  (TextView) pop.findViewById(R.id.tx_air_tem);
         tvAirHum =  (TextView) pop.findViewById(R.id.tx_air_hum);
-        tvSoilTem =  (TextView) pop.findViewById(R.id.tx_soil_tem);
-        tvSoilHum = (TextView) pop.findViewById(R.id.tx_soil_hum);
-        tvSoilSalt = (TextView) pop.findViewById(R.id.tx_soil_salt);
-        tvPlantFluid = (TextView) pop.findViewById(R.id.tx_plant_fluid);
-        tvPlantDia = (TextView) pop.findViewById(R.id.tx_plant_dia);
-        tvPlantRad = (TextView) pop.findViewById(R.id.tx_plant_rad);
+        tvAirRad = (TextView) pop.findViewById(R.id.tx_air_rad);
         valAirTem = (TextView) pop.findViewById(R.id.val_air_tem);
         valAirHum = (TextView) pop.findViewById(R.id.val_air_hum);
-        valSoilTem = (TextView) pop.findViewById(R.id.val_soil_tem);
-        valSoilHum = (TextView) pop.findViewById(R.id.val_soil_hum);
-        valSoilSalt = (TextView) pop.findViewById(R.id.val_soil_salt);
-        valPlantFluid = (TextView) pop.findViewById(R.id.val_plant_fluid);
-        valPlantDia = (TextView) pop.findViewById(R.id.val_plant_dia);
-        valPlantRad = (TextView) pop.findViewById(R.id.val_plant_rad);
+        valAirRad = (TextView) pop.findViewById(R.id.val_air_rad);
+        valAirTem.setText("");
+        valAirHum.setText("");
+        valAirRad.setText("");
+        if(!"59".equals(collectorId)){
+            tvSoilTem =  (TextView) pop.findViewById(R.id.tx_soil_tem);
+            tvSoilHum = (TextView) pop.findViewById(R.id.tx_soil_hum);
+            tvSoilSalt = (TextView) pop.findViewById(R.id.tx_soil_salt);
+            valSoilTem = (TextView) pop.findViewById(R.id.val_soil_tem);
+            valSoilHum = (TextView) pop.findViewById(R.id.val_soil_hum);
+            valSoilSalt = (TextView) pop.findViewById(R.id.val_soil_salt);
+            tvPlantFluid = (TextView) pop.findViewById(R.id.tx_plant_fluid);
+            tvPlantDia = (TextView) pop.findViewById(R.id.tx_plant_dia);
+            valPlantFluid = (TextView) pop.findViewById(R.id.val_plant_fluid);
+            valPlantDia = (TextView) pop.findViewById(R.id.val_plant_dia);
+            valSoilTem.setText("");
+            valSoilHum.setText("");
+            valSoilSalt.setText("");
+            valPlantFluid.setText("");
+            valPlantDia.setText("");
+        }
         Map indexMap = stationFacade.initIndex(collectorId);
         //Log.d(TAG,"==================indexMap=====" + indexMap);
         for(Iterator it = indexMap.keySet().iterator();it.hasNext();){
             String indexAndUnit = (String) it.next();
-            //Log.d(TAG,"==================indexAndUnit=====" + indexAndUnit);
+            //Log.d(TAG,"==================indexAndUnit=====:" + indexAndUnit);
+            int length = indexAndUnit.split(",").length;
+            //Log.d(TAG,"==================indexAndUnit==length===:" + length);
             String index = indexAndUnit.split(",")[0];
-            String unit = indexAndUnit.split(",")[1];
-            Log.d(TAG,"======index==========:"+index+"======unit==========:"+unit+"########collectorId======" + collectorId);
-            String tem = stationFacade.getNewestData(indexAndUnit,collectorId,1)+" "+unit;
+            String unit ="";
+            if(length>1){
+                unit = indexAndUnit.split(",")[1];
+            }
+            //Log.d(TAG,"======index==========:"+index+"======unit==========:"+unit+"########collectorId======" + collectorId);
+            String tem = stationFacade.getNewestData(indexAndUnit,collectorId,1);
+            if (!"".equals(unit)) {
+                tem = tem+" "+unit;
+            }
+            //Log.d(TAG,"======index==========:"+index+"======tem==========:"+tem);
             try {
                 if("空气温度".equals(index) || "AirTC_Avg1".equals(index) ){
                     tvAirTem.setText(index+":");
                     valAirTem.setText(tem);
                 }
-                if("空气湿度".equals(index)||"RH_Avg1".equals(index)){
+                if("空气湿度(%)".equals(index)||"RH_Avg1".equals(index)){
                     tvAirHum.setText(index+":");
                     valAirHum.setText(tem);
                 }
@@ -415,7 +493,6 @@ public class DashboardFragment extends Fragment {
                     tvSoilSalt.setText(index+":");
                     valSoilSalt.setText(tem);
                 }
-
                 if("树干液流".equals(index)|| "DD_Avg1".equals(index)){
                      tvPlantFluid.setText(index+":");
                      valPlantFluid.setText(tem);
@@ -427,8 +504,8 @@ public class DashboardFragment extends Fragment {
                     valSoilHum.setText("");
                     tvSoilSalt.setText("");
                     valSoilSalt.setText("");
-                    tvPlantRad.setText("");
-                    valPlantRad.setText("");
+                    tvAirRad.setText("");
+                    valAirRad.setText("");
                     tvPlantDia.setText("");
                     valPlantDia.setText("");
                 }
@@ -445,22 +522,25 @@ public class DashboardFragment extends Fragment {
                 }
 
                 if("光合有效辐射".equals(index)|| "TDP_Avg1".equals(index)){
-                    tvPlantRad.setText(index+":");
-                    valPlantRad.setText(tem);
+                    tvAirRad.setText(index+":");
+                    valAirRad.setText(tem);
                 }
             }catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
-
     }
 
     //创建布局参数
     private MapViewLayoutParams createLayoutParams(){
         MapViewLayoutParams.Builder builder =  new MapViewLayoutParams.Builder();
         builder.layoutMode(MapViewLayoutParams.ELayoutMode.absoluteMode);//mapMode是指定坐标类型为经纬度
-        builder.point(new Point(540,700)).width(mMapView.getWidth()).height(700);//设置标志的位置,屏幕坐标
+        int width = getActivity().getApplicationContext().getResources().getDisplayMetrics().widthPixels;
+        int height = getActivity().getApplicationContext().getResources().getDisplayMetrics().heightPixels;
+        //Log.d(TAG,"==============Display====width=====" + width);
+        //Log.d(TAG,"==============Display====height=====" + height);
+        builder.point(new Point(width/2,700)).width(mMapView.getWidth()).height(700);//设置标志的位置,屏幕坐标
+        //////取屏幕中间点
         //builder.position(position);//设置标志的位置，经纬度
         builder.yOffset(100);//设置View的偏移量
         //builder.width(mMapView.getWidth());

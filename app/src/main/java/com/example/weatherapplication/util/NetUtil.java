@@ -2,6 +2,9 @@ package com.example.weatherapplication.util;
 
 import android.util.Log;
 
+import com.example.weatherapplication.bean.CarbonBean;
+import com.example.weatherapplication.bean.CarbonItemBean;
+import com.example.weatherapplication.bean.CarbonItemDataBean;
 import com.example.weatherapplication.bean.CollectorBean;
 import com.example.weatherapplication.bean.CommunityBean;
 import com.example.weatherapplication.bean.DaysDataItemBean;
@@ -22,6 +25,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.List;
 
 public class NetUtil {
@@ -36,10 +40,11 @@ public class NetUtil {
     public static final String URL_REPORT_DATA = "http://"+HTTPHOST+"/basic/show_report_data_list";
     public static final String URL_TODAY_DATA = "http://"+HTTPHOST+"/basic/show_CDV_data_list";
     public static final String URL_TREE = "http://"+HTTPHOST+"/basic/show_tree_list";
-    public static final String URL_TREE_DATA = "http://"+HTTPHOST+"/basic/show_tree_data_list";
+    public static final String URL_TREE_DATA = "http://"+HTTPHOST+"/basic/show_tree_data_list_by_group";
     public static final String URL_DAYS_DATA = "http://"+HTTPHOST+"/basic/show_CDV_data_by_type_list";
     public static final String URL_COMMNUITY = "http://"+HTTPHOST+"/basic/show_community_list";
     public static final String URL_COMMNUITY_DATA = "http://"+HTTPHOST+"/basic/show_community_data_list";
+    public static final String URL_CARBON_DATA = "http://"+HTTPHOST+"/basic/show_community_c_data_list";
     public static String service(String urlStr,String method) throws  Exception {
         String result = "";
         HttpURLConnection connection = null;
@@ -223,7 +228,7 @@ public class NetUtil {
         ReportBean reportBean = null;
         //拼接出URL
         String newestDataUrl = URL_TODAY_DATA+"?collectorConfigId="+selectConfigId+"&collectorId="+stationId+"&count="+count;
-        //Log.d(TAG,"-----newestDataUrl======"+newestDataUrl);
+        Log.d(TAG,"-----newestDataUrl======"+newestDataUrl);
         try{
             dataResult = service(newestDataUrl,"POST");
             //Log.d(TAG,"-----getNewestData  result======"+dataResult);
@@ -238,7 +243,7 @@ public class NetUtil {
     public static TreeBean getTreeBean(String collectorId) throws  Exception{
         String dataResult ="";
         //拼接出URL
-        String treeUrl = URL_TREE+"?collectorId="+collectorId;
+        String treeUrl = URL_TREE+"?weatherStationId="+collectorId;
         Log.d(TAG,"-----getTreeBean======"+treeUrl);
         TreeBean treeBean = null;
         try{
@@ -259,11 +264,11 @@ public class NetUtil {
         Log.d(TAG,"-----getTreeDataBean====="+treeDataUrl);
         TreeAndCommunityDataBean treeDataBean = null;
         try{
-            //dataResult = service(treeDataUrl,"POST");
-            dataResult = "{\"total\":3,\"rows\":[{\"mainConfigId\":\"61\",\"treeDataList\":[{\"configName\":\"树株1水文调节\",\"dataList\":[{\"acquisitionTime\":\"2022-10-06 00:00:00\",\"val\":\"21\"},{\"acquisitionTime\":\"2022-10-05 00:00:00\",\"val\":\"24\"},{\"acquisitionTime\":\"2022-10-04 00:00:00\",\"val\":\"38\"},{\"acquisitionTime\":\"2022-10-03 00:00:00\",\"val\":\"45\"},{\"acquisitionTime\":\"2022-10-02 00:00:00\",\"val\":\"26\"},{\"acquisitionTime\":\"2022-10-01 00:00:00\",\"val\":\"32\"}],\"groupId\":\"62\",\"mainConfigId\":\"61\",\"treeConfigId\":\"61\",\"unit\":\"ml\"},\n" +
-                    "{\"configName\":\"树株1水文调节价值\",\"dataList\":[{\"acquisitionTime\":\"2022-10-06 00:00:00\",\"val\":\"111\"},{\"acquisitionTime\":\"2022-10-05 00:00:00\",\"val\":\"213\"},{\"acquisitionTime\":\"2022-10-04 00:00:00\",\"val\":\"341\"},{\"acquisitionTime\":\"2022-10-03 00:00:00\",\"val\":\"452\"},{\"acquisitionTime\":\"2022-10-02 00:00:00\",\"val\":\"432\"},{\"acquisitionTime\":\"2022-10-01 00:00:00\",\"val\":\"145\"}],\"groupId\":\"61\",\"mainConfigId\":\"61\",\"treeConfigId\":\"62\",\"unit\":\"yuan\"}\n" +
-                    "]},{\"mainConfigId\":\"67\",\"treeDataList\":[{\"configName\":\"树株1滞纳PM10\",\"dataList\":[{\"acquisitionTime\":\"2022-10-06 00:00:00\",\"val\":\"3\"},{\"acquisitionTime\":\"2022-10-05 00:00:00\",\"val\":\"14\"},{\"acquisitionTime\":\"2022-10-04 00:00:00\",\"val\":\"25\"},{\"acquisitionTime\":\"2022-10-03 00:00:00\",\"val\":\"17\"},{\"acquisitionTime\":\"2022-10-02 00:00:00\",\"val\":\"14\"},{\"acquisitionTime\":\"2022-10-01 00:00:00\",\"val\":\"54\"}],\"groupId\":\"71\",\"mainConfigId\":\"67\",\"treeConfigId\":\"67\",\"unit\":\"g-m-2\"},\n"+
-                    "{\"configName\":\"树株1滞纳PM10价值\",\"dataList\":[{\"acquisitionTime\":\"2022-10-06 00:00:00\",\"val\":\"100\"},{\"acquisitionTime\":\"2022-10-05 00:00:00\",\"val\":\"156\"},{\"acquisitionTime\":\"2022-10-04 00:00:00\",\"val\":\"321\"},{\"acquisitionTime\":\"2022-10-03 00:00:00\",\"val\":\"134\"},{\"acquisitionTime\":\"2022-10-02 00:00:00\",\"val\":\"236\"},{\"acquisitionTime\":\"2022-10-01 00:00:00\",\"val\":\"287\"}],\"groupId\":\"67\",\"mainConfigId\":\"67\",\"treeConfigId\":\"71\",\"unit\":\"yuan\"}]}]}";
+             dataResult = service(treeDataUrl,"POST");
+//            dataResult = "{\"total\":3,\"rows\":[{\"mainConfigId\":\"61\",\"treeDataList\":[{\"configName\":\"树株1水文调节\",\"dataList\":[{\"acquisitionTime\":\"2022-10-06 00:00:00\",\"val\":\"21\"},{\"acquisitionTime\":\"2022-10-05 00:00:00\",\"val\":\"24\"},{\"acquisitionTime\":\"2022-10-04 00:00:00\",\"val\":\"38\"},{\"acquisitionTime\":\"2022-10-03 00:00:00\",\"val\":\"45\"},{\"acquisitionTime\":\"2022-10-02 00:00:00\",\"val\":\"26\"},{\"acquisitionTime\":\"2022-10-01 00:00:00\",\"val\":\"32\"}],\"groupId\":\"62\",\"mainConfigId\":\"61\",\"treeConfigId\":\"61\",\"unit\":\"ml\"},\n" +
+//                    "{\"configName\":\"树株1水文调节价值\",\"dataList\":[{\"acquisitionTime\":\"2022-10-06 00:00:00\",\"val\":\"111\"},{\"acquisitionTime\":\"2022-10-05 00:00:00\",\"val\":\"213\"},{\"acquisitionTime\":\"2022-10-04 00:00:00\",\"val\":\"341\"},{\"acquisitionTime\":\"2022-10-03 00:00:00\",\"val\":\"452\"},{\"acquisitionTime\":\"2022-10-02 00:00:00\",\"val\":\"432\"},{\"acquisitionTime\":\"2022-10-01 00:00:00\",\"val\":\"145\"}],\"groupId\":\"61\",\"mainConfigId\":\"61\",\"treeConfigId\":\"62\",\"unit\":\"yuan\"}\n" +
+//                    "]},{\"mainConfigId\":\"67\",\"treeDataList\":[{\"configName\":\"树株1滞纳PM10\",\"dataList\":[{\"acquisitionTime\":\"2022-10-06 00:00:00\",\"val\":\"3\"},{\"acquisitionTime\":\"2022-10-05 00:00:00\",\"val\":\"14\"},{\"acquisitionTime\":\"2022-10-04 00:00:00\",\"val\":\"25\"},{\"acquisitionTime\":\"2022-10-03 00:00:00\",\"val\":\"17\"},{\"acquisitionTime\":\"2022-10-02 00:00:00\",\"val\":\"14\"},{\"acquisitionTime\":\"2022-10-01 00:00:00\",\"val\":\"54\"}],\"groupId\":\"71\",\"mainConfigId\":\"67\",\"treeConfigId\":\"67\",\"unit\":\"g-m-2\"},\n"+
+//                    "{\"configName\":\"树株1滞纳PM10价值\",\"dataList\":[{\"acquisitionTime\":\"2022-10-06 00:00:00\",\"val\":\"100\"},{\"acquisitionTime\":\"2022-10-05 00:00:00\",\"val\":\"156\"},{\"acquisitionTime\":\"2022-10-04 00:00:00\",\"val\":\"321\"},{\"acquisitionTime\":\"2022-10-03 00:00:00\",\"val\":\"134\"},{\"acquisitionTime\":\"2022-10-02 00:00:00\",\"val\":\"236\"},{\"acquisitionTime\":\"2022-10-01 00:00:00\",\"val\":\"287\"}],\"groupId\":\"67\",\"mainConfigId\":\"67\",\"treeConfigId\":\"71\",\"unit\":\"yuan\"}]}]}";
             Log.d(TAG,"-----getTreeDataBean  result======"+dataResult);
             Gson gson = new Gson();
             treeDataBean = gson.fromJson(dataResult, TreeAndCommunityDataBean.class);
@@ -277,14 +282,14 @@ public class NetUtil {
         String dataResult ="";
         //拼接出URL
         String daysDataUrl = URL_DAYS_DATA+"?collectorId="+stationId+"&configType="+configType+"&day="+day;;
-        //Log.d(TAG,"-----daysDataUrl======"+daysDataUrl);
+        Log.d(TAG,"-----daysDataUrl======"+daysDataUrl);
         List<DaysDataItemBean> daysDataItemBeans = null;
         try{
             dataResult = service(daysDataUrl,"POST");
-            //Log.d(TAG,"-----getDaysData  result======"+dataResult);
+            Log.d(TAG,"-----getDaysData  result======"+dataResult);
             Gson gson = new Gson();
             DaysDataBean daysDataBean = gson.fromJson(dataResult, DaysDataBean.class);
-            //Log.d(TAG,"====getDaysData====DaysDataBean==:"+daysDataBean.toString());
+            Log.d(TAG,"====getDaysData====DaysDataBean==:"+daysDataBean.toString());
             if(daysDataBean!= null && daysDataBean.getmItemBeans()!= null){
                 daysDataItemBeans =  daysDataBean.getmItemBeans();
 
@@ -294,7 +299,7 @@ public class NetUtil {
         }catch (Exception e) {
             e.printStackTrace();
         }
-       // Log.d(TAG,"====getDaysData====daysDataItemBeans==:"+daysDataItemBeans);
+        Log.d(TAG,"====getDaysData====daysDataItemBeans==:"+daysDataItemBeans);
         return daysDataItemBeans;
     }
 
@@ -324,30 +329,34 @@ public class NetUtil {
         TreeAndCommunityDataBean communityDataBean = null;
         try{
             dataResult = service(communityDataUrl,"POST");
-            //Log.d(TAG,"-----getCommunityDataBean  result======"+dataResult);
+            Log.d(TAG,"-----getCommunityDataBean  result======"+dataResult);
             Gson gson = new Gson();
             communityDataBean = gson.fromJson(dataResult, TreeAndCommunityDataBean.class);
-            //Log.d(TAG,"====getCommunityDataBean====解析后的communityDataBean==:"+ communityDataBean.toString());
+            Log.d(TAG,"====getCommunityDataBean====解析后的communityDataBean==:"+ communityDataBean.toString());
         }catch (Exception e) {
             e.printStackTrace();
         }
         return communityDataBean;
     }
 
-    public static ReportBean getCarbonData( String communityId, int count) throws Exception{
-        String dataResult ="";
-        ReportBean reportBean = null;
+    public static List<CarbonItemBean> getCarbonData(String communityId) throws Exception {
+        String dataResult = "";
+        List<CarbonItemBean> carbonItemBeans = null;
         //拼接出URL
-        String newestDataUrl = URL_TODAY_DATA+"?collectorId="+communityId+"&count="+count;
-        try{
-            dataResult = service(newestDataUrl,"POST");
-            //Log.d(TAG,"-----getNewestData  result======"+dataResult);
+        String newestDataUrl = URL_CARBON_DATA;
+        try {
+            dataResult = service(newestDataUrl, "POST");
+            Log.d(TAG, "-----getCarbonData  result======" + dataResult);
             Gson gson = new Gson();
-            reportBean = gson.fromJson(dataResult, ReportBean.class);
-            // Log.d(TAG,"====getNewestData====解析后的reportBean==:"+reportBean.toString());
-        }catch (Exception e) {
+            CarbonBean carbonBean = gson.fromJson(dataResult, CarbonBean.class);
+            Log.d(TAG, "====getCarbonData====解析后的carbonBean==:" + carbonBean.toString());
+            if (carbonBean != null && carbonBean.getmCarbonItemBeans() != null) {
+                carbonItemBeans = carbonBean.getmCarbonItemBeans();
+                Log.d(TAG, "====getCarbonData====carbonItemBeans==:" + carbonItemBeans);
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return reportBean;
+        return carbonItemBeans;
     }
 }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.example.weatherapplication.adapter.CommunityAdapter;
 import com.example.weatherapplication.bean.CommunityBean;
 import com.example.weatherapplication.bean.CommunityItemBean;
+import com.example.weatherapplication.util.Def;
 import com.example.weatherapplication.util.NetUtil;
 import com.example.weatherapplication.util.StatusBarUtils;
 import androidx.appcompat.app.AppCompatActivity;
@@ -45,8 +46,8 @@ public class CommunityActivity extends AppCompatActivity implements View.OnClick
         weatherStationName = getIntent().getStringExtra("weatherStationName");
         page = getIntent().getStringExtra("page");
         if (weatherStationId == null) {
-            weatherStationId = "22";
-            weatherStationName = "上海园林";
+            weatherStationId = Def.DefWeatherStationId;
+            weatherStationName = Def.DefWeatherStationName;
         }
         Log.d(TAG,"========userName==:"+ userName);
         Log.d(TAG,"======weatherStationId==:"+ weatherStationId);
@@ -89,6 +90,7 @@ public class CommunityActivity extends AppCompatActivity implements View.OnClick
             intent.putExtra("communityName", selectedCommunity.getCommunityName());
             intent.putExtra("weatherStationId",weatherStationId);
             intent.putExtra("weatherStationName",weatherStationName);
+            intent.putExtra("communityFlag","Y");
             //if("home".equals(page) || page ==null){
             //    intent.putExtra("fragment_flag", 2);
             //}else{
@@ -109,7 +111,7 @@ public class CommunityActivity extends AppCompatActivity implements View.OnClick
         List<CommunityItemBean> communityItemBeans = new ArrayList<>();
         try {
             if(weatherStationId == null){
-                weatherStationId ="22";
+                weatherStationId =Def.DefWeatherStationId;
             }
             Log.d(TAG, "==========33333333333333333333333=============:" );
             CommunityBean communityBean = NetUtil.getCommunityBean(weatherStationId);

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Weather Application</string>
+    <string name="app_name">生态效益</string>
     <string name="title_home">基础数据</string>
     <string name="title_dashboard">地图总览</string>
     <string name="title_notifications">效益评价</string>
@@ -8,7 +8,7 @@
     <string name="btn_soil">土壤</string>
     <string name="btn_tree">植株</string>
     <string name="btn_community">群落</string>
-    <string name="no_data">没有找到符合条件的房源</string>
+    <string name="no_data">没有找到符合条件的数据</string>
 
     <string-array name="index_left">
         <item>空气温度:</item>
@@ -43,4 +43,5 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="community_list">绿林地列表</string>
 </resources>
