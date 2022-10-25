@@ -66,7 +66,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     private static final String TAG = "HomeFragment";
     private HomeViewModel homeViewModel;
     private FragmentHomeBinding binding;
-    private TextView tvStation,tvChartname1,tvChartname2,tvChartname3,tvNewestData1,tvNewestData2,tvNewestData3,tvUnit1,tvUnit2,tvUnit3;
+    private TextView tvStation,tvChartname1,tvChartname2,tvChartname3,tvNewestData1,tvNewestData2,tvNewestData3;
     private ImageView ivAdd;
     private String  userName,collectorId,collectorName,configType,weatherStationName;//监测指标类型
     private Map indexMap;
@@ -82,6 +82,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     private String markerFlag,stationFlag ;
     private Boolean typeFlag = false;
     private Boolean dayFlag = false;
+    private View line1,line2;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
@@ -150,10 +151,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         tvNewestData1 = fragmentHomeView.findViewById(R.id.newestData_tv_1);
         tvNewestData2 = fragmentHomeView.findViewById(R.id.newestData_tv_2);
         tvNewestData3 = fragmentHomeView.findViewById(R.id.newestData_tv_3);
-        tvUnit1 = fragmentHomeView.findViewById(R.id.unit_tv_1);
-        tvUnit2 = fragmentHomeView.findViewById(R.id.unit_tv_2);
-        tvUnit3 = fragmentHomeView.findViewById(R.id.unit_tv_3);
         scrollView = fragmentHomeView.findViewById(R.id.scrollview);
+        line1 = fragmentHomeView.findViewById(R.id.line_1);
+        line2 = fragmentHomeView.findViewById(R.id.line_2);
         //if (markerFlag == null && stationFlag == null) {//如果是从底部菜单进入，需要默认显示一号站点，气象，近一天 数据
         if(collectorId == null){
             Log.d(TAG,"=============11111111111111111=========");
@@ -206,6 +206,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 setScrollInvisiable();
                 break;
         }
+        line1.setVisibility(View.INVISIBLE);
+        line2.setVisibility(View.INVISIBLE);
         checkDayBtnAndDraw(configType);
     }
     Handler handler = new Handler() {
@@ -233,6 +235,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         }
         if(days != 0){
             //drawChart(configType,days);
+            line1.setVisibility(View.INVISIBLE);
+            line2.setVisibility(View.INVISIBLE);
             try {
                 if(days == 1){
                     drawChart(configType,days);
@@ -276,15 +280,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     private void setScrollInvisiable() {
         tvChartname1.setVisibility(View.INVISIBLE);
         tvNewestData1.setVisibility(View.INVISIBLE);
-        tvUnit1.setVisibility(View.INVISIBLE);
         lineChart1.setVisibility(View.INVISIBLE);
         tvChartname2.setVisibility(View.INVISIBLE);
-        tvUnit2.setVisibility(View.INVISIBLE);
         tvNewestData2.setVisibility(View.INVISIBLE);
         lineChart2.setVisibility(View.INVISIBLE);
         tvChartname3.setVisibility(View.INVISIBLE);
         tvNewestData3.setVisibility(View.INVISIBLE);
-        tvUnit3.setVisibility(View.INVISIBLE);
         lineChart3.setVisibility(View.INVISIBLE);
     }
 
@@ -326,6 +327,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                     break;
             }
             //drawChart(configType,days);
+            line1.setVisibility(View.INVISIBLE);
+            line2.setVisibility(View.INVISIBLE);
             try {
                 if(days == 1){
                     drawChart(configType,days);
@@ -417,13 +420,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                     Log.d(TAG, "===newestData==:" + newestData);
                     if(item!=null){
                         if(i==0){
+                            Log.d(TAG, "===00000000000==:");
                             scrollView.scrollTo(0,0);
-                            tvChartname1.setText(item.getDescription());
+                            if(!"".equals(item.getUnit())){
+                                tvChartname1.setText(item.getDescription()+"("+item.getUnit()+")");
+                            }else{
+                                tvChartname1.setText(item.getDescription());
+                            }
                             tvChartname1.setVisibility(View.VISIBLE);
                             tvNewestData1.setText(newestData);
                             tvNewestData1.setVisibility(View.VISIBLE);
-                            tvUnit1.setVisibility(View.VISIBLE);
-                            tvUnit1.setText(item.getUnit());
                             lineChart1.setVisibility(View.VISIBLE);
                             lineChart1.zoom(0.25f,1f,0,0);
                             setLineChart(days,item,lineChart1,entries1,item.getDescription(),item.getUnit());
@@ -432,12 +438,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                             lineChart1.invalidate();
                         }
                         if(i==1){
-                            tvChartname2.setText(item.getDescription());
+                            Log.d(TAG, "===1111111111==:");
+                            line1.setVisibility(View.VISIBLE);
+                            if(!"".equals(item.getUnit())){
+                                tvChartname2.setText(item.getDescription()+"("+item.getUnit()+")");
+                            }else{
+                                tvChartname2.setText(item.getDescription());
+                            }
                             tvChartname2.setVisibility(View.VISIBLE);
                             tvNewestData2.setText(newestData);
                             tvNewestData2.setVisibility(View.VISIBLE);
-                            tvUnit2.setVisibility(View.VISIBLE);
-                            tvUnit2.setText(item.getUnit());
                             lineChart2.setVisibility(View.VISIBLE);
                             lineChart2.zoom(0.25f,1f,0,0);
                             setLineChart(days,item,lineChart2,entries2,item.getDescription(),item.getUnit());
@@ -446,12 +456,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                             lineChart2.invalidate();
                         }
                         if(i==2){
-                            tvChartname3.setText(item.getDescription());
+                            Log.d(TAG, "===22222222222222==:");
+                            line2.setVisibility(View.VISIBLE);
+                            if(!"".equals(item.getUnit())){
+                                tvChartname3.setText(item.getDescription()+"("+item.getUnit()+")");
+                            }else{
+                                tvChartname3.setText(item.getDescription());
+                            }
                             tvChartname3.setVisibility(View.VISIBLE);
                             tvNewestData3.setText(newestData);
                             tvNewestData3.setVisibility(View.VISIBLE);
-                            tvUnit3.setVisibility(View.VISIBLE);
-                            tvUnit3.setText(item.getUnit());
                             lineChart3.setVisibility(View.VISIBLE);
                             lineChart3.zoom(0.25f,1f,0,0);
                             setLineChart(days,item,lineChart3,entries3,item.getDescription(),item.getUnit());
@@ -466,19 +480,20 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 if(i==0){
                     tvChartname1.setVisibility(View.INVISIBLE);
                     tvNewestData1.setVisibility(View.INVISIBLE);
-                    tvUnit1.setVisibility(View.INVISIBLE);
                     lineChart1.setVisibility(View.INVISIBLE);
+
                 }
                 if(i==1){
+                    line1.setVisibility(View.INVISIBLE);
                     tvChartname2.setVisibility(View.INVISIBLE);
                     tvNewestData2.setVisibility(View.INVISIBLE);
-                    tvUnit2.setVisibility(View.INVISIBLE);
                     lineChart2.setVisibility(View.INVISIBLE);
+
                 }
                 if(i==2){
+                    line2.setVisibility(View.INVISIBLE);
                     tvChartname3.setVisibility(View.INVISIBLE);
                     tvNewestData3.setVisibility(View.INVISIBLE);
-                    tvUnit3.setVisibility(View.INVISIBLE);
                     lineChart3.setVisibility(View.INVISIBLE);
                 }
             }
@@ -501,13 +516,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                           newestData = stationFacade.getNewestData((String) item.getDescription()+","+item.getUnit(),collectorId,1);
                           Log.d(TAG, "===newestData==:" + newestData);
                           if(i==0){
+                              Log.d(TAG, "@@@@@@@@@@@@@@0000000000==:");
                                scrollView.scrollTo(0,0);
-                               tvChartname1.setText(item.getDescription());
+                              if(!"".equals(item.getUnit())){
+                                  tvChartname1.setText(item.getDescription()+"("+item.getUnit()+")");
+                              }else{
+                                  tvChartname1.setText(item.getDescription());
+                              }
                                tvChartname1.setVisibility(View.VISIBLE);
                                tvNewestData1.setText(newestData);
                                tvNewestData1.setVisibility(View.VISIBLE);
-                               tvUnit1.setVisibility(View.VISIBLE);
-                               tvUnit1.setText(item.getUnit());
                                lineChart1.setVisibility(View.VISIBLE);
                                lineChart1.zoom(0.25f,1f,0,0);
                                setLineChart(days,item,lineChart1,entries1,item.getDescription(),item.getUnit());
@@ -516,12 +534,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                                lineChart1.invalidate();
                           }
                           if(i==1){
-                               tvChartname2.setText(item.getDescription());
+                              Log.d(TAG, "@@@@@@@@@@@@@@1111111111==:");
+                              line1.setVisibility(View.VISIBLE);
+                              if(!"".equals(item.getUnit())){
+                                  tvChartname2.setText(item.getDescription()+"("+item.getUnit()+")");
+                              }else{
+                                  tvChartname2.setText(item.getDescription());
+                              }
                                tvChartname2.setVisibility(View.VISIBLE);
                                tvNewestData2.setText(newestData);
                                tvNewestData2.setVisibility(View.VISIBLE);
-                               tvUnit2.setVisibility(View.VISIBLE);
-                               tvUnit2.setText(item.getUnit());
                                lineChart2.setVisibility(View.VISIBLE);
                                lineChart2.zoom(0.25f,1f,0,0);
                                setLineChart(days,item,lineChart2,entries2,item.getDescription(),item.getUnit());
@@ -530,12 +552,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                                lineChart2.invalidate();
                           }
                           if(i==2){
-                               tvChartname3.setText(item.getDescription());
+                              Log.d(TAG, "@@@@@@@@@@@@@@2222222222==:");
+                              line2.setVisibility(View.VISIBLE);
+                              if(!"".equals(item.getUnit())){
+                                  tvChartname3.setText(item.getDescription()+"("+item.getUnit()+")");
+                              }else{
+                                  tvChartname3.setText(item.getDescription());
+                              }
                                tvChartname3.setVisibility(View.VISIBLE);
                                tvNewestData3.setText(newestData);
                                tvNewestData3.setVisibility(View.VISIBLE);
-                               tvUnit3.setVisibility(View.VISIBLE);
-                               tvUnit3.setText(item.getUnit());
                                lineChart3.setVisibility(View.VISIBLE);
                                lineChart3.zoom(0.25f,1f,0,0);
                                setLineChart(days,item,lineChart3,entries3,item.getDescription(),item.getUnit());
@@ -550,19 +576,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                         tvChartname1.setVisibility(View.INVISIBLE);
                         tvNewestData1.setVisibility(View.INVISIBLE);
                         lineChart1.setVisibility(View.INVISIBLE);
-                        tvUnit1.setVisibility(View.INVISIBLE);
                     }
                     if(i==1){
+                        line1.setVisibility(View.INVISIBLE);
                         tvChartname2.setVisibility(View.INVISIBLE);
                         tvNewestData2.setVisibility(View.INVISIBLE);
                         lineChart2.setVisibility(View.INVISIBLE);
-                        tvUnit2.setVisibility(View.INVISIBLE);
                     }
                     if(i==2){
+                        line2.setVisibility(View.INVISIBLE);
                         tvChartname3.setVisibility(View.INVISIBLE);
                         tvNewestData3.setVisibility(View.INVISIBLE);
                         lineChart3.setVisibility(View.INVISIBLE);
-                        tvUnit3.setVisibility(View.INVISIBLE);
                     }
                 }
             } catch (Exception e) {
