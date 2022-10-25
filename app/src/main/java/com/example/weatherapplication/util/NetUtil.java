@@ -231,7 +231,7 @@ public class NetUtil {
         Log.d(TAG,"-----newestDataUrl======"+newestDataUrl);
         try{
             dataResult = service(newestDataUrl,"POST");
-            //Log.d(TAG,"-----getNewestData  result======"+dataResult);
+            Log.d(TAG,"-----getNewestData  result======"+dataResult);
             Gson gson = new Gson();
             reportBean = gson.fromJson(dataResult, ReportBean.class);
            // Log.d(TAG,"====getNewestData====解析后的reportBean==:"+reportBean.toString());

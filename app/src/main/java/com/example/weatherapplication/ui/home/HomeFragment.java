@@ -600,10 +600,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
              //   time = Float.parseFloat(dayDataDetailReportBean.getAcquisitionTime().substring(11,13));
             //}else
             if(days==1 || days==7){
-                dataMap.put(count,dayDataDetailReportBean.getAcquisitionTime().substring(0,13));
+                dataMap.put(count,dayDataDetailReportBean.getAcquisitionTime().substring(5,13));
                 time = count;
             }else{
-                dataMap.put(count,dayDataDetailReportBean.getAcquisitionTime().substring(0,10));
+                dataMap.put(count,dayDataDetailReportBean.getAcquisitionTime().substring(5,10));
                 time = count;
             }
             float value = 0.0f;

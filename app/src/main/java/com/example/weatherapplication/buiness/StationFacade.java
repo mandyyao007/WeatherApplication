@@ -31,7 +31,7 @@ public class StationFacade {
                 IndexBean indexbean = NetUtil.getIndexInfo(collectorId);
                 //String[] mIndexs  =  getIndexOfStation(indexbean);
                 indexMap =  getIndexOfStationMap(indexbean);
-                //Log.d(TAG,"===indexMap==:"+ indexMap.toString());
+                Log.d(TAG,"===indexMap==:"+ indexMap.toString());
                 return  indexMap;
             }
         } catch (Exception e) {
@@ -82,9 +82,12 @@ public class StationFacade {
         Map indexMap = initIndex(collectorId);
         String newestData = "";
         //Log.d(TAG,"======indexMap =====:"+indexMap);
-        //Log.d(TAG,"======selectConfigName =====:"+selectConfigName);
+        Log.d(TAG,"======selectConfigName =====:"+selectConfigName);
+        if ("胸径实际值 ,cm".equals(selectConfigName)) {
+           // selectConfigName = selectConfigName.substring()
+        }
         String selectConfigId = (String) indexMap.get(selectConfigName);
-        //Log.d(TAG,"======selectConfigId =====:"+selectConfigId);
+        Log.d(TAG,"======selectConfigId =====:"+selectConfigId);
         ReportBean newestRrpotData = NetUtil.getNewestData(selectConfigId, collectorId,1);
         if(newestRrpotData != null  && newestRrpotData.getmDayReportBeans() != null) {
             List<DayReportBean> dayReports = newestRrpotData.getmDayReportBeans();

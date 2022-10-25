@@ -455,12 +455,12 @@ public class DashboardFragment extends Fragment {
             valPlantDia.setText("");
         }
         Map indexMap = stationFacade.initIndex(collectorId);
-        //Log.d(TAG,"==================indexMap=====" + indexMap);
+        Log.d(TAG,"==================indexMap=====" + indexMap);
         for(Iterator it = indexMap.keySet().iterator();it.hasNext();){
             String indexAndUnit = (String) it.next();
-            //Log.d(TAG,"==================indexAndUnit=====:" + indexAndUnit);
+            Log.d(TAG,"==================indexAndUnit=====:" + indexAndUnit);
             int length = indexAndUnit.split(",").length;
-            //Log.d(TAG,"==================indexAndUnit==length===:" + length);
+            Log.d(TAG,"==================indexAndUnit==length===:" + length);
             String index = indexAndUnit.split(",")[0];
             String unit ="";
             if(length>1){
@@ -535,11 +535,11 @@ public class DashboardFragment extends Fragment {
     private MapViewLayoutParams createLayoutParams(){
         MapViewLayoutParams.Builder builder =  new MapViewLayoutParams.Builder();
         builder.layoutMode(MapViewLayoutParams.ELayoutMode.absoluteMode);//mapMode是指定坐标类型为经纬度
-        int width = getActivity().getApplicationContext().getResources().getDisplayMetrics().widthPixels;
-        int height = getActivity().getApplicationContext().getResources().getDisplayMetrics().heightPixels;
+        int width = getActivity().getApplicationContext().getResources().getDisplayMetrics().widthPixels;//获取当前设备的屏幕宽度
+        int height = getActivity().getApplicationContext().getResources().getDisplayMetrics().heightPixels;//获取当前设备的屏幕高度
         //Log.d(TAG,"==============Display====width=====" + width);
         //Log.d(TAG,"==============Display====height=====" + height);
-        builder.point(new Point(width/2,700)).width(mMapView.getWidth()).height(700);//设置标志的位置,屏幕坐标
+        builder.point(new Point(width/2,800)).width(mMapView.getWidth()).height(800);//设置标志的位置,屏幕坐标
         //////取屏幕中间点
         //builder.position(position);//设置标志的位置，经纬度
         builder.yOffset(100);//设置View的偏移量

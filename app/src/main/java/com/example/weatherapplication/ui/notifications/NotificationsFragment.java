@@ -336,6 +336,19 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                     Log.d(TAG,"=**22222222222*************=bt_community_name====== toggleButton.getTextColors()==="+ toggleButton.getCurrentTextColor());
 
                 }
+                ivBarCart8.setVisibility(View.INVISIBLE);
+                ivLineCart8.setVisibility(View.INVISIBLE);
+                tvLine8.setVisibility(View.INVISIBLE);
+                tvChartname8.setText("");
+                tvChartnamel8.setVisibility(View.INVISIBLE);
+                combinedChart1.clear();
+                combinedChart2.clear();
+                combinedChart3.clear();
+                combinedChart4.clear();
+                combinedChart5.clear();
+                combinedChart6.clear();
+                combinedChart7.clear();
+                combinedChart8.clear();
                 type="community";
                 Log.d(TAG,"=**111111*************=bt_community_name=========");
                 selectedId = communityId;
@@ -778,16 +791,33 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
     private void setChart(float ratio,CombinedChart combinedChart,List<BarEntry> list1,List<Entry> list2,int days) {
         try{
             double maxLeftYaxis = 1f,maxRightYaxis = 1f;
+            float maxLeftY =1f,maxRightY =1f;
+            int count = 6;
+            float labelIntervalLeft = 0.01f,labelIntervalRight = 0.01f;
             Log.d(TAG, "=========setChart======list1==:" +list1);
             Log.d(TAG, "=========setChart======list2==:" +list2);
             if(list1.size()>0){
                 maxLeftYaxis = getBarMaxValue(list1) * 1.05;
+                if(maxLeftYaxis > 0.1){
+                    maxLeftY   =  new  BigDecimal(maxLeftYaxis).setScale(1,  BigDecimal.ROUND_HALF_UP).floatValue();
+                    labelIntervalLeft = maxLeftY/5;
+                }else{
+                    maxLeftY   = (float) 0.1;
+                    labelIntervalLeft = (float) 0.02;
+                }
             }
             if(list2.size()>0){
                 maxRightYaxis = getMaxValue(list2) * 1.05;
+                if(maxRightYaxis > 0.1){
+                    maxRightY   =  new  BigDecimal(maxRightYaxis).setScale(1,  BigDecimal.ROUND_HALF_UP).floatValue();
+                    labelIntervalRight = maxRightY/5;
+                }else{
+                    maxRightY   = (float) 0.1;
+                    labelIntervalRight = (float) 0.02;
+                }
             }
-            float maxLeftY   =  new  BigDecimal(maxLeftYaxis).setScale(3,  BigDecimal.ROUND_HALF_UP).floatValue();
-            float maxRightY   =  new  BigDecimal(maxRightYaxis).setScale(3,  BigDecimal.ROUND_HALF_UP).floatValue();
+            Log.d(TAG, "=========setChart======maxLeftY==:" +maxLeftY);
+            Log.d(TAG, "=========setChart======maxRightY==:" +maxRightY);
             combinedChart.setDrawBorders(false);//不显示边界
             combinedChart.setPinchZoom(true);//比例缩放
             combinedChart.animateY(1500);
@@ -816,8 +846,8 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
             YAxis axisLeft = combinedChart.getAxisLeft();//获取Y轴左边操作类
             axisLeft.setAxisMinimum(0f);//设置最小值
             axisLeft.setAxisMaximum(maxLeftY); //保留四位小数
-            //axisLeft.setGranularity(10);//设置label间隔
-            axisLeft.setLabelCount(10, true);         //第一个参数是轴坐标的个数，第二个参数是 是否不均匀分布，true是不均匀分布
+            axisLeft.setGranularity(labelIntervalLeft);//设置label间隔
+            axisLeft.setLabelCount(count, true);         //第一个参数是轴坐标的个数，第二个参数是 是否不均匀分布，true是不均匀分布
             axisLeft.setDrawGridLines(true);                      //不要横网格
             //axisLeft.setGridColor(Color.parseColor("#000000"));   //设置横网格颜色
             //axisLeft.setSpaceTop(20f);                            //设置在图表上最高处的值相比轴上最高值的顶端空间（总轴范围的百分比）
@@ -828,7 +858,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 @Override
                 public String getFormattedValue(float value, AxisBase axis) {
                     BigDecimal valueB  =   new  BigDecimal(value);
-                    return valueB.setScale(5,  BigDecimal.ROUND_HALF_UP).floatValue()+"";
+                    return valueB.setScale(2,  BigDecimal.ROUND_HALF_UP).floatValue()+"";
                 }
             });
             YAxis axisRight = combinedChart.getAxisRight();//获取Y轴右边竖线
@@ -836,18 +866,18 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 axisRight.setDrawAxisLine(true);
                 axisRight.setAxisMinimum(0f);//设置最小值
                 axisRight.setAxisMaximum( maxRightY);
-                //axisRight.setGranularity(10);//设置label间隔
-                axisRight.setLabelCount(10, true);         //第一个参数是轴坐标的个数，第二个参数是 是否强制
+                axisRight.setGranularity( labelIntervalRight );//设置label间隔
+                axisRight.setLabelCount(count, true);         //第一个参数是轴坐标的个数，第二个参数是 是否强制
                 //axisRight.setDrawLabels(true);
                 axisRight.setTextColor(Color.BLACK);
                 axisRight.setDrawGridLines(true);
                 axisRight.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
-
+                //Y轴上的刻度保留两位小数
                 axisRight.setValueFormatter(new IAxisValueFormatter() {
                     @Override
                     public String getFormattedValue(float value, AxisBase axis) {
                         BigDecimal valueB  =   new  BigDecimal(value);
-                        return valueB.setScale(5,  BigDecimal.ROUND_HALF_UP).floatValue()+"";
+                        return valueB.setScale(2,  BigDecimal.ROUND_HALF_UP).floatValue()+"";
                     }
                 });
             }else{
