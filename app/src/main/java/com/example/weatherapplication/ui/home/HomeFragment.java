@@ -79,7 +79,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     List<DaysDataItemBean>  daysDataItemBean = null;
     private int days = 0;
     private ProgressDialog progressDialog = null;
-    private String markerFlag,stationFlag ;
+    private String markerFlag,stationFlag ,name;
     private Boolean typeFlag = false;
     private Boolean dayFlag = false;
     private View line1,line2;
@@ -419,14 +419,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                     newestData = stationFacade.getNewestData((String) item.getDescription()+","+item.getUnit(),collectorId,1);
                     Log.d(TAG, "===newestData==:" + newestData);
                     if(item!=null){
+                        if(!"".equals(item.getUnit())){
+                            name = item.getDescription()+"("+item.getUnit()+"):";
+                        }else{
+                            name =item.getDescription()+":";
+                        }
                         if(i==0){
-                            Log.d(TAG, "===00000000000==:");
                             scrollView.scrollTo(0,0);
-                            if(!"".equals(item.getUnit())){
-                                tvChartname1.setText(item.getDescription()+"("+item.getUnit()+")");
-                            }else{
-                                tvChartname1.setText(item.getDescription());
-                            }
+                            tvChartname1.setText(name);
                             tvChartname1.setVisibility(View.VISIBLE);
                             tvNewestData1.setText(newestData);
                             tvNewestData1.setVisibility(View.VISIBLE);
@@ -438,13 +438,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                             lineChart1.invalidate();
                         }
                         if(i==1){
-                            Log.d(TAG, "===1111111111==:");
                             line1.setVisibility(View.VISIBLE);
-                            if(!"".equals(item.getUnit())){
-                                tvChartname2.setText(item.getDescription()+"("+item.getUnit()+")");
-                            }else{
-                                tvChartname2.setText(item.getDescription());
-                            }
+                            tvChartname2.setText(name);
                             tvChartname2.setVisibility(View.VISIBLE);
                             tvNewestData2.setText(newestData);
                             tvNewestData2.setVisibility(View.VISIBLE);
@@ -456,13 +451,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                             lineChart2.invalidate();
                         }
                         if(i==2){
-                            Log.d(TAG, "===22222222222222==:");
                             line2.setVisibility(View.VISIBLE);
-                            if(!"".equals(item.getUnit())){
-                                tvChartname3.setText(item.getDescription()+"("+item.getUnit()+")");
-                            }else{
-                                tvChartname3.setText(item.getDescription());
-                            }
+                            tvChartname3.setText(name);
                             tvChartname3.setVisibility(View.VISIBLE);
                             tvNewestData3.setText(newestData);
                             tvNewestData3.setVisibility(View.VISIBLE);
@@ -511,65 +501,57 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 if(daysDataItemBean != null && daysDataItemBean.size()>0) {
                     Iterator it = daysDataItemBean.iterator();
                     while(it.hasNext()){
-                          DaysDataItemBean item = (DaysDataItemBean) it.next();
-                          Log.d(TAG, "===newestData======itemitem=:" + item);
-                          newestData = stationFacade.getNewestData((String) item.getDescription()+","+item.getUnit(),collectorId,1);
-                          Log.d(TAG, "===newestData==:" + newestData);
-                          if(i==0){
-                              Log.d(TAG, "@@@@@@@@@@@@@@0000000000==:");
-                               scrollView.scrollTo(0,0);
-                              if(!"".equals(item.getUnit())){
-                                  tvChartname1.setText(item.getDescription()+"("+item.getUnit()+")");
-                              }else{
-                                  tvChartname1.setText(item.getDescription());
-                              }
-                               tvChartname1.setVisibility(View.VISIBLE);
-                               tvNewestData1.setText(newestData);
-                               tvNewestData1.setVisibility(View.VISIBLE);
-                               lineChart1.setVisibility(View.VISIBLE);
-                               lineChart1.zoom(0.25f,1f,0,0);
-                               setLineChart(days,item,lineChart1,entries1,item.getDescription(),item.getUnit());
-                               lineChart1.notifyDataSetChanged();
-                               //lineChart1.getData().notifyDataChanged();
-                               lineChart1.invalidate();
-                          }
-                          if(i==1){
-                              Log.d(TAG, "@@@@@@@@@@@@@@1111111111==:");
-                              line1.setVisibility(View.VISIBLE);
-                              if(!"".equals(item.getUnit())){
-                                  tvChartname2.setText(item.getDescription()+"("+item.getUnit()+")");
-                              }else{
-                                  tvChartname2.setText(item.getDescription());
-                              }
-                               tvChartname2.setVisibility(View.VISIBLE);
-                               tvNewestData2.setText(newestData);
-                               tvNewestData2.setVisibility(View.VISIBLE);
-                               lineChart2.setVisibility(View.VISIBLE);
-                               lineChart2.zoom(0.25f,1f,0,0);
-                               setLineChart(days,item,lineChart2,entries2,item.getDescription(),item.getUnit());
-                               lineChart2.notifyDataSetChanged();
-                               //lineChart2.getData().notifyDataChanged();
-                               lineChart2.invalidate();
-                          }
-                          if(i==2){
-                              Log.d(TAG, "@@@@@@@@@@@@@@2222222222==:");
-                              line2.setVisibility(View.VISIBLE);
-                              if(!"".equals(item.getUnit())){
-                                  tvChartname3.setText(item.getDescription()+"("+item.getUnit()+")");
-                              }else{
-                                  tvChartname3.setText(item.getDescription());
-                              }
-                               tvChartname3.setVisibility(View.VISIBLE);
-                               tvNewestData3.setText(newestData);
-                               tvNewestData3.setVisibility(View.VISIBLE);
-                               lineChart3.setVisibility(View.VISIBLE);
-                               lineChart3.zoom(0.25f,1f,0,0);
-                               setLineChart(days,item,lineChart3,entries3,item.getDescription(),item.getUnit());
-                               lineChart3.notifyDataSetChanged();
-                               //lineChart3.getData().notifyDataChanged();
-                               lineChart3.invalidate();
-                          }
-                          i++;
+                        DaysDataItemBean item = (DaysDataItemBean) it.next();
+                        Log.d(TAG, "===newestData======itemitem=:" + item);
+                        newestData = stationFacade.getNewestData((String) item.getDescription()+","+item.getUnit(),collectorId,1);
+                        Log.d(TAG, "===newestData==:" + newestData);
+                        if(item!=null){
+                            if(!"".equals(item.getUnit())){
+                                name = item.getDescription()+"("+item.getUnit()+"):";
+                            }else{
+                                name =item.getDescription()+":";
+                            }
+                            if(i==0){
+                                scrollView.scrollTo(0,0);
+                                tvChartname1.setText(name);
+                                tvChartname1.setVisibility(View.VISIBLE);
+                                tvNewestData1.setText(newestData);
+                                tvNewestData1.setVisibility(View.VISIBLE);
+                                lineChart1.setVisibility(View.VISIBLE);
+                                lineChart1.zoom(0.25f,1f,0,0);
+                                setLineChart(days,item,lineChart1,entries1,item.getDescription(),item.getUnit());
+                                lineChart1.notifyDataSetChanged();
+                                //lineChart1.getData().notifyDataChanged();
+                                lineChart1.invalidate();
+                            }
+                            if(i==1){
+                                line1.setVisibility(View.VISIBLE);
+                                tvChartname2.setText(name);
+                                tvChartname2.setVisibility(View.VISIBLE);
+                                tvNewestData2.setText(newestData);
+                                tvNewestData2.setVisibility(View.VISIBLE);
+                                lineChart2.setVisibility(View.VISIBLE);
+                                lineChart2.zoom(0.25f,1f,0,0);
+                                setLineChart(days,item,lineChart2,entries2,item.getDescription(),item.getUnit());
+                                lineChart2.notifyDataSetChanged();
+                                //lineChart2.getData().notifyDataChanged();
+                                lineChart2.invalidate();
+                            }
+                            if(i==2){
+                                line2.setVisibility(View.VISIBLE);
+                                tvChartname3.setText(name);
+                                tvChartname3.setVisibility(View.VISIBLE);
+                                tvNewestData3.setText(newestData);
+                                tvNewestData3.setVisibility(View.VISIBLE);
+                                lineChart3.setVisibility(View.VISIBLE);
+                                lineChart3.zoom(0.25f,1f,0,0);
+                                setLineChart(days,item,lineChart3,entries3,item.getDescription(),item.getUnit());
+                                lineChart3.notifyDataSetChanged();
+                                //lineChart3.getData().notifyDataChanged();
+                                lineChart3.invalidate();
+                            }
+                        }
+                        i++;
                     }
                 }else{
                     if(i==0){

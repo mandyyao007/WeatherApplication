@@ -29,7 +29,12 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.WeatherApplication"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:smallScreens="true"
+        android:normalScreens="true"
+        android:largeScreens="true"
+        android:resizeable="true"
+        android:anyDensity="true">
         <activity
             android:name=".SplashActivity"
             android:exported="true">

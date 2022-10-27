@@ -12,4 +12,5 @@ public class Def {
     public static final String DefCommunityName = "香樟群落";
     public static final String DefCollectorId ="57";
     public static final String DefCollectorName ="1号站点";
+    public static final String communityName = "群落";
 }

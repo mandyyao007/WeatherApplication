@@ -53,6 +53,7 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -268,7 +269,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         //Log.d(TAG,"=***************==viewRight.getShowText()==:"+ viewRight.getShowText());
         expandTabView.setTitle(viewLeft.getShowText(), 2);
         //expandTabView.setTitle(viewRight.getShowText(), 2);
-        btCommunityName.setText(communityName);
+        btCommunityName.setText(Def.communityName);
         btCommunityName.setTextSize(20);
     }
     private void initListener() {
@@ -685,6 +686,9 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         dataMap.clear();
         try{
             if(treeAndCommunityDataItemDetailBeanList != null){
+                Log.d(TAG, "==line====setChartData=====treeAndCommunityDataItemDetailBeanList====:" + treeAndCommunityDataItemDetailBeanList);
+                Collections.reverse(treeAndCommunityDataItemDetailBeanList);//将结果集倒序
+                Log.d(TAG, "==line==setChartData====reverse=====treeAndCommunityDataItemDetailBeanList====:" + treeAndCommunityDataItemDetailBeanList);
                 Iterator iter = treeAndCommunityDataItemDetailBeanList.iterator();
                 while (iter.hasNext() ){
                     TreeAndCommunityDataItemDetailBean treeAndCommunityDataItemDetailBean = (TreeAndCommunityDataItemDetailBean) iter.next();
@@ -740,6 +744,9 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         dataMap.clear();
         try{
             if(treeAndCommunityDataItemDetailBeanList != null){
+                Log.d(TAG, "====bar======setBarChartData=treeAndCommunityDataItemDetailBeanList====:" + treeAndCommunityDataItemDetailBeanList);
+                Collections.reverse(treeAndCommunityDataItemDetailBeanList);//将结果集倒序
+                Log.d(TAG, "====bar======setBarChartData===reverse=====treeAndCommunityDataItemDetailBeanList====:" + treeAndCommunityDataItemDetailBeanList);
                 Iterator iter = treeAndCommunityDataItemDetailBeanList.iterator();
                 while (iter.hasNext() ){
                     TreeAndCommunityDataItemDetailBean treeAndCommunityDataItemDetailBean = (TreeAndCommunityDataItemDetailBean) iter.next();
@@ -936,6 +943,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
             //Log.d(TAG, "=====setChart==================days===============:" + days);
             //从Y轴弹出的动画时间
             combinedChart.animateY(1500);
+            combinedChart.moveViewToX(list1.size()-1);
         }catch(Exception e){
            e.printStackTrace();
         }

@@ -9,4 +9,5 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="combined_chart_name_font_size">15dp</dimen>
     <dimen name="combined_chart_height">220dp</dimen>
+    <dimen name="criteria_text_size">13sp</dimen>
 </resources>

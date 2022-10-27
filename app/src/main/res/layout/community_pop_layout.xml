@@ -1,29 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/half_transparent">
-    <TextView
-        android:id="@+id/tv_community_name"
-        android:layout_width="match_parent"
+    <TableRow
+        android:id="@+id/row0"
         android:layout_height="wrap_content"
-        android:text=""
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="5dp"
-        android:textSize="18sp"
-        android:gravity="center">
-    </TextView>
-    <ImageView
-        android:id="@+id/iv_line"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginBottom="5dp"
-        android:background="#DCDCDC"/>
-    <LinearLayout
-        android:layout_width="match_parent"
+        android:gravity="center"
+        >
+        <TextView
+            android:id="@+id/tv_community_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="25dp"
+            android:textSize="18sp"
+            android:gravity="center">
+        </TextView>
+    </TableRow>
+    <TableRow
+        android:id="@+id/row1"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_width="match_parent"
         >
         <TextView
             android:id="@+id/tx_carbon"
@@ -43,5 +45,5 @@
             android:textSize="13sp"
             >
         </TextView>
-    </LinearLayout>
-</LinearLayout>
+    </TableRow>
+</TableLayout>

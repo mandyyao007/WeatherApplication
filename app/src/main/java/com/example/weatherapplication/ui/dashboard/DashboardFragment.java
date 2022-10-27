@@ -129,7 +129,7 @@ public class DashboardFragment extends Fragment {
         mapStatusUpdate = MapStatusUpdateFactory.zoomTo(Def.MAPLEVAL);//设置地图缩放
         mBaiduMap.setMapStatus(mapStatusUpdate);
         initMarker();///初始化标志
-        addArea(Color.parseColor("#FFFFFFFF"), Color.parseColor("#80FFFFFF"), mLatLnglist);//添加多边形区域
+        //addArea(Color.parseColor("#FFFFFFFF"), Color.parseColor("#80FFFFFF"), mLatLnglist);//添加多边形区域
         mBaiduMap.setOnMarkerClickListener(markerClickListener);//注册点击监听器事件
         mBaiduMap.setOnMapClickListener(mapClickListener);
         mBaiduMap.showMapPoi(false);//是否显示地图标注(各类道路地点等)
@@ -312,7 +312,7 @@ public class DashboardFragment extends Fragment {
                 if (popStationNormal == null && !"59".equals(collectorId)) {
                     try {
                         //Log.d(TAG, "--------popStationNormal======");
-                        popStationNormal = View.inflate(getActivity(), R.layout.marker_layout, null);
+                        popStationNormal = View.inflate(getActivity(), R.layout.marker_layout_table, null);
                         initPopView(popStationNormal,collectorId);
                         mMapView.addView(popStationNormal, createLayoutParams());
                     } catch (Exception e) {
@@ -329,7 +329,7 @@ public class DashboardFragment extends Fragment {
                 if ( popStationBasic ==null  && "59".equals(collectorId)) {
                     try {
                         //Log.d(TAG, "-----popStationBasic======");
-                        popStationBasic = View.inflate(getActivity(), R.layout.marker_soil_layout, null);
+                        popStationBasic = View.inflate(getActivity(), R.layout.soil_layout_table, null);
                         initPopView(popStationBasic,collectorId);
                         mMapView.addView(popStationBasic, createLayoutParams());
                     } catch (Exception e) {
@@ -471,7 +471,7 @@ public class DashboardFragment extends Fragment {
             if (!"".equals(unit)) {
                 tem = tem+" "+unit;
             }
-            //Log.d(TAG,"======index==========:"+index+"======tem==========:"+tem);
+            Log.d(TAG,"======index==========:"+index+"======tem==========:"+tem);
             try {
                 if("空气温度".equals(index) || "AirTC_Avg1".equals(index) ){
                     tvAirTem.setText(index+":");
@@ -509,12 +509,8 @@ public class DashboardFragment extends Fragment {
                     tvPlantDia.setText("");
                     valPlantDia.setText("");
                 }
-                if("树木胸径增长".equals(index)|| ("PAR_Avg1".equals(index) && !"54".equals(collectorId))){
-                    if("树木胸径增长".equals(index)){
-                        tvPlantDia.setText(index.substring(0,4)+":");
-                    }else{
-                        tvPlantDia.setText(index+":");
-                    }
+                if("胸径".equals(index)|| ("PAR_Avg1".equals(index) && !"54".equals(collectorId))){
+                    tvPlantDia.setText(index+":");
                     valPlantDia.setText(tem);
                 }else if( ("PAR_Avg1".equals(index) && "54".equals(collectorId))){
                     tvPlantFluid.setText(index+":");
@@ -563,6 +559,7 @@ public class DashboardFragment extends Fragment {
                 Log.d(TAG,"############weatherStationId==:"+weatherStationId);
                 String reg = "^[0-9]+(.[0-9]+)?$";
                 initLatLngData(item);//初始化四边形的点
+                addArea(Color.parseColor("#FFFFFFFF"), Color.parseColor("#80FFFFFF"), mLatLnglist);//添加多边形区域
                 List<CollectorItemBean> collectorItems = NetUtil.getStationItemInfo(userName,weatherStationId);
                 Log.d(TAG,"############collectorItems==:"+collectorItems);
                 Iterator iter = collectorItems.iterator();
