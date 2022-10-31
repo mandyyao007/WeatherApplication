@@ -591,7 +591,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
             return null;
         }
         //Log.d(TAG, "==============dayDataDetailReports==:" +dayDataDetailReports);
-        //Collections.reverse(dayDataDetailReports);//将结果集倒序
+        Collections.reverse(dayDataDetailReports);//将结果集倒序
         //Log.d(TAG, "==========reverse====dayDataDetailReports==:" + dayDataDetailReports);
         Iterator it = dayDataDetailReports.iterator();
         int count = 0;
@@ -702,6 +702,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                lineChart.moveViewToX(entries.size()-1);
             }else{
                 //String message = "没有数据";
                 //lineChart.setVisibility(View.INVISIBLE);

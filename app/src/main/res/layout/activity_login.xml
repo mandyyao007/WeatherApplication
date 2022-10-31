@@ -13,7 +13,7 @@
         android:layout_marginTop="200dp"
         android:textSize="22sp"
         android:layout_marginBottom="10dp"
-        android:text="城市绿地碳汇效益智能监测系统"
+        android:text="城市绿地生态效益智能监测系统"
         android:textColor="@color/white">
     </TextView>
     <EditText

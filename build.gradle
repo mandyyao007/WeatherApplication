@@ -2,9 +2,12 @@
 buildscript {
     repositories {
         google()
-        jcenter()
+        //center()
         mavenCentral()
         maven { url "https://jitpack.io"}//chart需求
+        //maven { url "https://maven.aliyun.com/nexus/content/groups/public"}
+        //maven { url "https://maven.aliyun.com/nexus/content/groups/google"}
+        //maven { url "https://maven.aliyun.com/nexus/content/groups/jcenter"}
     }
     dependencies {
         classpath "com.android.tools.build:gradle:7.0.3"

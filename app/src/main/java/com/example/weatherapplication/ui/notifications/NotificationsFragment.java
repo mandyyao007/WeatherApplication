@@ -814,9 +814,16 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 }
             }
             if(list2.size()>0){
+                Log.d(TAG, "=========setChart====== getMaxValue(list2) ==:" + getMaxValue(list2) );
+                Log.d(TAG, "=========setChart====== getMaxValue(list2)* 1.05 ==:" + getMaxValue(list2)* 1.05 );
                 maxRightYaxis = getMaxValue(list2) * 1.05;
                 if(maxRightYaxis > 0.1){
                     maxRightY   =  new  BigDecimal(maxRightYaxis).setScale(1,  BigDecimal.ROUND_HALF_UP).floatValue();
+                    if(maxRightY < getMaxValue(list2)){
+                        maxRightYaxis = getMaxValue(list2) * 1.2;
+                        Log.d(TAG, "=========setChart====== getMaxValue(list2)* 1.2 ==:" + getMaxValue(list2)* 1.2 );
+                        maxRightY   =  new  BigDecimal(maxRightYaxis).setScale(2,  BigDecimal.ROUND_HALF_UP).floatValue();
+                    }
                     labelIntervalRight = maxRightY/5;
                 }else{
                     maxRightY   = (float) 0.1;

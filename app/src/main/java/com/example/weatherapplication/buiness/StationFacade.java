@@ -115,14 +115,17 @@ public class StationFacade {
             if(iter.hasNext()){
               CarbonItemBean carbonItemBean = iter.next();
                 Log.d(TAG,"*************8888carbonItemBean=====:"+carbonItemBean);
+                String unit = carbonItemBean.getUnit();
                 List<CarbonItemDataBean> carbonItemDataBeanList = carbonItemBean.getmCarbonItemDataBean();
                 Log.d(TAG,"*************8888carbonItemDataBeanList=====:"+carbonItemDataBeanList);
                 Iterator<CarbonItemDataBean> iterator = carbonItemDataBeanList.iterator();
                 if(iterator.hasNext()){
-                    iterator.next();
                     CarbonItemDataBean carbonItemDataBean = iterator.next();
                     Log.d(TAG,"*************8888carbonItemDataBean=====:"+carbonItemDataBean);
-                    carbonData = carbonItemDataBean.getValue();
+                    if(unit!=null || !"".equals(unit)){
+                        carbonData = carbonItemDataBean.getValue()+"("+unit+")";
+                    }
+
                     Log.d(TAG,"*************8888carbonData=====:"+carbonData);
                 }
             }
