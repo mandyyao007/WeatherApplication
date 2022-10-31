@@ -12,8 +12,4 @@
         android:id="@+id/navigation_home"
         android:icon="@drawable/ic_dashboard_black_24dp"
         android:title="基础数据" />
-    <item
-        android:id="@+id/navigation_me"
-        android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="我" />
 </menu>
